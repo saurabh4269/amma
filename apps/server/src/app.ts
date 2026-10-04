@@ -16,6 +16,11 @@ export interface Config {
   today: () => string;
   /** Messages allowed per address per minute. */
   ratePerMinute: number;
+  /**
+   * For "give a missed call and we call you back", which costs her nothing.
+   * Leave out to switch the feature off.
+   */
+  callback?: { accountSid: string; fromNumber: string; fetch: typeof fetch; perHour: number };
 }
 
 /** Wording the server needs before any session exists. Overridable per language under `ui`. */
@@ -76,9 +81,11 @@ export function buildApp(cfg: Config): FastifyInstance {
     if (!validSignature(cfg.authToken, url, params, req.headers['x-twilio-signature'] as string | undefined)) {
       return reply.code(403).send('bad signature');
     }
-    if (!params.From) return reply.code(400).send('missing From');
+    // On a call we placed, she is the "To" number; on a call she placed, the "From".
+    const her = params.Direction === 'outbound-api' ? params.To : params.From;
+    if (!her) return reply.code(400).send('missing caller');
     // A separate record from the same number's text conversation: channels are kept apart.
-    const address = `voice:${params.From}`;
+    const address = `voice:${her}`;
     const first = params.Digits === undefined && params.SpeechResult === undefined;
     const known = cfg.store.get(address);
     const out = first && known?.conversation ? repeatLast(known) : handle(address, params.Digits ?? params.SpeechResult ?? '', 'voice');
@@ -88,6 +95,34 @@ export function buildApp(cfg: Config): FastifyInstance {
       out.parts.map((p) => ({ text: p.text, locale: p.lang?.locale ?? lang?.locale ?? DEFAULT_LOCALE })),
       { action: url, listenLocale: lang?.locale ?? DEFAULT_LOCALE, hangup: out.ended },
     );
+  });
+
+  // Missed call: refuse the call so she is not charged, then ring her back.
+  const callbacks = new Map<string, { hour: number; count: number }>();
+  app.post('/twilio/missed', async (req, reply) => {
+    const params = req.body as Record<string, string>;
+    if (!validSignature(cfg.authToken, `${cfg.publicUrl}/twilio/missed`, params, req.headers['x-twilio-signature'] as string | undefined)) {
+      return reply.code(403).send('bad signature');
+    }
+    reply.type('text/xml');
+    const rejected = '<?xml version="1.0" encoding="UTF-8"?><Response><Reject reason="busy"/></Response>';
+    const cb = cfg.callback;
+    if (!cb || !params.From) return rejected;
+    // Calling back costs money; a number that rings again and again is not called without limit.
+    const hour = Math.floor(Date.now() / 3_600_000);
+    const seen = callbacks.get(params.From);
+    if (seen && seen.hour === hour && seen.count >= cb.perHour) return rejected;
+    callbacks.set(params.From, { hour, count: seen?.hour === hour ? seen.count + 1 : 1 });
+    const res = await cb.fetch(`https://api.twilio.com/2010-04-01/Accounts/${cb.accountSid}/Calls.json`, {
+      method: 'POST',
+      headers: {
+        authorization: `Basic ${Buffer.from(`${cb.accountSid}:${cfg.authToken}`).toString('base64')}`,
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({ To: params.From, From: cb.fromNumber, Url: `${cfg.publicUrl}/twilio/voice`, Method: 'POST' }).toString(),
+    });
+    if (!res.ok) req.log.error({ status: res.status }, 'callback could not be placed');
+    return rejected;
   });
 
   /** She called back in the middle of a session: say where we were instead of treating silence as an answer. */

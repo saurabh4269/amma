@@ -32,5 +32,8 @@ const app = buildApp({
   publicUrl: need('PUBLIC_URL'),
   today: () => new Date().toISOString().slice(0, 10),
   ratePerMinute: Number(process.env.RATE_PER_MINUTE ?? 20),
+  callback: process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_FROM_NUMBER
+    ? { accountSid: process.env.TWILIO_ACCOUNT_SID, fromNumber: process.env.TWILIO_FROM_NUMBER, fetch, perHour: Number(process.env.CALLBACKS_PER_HOUR ?? 3) }
+    : undefined,
 });
 await app.listen({ host: '0.0.0.0', port: Number(process.env.PORT ?? 8080) });

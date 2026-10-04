@@ -11,6 +11,11 @@ const URL = 'https://example.org';
 
 function server() {
   const store = new SqliteStore(':memory:');
+  const placed: { url: string; body: string; auth: string }[] = [];
+  const fakeFetch = (async (url: string, init: RequestInit) => {
+    placed.push({ url, body: String(init.body), auth: (init.headers as Record<string, string>).authorization ?? '' });
+    return new Response('{}', { status: 201 });
+  }) as unknown as typeof fetch;
   const app = buildApp({
     ix: indexPack(fixture),
     languages: [referenceLanguage(fixture, 'English')],
@@ -19,6 +24,7 @@ function server() {
     publicUrl: URL,
     today: () => '2026-10-04',
     ratePerMinute: 100,
+    callback: { accountSid: 'AC123', fromNumber: '+15550001111', fetch: fakeFetch, perHour: 2 },
   });
   app.log.level = 'silent';
   let n = 0;
@@ -32,7 +38,17 @@ function server() {
     });
     return { status: res.statusCode, xml: res.body };
   };
-  const call = async (input: { Digits?: string; SpeechResult?: string } = {}, from = '+910000000009') => {
+  const missed = async (from: string) => {
+    const params = { From: from, CallSid: 'CAm' };
+    const res = await app.inject({
+      method: 'POST',
+      url: '/twilio/missed',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', 'x-twilio-signature': twilioSignature(TOKEN, `${URL}/twilio/missed`, params) },
+      payload: new URLSearchParams(params).toString(),
+    });
+    return res.body;
+  };
+  const call = async (input: Record<string, string> = {}, from = '+910000000009') => {
     const params: Record<string, string> = { From: from, CallSid: 'CA1', ...input };
     const res = await app.inject({
       method: 'POST',
@@ -42,7 +58,7 @@ function server() {
     });
     return res.body;
   };
-  return { store, send, call };
+  return { store, send, call, missed, placed };
 }
 
 describe('message webhook', () => {
@@ -148,5 +164,22 @@ describe('phone call', () => {
     await send('hi', { from: '+910000000001' });
     expect(store.get('voice:+910000000001')?.consented).toBe(true);
     expect(store.get('+910000000001')).toBeUndefined();
+  });
+
+  it('a missed call is refused at no cost to her and she is rung back, but not without limit', async () => {
+    const { missed, placed, call, store } = server();
+    expect(await missed('+2200000001')).toContain('<Reject');
+    expect(placed).toHaveLength(1);
+    expect(placed[0]!.url).toContain('/Accounts/AC123/Calls.json');
+    expect(new URLSearchParams(placed[0]!.body).get('To')).toBe('+2200000001');
+    expect(placed[0]!.auth).toMatch(/^Basic /);
+    await missed('+2200000001');
+    await missed('+2200000001');
+    expect(placed).toHaveLength(2);
+    // When the call we placed connects, she is the "To" number.
+    await call({ Direction: 'outbound-api', To: '+2200000001' }, '+15550001111');
+    await call({ Direction: 'outbound-api', To: '+2200000001', Digits: '1' }, '+15550001111');
+    expect(store.get('voice:+2200000001')?.consented).toBe(true);
+    expect(store.get('voice:+15550001111')).toBeUndefined();
   });
 });

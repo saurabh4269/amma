@@ -153,6 +153,31 @@ def t_onnx(res):
     return t1, t2, t3
 
 
+def t_diag(res):
+    dg = res["diagnostics_posthoc"]
+    rows1, rows2 = [], []
+    for key, d in dg.items():
+        n, f, fc = d["nearest_other_clip"], d["full_pool_nn"], d["full_pool_nn_centered"]
+        rows1.append([key.replace("|", " / "), f"{d['pairwise_cosine']['mean']:.3f}", pct(n["same_intent"]),
+                      pct(n["same_sentence"]), pct(n["same_speaker"]), f"{f['support_clips_mean']:.0f}",
+                      ms(f["test_macro"]), ms(f["test_micro"]), ms(f["same_sentence_retrieved"]), ms(fc["test_macro"])])
+        enc, layer, _ = key.split("|")
+        for clf in ("proto", "nn"):
+            base, cen = res["grid"][f"{enc}|{layer}|{clf}"], d["fewshot_centered"][clf]
+            for k in KS:
+                c = cen[k]["A"]["abstention"]["maxsim"]["calibrated"]["0.05"]
+                rows2.append([f"whisper-{enc} {layer} {clf}", k, pct(base[k]["A"]["test_macro"]["mean"]),
+                              pct(cen[k]["A"]["test_macro"]["mean"]), pct(base[k]["B"]["test_macro"]["mean"]),
+                              pct(cen[k]["B"]["test_macro"]["mean"]),
+                              f"{pct(c['coverage']['mean'])} / {pct(c['error_among_accepted_pooled'], 2)}"])
+    t1 = table(["Config", "Mean pairwise cosine (all clips)", "Nearest other clip: same intent %", "same sentence %",
+                "same speaker %", "Full-pool support clips", "Full-pool 1-NN A macro %", "A micro %",
+                "Nearest support clip is the same sentence %", "Full-pool 1-NN, centred, A macro %"], rows1)
+    t2 = table(["Config", "k", "A macro % (protocol)", "A macro % (centred)", "B macro % (protocol)",
+                "B macro % (centred)", "Centred, calibrated @5%: cov / err"], rows2)
+    return t1, t2
+
+
 def write_report(res: dict) -> None:
     prose_dir = REPORTS_DIR / "_prose"
     tpl = (prose_dir / "report.template.md").read_text()
@@ -162,6 +187,7 @@ def write_report(res: dict) -> None:
                for e, b in res["selection"]["best_per_encoder"].items()}
     o1, o2, o3 = t_onnx(res)
     env = res["environment"]
+    d1, d2 = t_diag(res)
     subs = {
         "DATASET_TABLE": ds1, "INTENT_TABLE": ds2, "SPEAKER_TABLE": ds3,
         "HEADLINE_TABLE": t_headline(res), "GRID_TABLE": t_grid(res),
@@ -172,6 +198,7 @@ def write_report(res: dict) -> None:
         "RC_MAXSIM_A": t_rc(res["grid"][best], "maxsim", "A"),
         "RC_MARGIN_A": t_rc(res["grid"][best], "margin", "A"),
         "ROBUST_TABLE": t_robust(res),
+        "DIAG_TABLE_1": d1, "DIAG_TABLE_2": d2,
         "ONNX_SIZE_TABLE": o1, "ONNX_LATENCY_TABLE": o2, "ONNX_INT8_TABLE": o3,
         "ONNX_NOTES": "; ".join(res["onnx"]["notes"]) or "ONNX files were already present (cached)",
         "PARITY": f"min cosine {res['onnx']['parity_fp32_vs_pytorch']['cos_min']:.6f}, mean {res['onnx']['parity_fp32_vs_pytorch']['cos_mean']:.6f} over {res['onnx']['parity_fp32_vs_pytorch']['n']} clips",
