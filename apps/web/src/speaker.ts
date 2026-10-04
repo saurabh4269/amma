@@ -7,6 +7,16 @@ import type { Words } from './pack.ts';
 export class Speaker {
   private audio?: HTMLAudioElement;
   private token = 0;
+  private static all = new Set<Speaker>();
+
+  constructor() {
+    Speaker.all.add(this);
+  }
+
+  /** Silence every screen, for when the assistant opens on top of whatever was speaking. */
+  static stopAll() {
+    for (const s of Speaker.all) s.stop();
+  }
 
   usesDeviceVoice(words: Words, cards: string[]): boolean {
     return cards.some((c) => !words.lang.audio[c]);

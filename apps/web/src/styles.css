@@ -220,3 +220,14 @@ fieldset { border: 1.5px solid var(--line); border-radius: 16px; background: var
 .map-link { display: flex; align-items: center; justify-content: center; min-width: 56px; border-radius: 18px; background: #fff; text-decoration: none; font-size: 1.5rem; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
 .directions { display: inline-block; margin-left: 8px; font-weight: 600; white-space: nowrap; }
 .near .find { min-height: 56px; }
+
+/* The microphone that is on every screen. */
+.assistant {
+  position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 20;
+  width: 64px; height: 64px; border-radius: 50%; border: 0; padding: 0;
+  background: #C4513A; color: #fff; font-size: 1.7rem; line-height: 1;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .25); cursor: pointer;
+}
+.assistant:active { transform: scale(.96); }
+.page { padding-bottom: 96px; }
+@media print { .assistant { display: none; } }

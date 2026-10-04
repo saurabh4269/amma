@@ -124,18 +124,48 @@ export function begin(ix: PackIndex, lang: LanguagePack, profile: Profile, date:
 /** Sent in place of a message to ask for the last question again without answering it. */
 export const REPEAT = '\u0000';
 
+/**
+ * A question asked out of turn. On a text channel she can ask at any point, in the middle of the plan
+ * or the check; the answer is one of the fixed cards and the session does not move.
+ */
+export function askAside(ix: PackIndex, lang: LanguagePack, profile: Profile, body: string): { messages: string[]; said: string[] } | undefined {
+  const on = new Set(profile.tracks);
+  const asked = ix.pack.questions.filter((q) => q.tracks.length === 0 || q.tracks.some((t) => on.has(t)));
+  const hit = matchText(body, lang.lexicon, asked.map((q) => `question:${q.id}`));
+  if (hit.kind !== 'accept') return undefined;
+  const q = asked.find((x) => `question:${x.id}` === hit.meanings[0]);
+  return q ? { messages: [text(ix, lang, q.answer)], said: [q.answer] } : undefined;
+}
+
+function askAgain(ix: PackIndex, lang: LanguagePack, a: Awaiting): string {
+  if (a.kind === 'choice') return a.options.map((o, i) => `${i + 1}. ${text(ix, lang, o.card)}`).join('\n');
+  if (a.kind === 'input') return text(ix, lang, ix.pack.plan.find((s) => s.id === a.slot)?.ask ?? '');
+  return '';
+}
+
 export function receive(ix: PackIndex, lang: LanguagePack, conversation: Conversation, body: string): Turn {
-  const event = body === REPEAT ? undefined : interpret(body, conversation.awaiting, lang);
+  const a = conversation.awaiting;
+  const same = (messages: string[], said: string[] = []): Turn => ({ conversation, messages, said, ended: conversation.session.ended });
+  if (body === REPEAT) {
+    const again = askAgain(ix, lang, a);
+    return same(again ? [again] : []);
+  }
+  // Where the step itself listens for questions (the "anything to ask?" step) the engine handles them.
+  // Everywhere else a question is answered on the side and the step is asked again.
+  const stepListens = a.kind === 'choice' && a.listen?.some((m) => m.startsWith('question:'));
+  const isNumber = /^\d+$/.test(body.trim());
+  if (!stepListens && !isNumber) {
+    const aside = askAside(ix, lang, conversation.session.profile, body);
+    if (aside) {
+      const again = askAgain(ix, lang, a);
+      return same(again ? [...aside.messages, again] : aside.messages, aside.said);
+    }
+  }
+  const event = interpret(body, a, lang);
   if (!event) {
-    // Not a number we offered: repeat the choices rather than guess.
-    const a = conversation.awaiting;
-    const again =
-      a.kind === 'choice'
-        ? a.options.map((o, i) => `${i + 1}. ${text(ix, lang, o.card)}`).join('\n')
-        : a.kind === 'input'
-          ? text(ix, lang, ix.pack.plan.find((s) => s.id === a.slot)?.ask ?? '')
-          : '';
-    return { conversation, messages: again ? [again] : [], said: [], ended: conversation.session.ended };
+    // Not an answer we offered: repeat the question rather than guess.
+    const again = askAgain(ix, lang, a);
+    return same(again ? [again] : []);
   }
   const r = step(ix, conversation.session, event);
   const out = render(ix, lang, r.effects, r.state.profile);

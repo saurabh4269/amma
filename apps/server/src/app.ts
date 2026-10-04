@@ -2,7 +2,7 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import formbody from '@fastify/formbody';
 import { Profile, type LanguagePack } from '@amma/schema';
 import type { PackIndex } from '@amma/engine';
-import { begin, receive, REPEAT, type Turn } from '@amma/channel-text';
+import { askAside, begin, interpret, receive, REPEAT, type Turn } from '@amma/channel-text';
 import type { Store, User } from './store.ts';
 import { twiml, validSignature, voiceTwiml } from './twilio.ts';
 
@@ -47,6 +47,7 @@ const SERVER_UI = {
   after_birth: 'Baby is born',
   skip: 'Skip',
   heard: 'I heard:',
+  tap_to_confirm: 'Please tap your answer, so a mishearing cannot hide a danger sign.',
   not_heard: 'I could not make out that voice note. Please say it again, or type it.',
   voice_note: 'You can also send a voice note. It goes to a speech service to be turned into text and is not kept.',
 } as const;
@@ -184,6 +185,22 @@ export function buildApp(cfg: Config): FastifyInstance {
       }
       // She sees exactly what the service made of her words before the bot acts on them.
       await json('sendMessage', { chat_id: chat, text: `🎤 ${ui(known, 'heard')} "${heard}"` });
+      // A danger-sign question may be answered "yes" by voice, because that only raises a flag.
+      // A spoken "no" or "not sure" could be a mishearing that clears one, so it must be tapped.
+      const waiting = cfg.store.get(address)?.conversation?.awaiting;
+      const isSignQuestion = waiting?.kind === 'choice' && waiting.options.some((o) => o.id === 'unsure');
+      if (known && waiting && isSignQuestion) {
+        const event = interpret(heard, waiting, known);
+        if (event?.type === 'chose' && event.option !== 'yes') {
+          const say = (card: string) => known.translations[card]?.text ?? cfg.ix.card.get(card)?.ref ?? card;
+          await json('sendMessage', {
+            chat_id: chat,
+            text: ui(known, 'tap_to_confirm'),
+            reply_markup: { inline_keyboard: waiting.options.map((o, i) => [{ text: say(o.card), callback_data: String(i + 1) }]) },
+          });
+          return { ok: true };
+        }
+      }
       body = heard;
     }
 
@@ -305,6 +322,9 @@ export function buildApp(cfg: Config): FastifyInstance {
     }
 
     if (!user.conversation) {
+      // Between sessions she can still ask a question and get its card, without a new session starting.
+      const aside = askAside(cfg.ix, chosen, user.profile!, body);
+      if (aside) return { parts: [...aside.messages, ui(chosen, 'again')].map((text) => ({ text, lang: chosen })), said: aside.said, ended: false };
       return finishTurn(user, begin(cfg.ix, chosen, user.profile!, cfg.today()));
     }
     return finishTurn(user, receive(cfg.ix, chosen, user.conversation, body));

@@ -53,6 +53,7 @@ export const UI_DEFAULT = {
   teach_voice: 'Teach the phone my voice',
   teach_how: 'Tap a sign, say it in your own words, then tap again. Do each one two or three times. Only this phone keeps it, and no sound is saved.',
   no_voice: 'The speech model is not installed on this phone.',
+  assistant: 'Ask AMMA',
   mic_unsupported: 'This browser cannot use the microphone. Open AMMA in Chrome (not inside another app) to speak. You can still tap a picture or type.',
   mic_blocked: 'The microphone is blocked for this site. Allow it in the browser settings to speak. You can still tap a picture or type.',
   mic_start: 'Tap and speak',

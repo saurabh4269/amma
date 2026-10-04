@@ -1,3 +1,4 @@
+import { publishAssistant } from './assistant.tsx';
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { Profile } from '@amma/schema';
 import { ClinicCard, weeksPregnant } from './clinic-card.tsx';
@@ -56,6 +57,24 @@ export function App() {
   useEffect(() => {
     if (words) warmLanguage(words.lang);
   }, [words?.lang.id]);
+  // Tell the always-present microphone whose record is open. During a weekly session it may answer
+  // but not save, because the session keeps its own copy of the record until it finishes.
+  useEffect(() => {
+    if (!loaded || !words) return publishAssistant(undefined);
+    const open = 'profile' in screen ? screen : undefined;
+    publishAssistant({
+      ix: loaded.ix,
+      words,
+      places: loaded.places,
+      profile: open?.profile,
+      save: open && open.at !== 'session'
+        ? (p: Profile) => {
+            void saveProfile(p, open.pin);
+            setScreen({ ...open, profile: p });
+          }
+        : undefined,
+    });
+  }, [loaded, words, screen]);
   // Pick up a newly installed version, but only from the home screen so no session is lost.
   useEffect(() => {
     const reloadIfIdle = () => {

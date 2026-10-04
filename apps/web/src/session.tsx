@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { PlacePack, PlanSlot, PlanValue, Profile } from '@amma/schema';
-import { createSession, parseMeaning, step, type Effect, type Event, type Heard, type Option, type PackIndex, type SessionState } from '@amma/engine';
+import { createSession, outcome, parseMeaning, signFact, signsFor, step, type Effect, type Event, type Heard, type Option, type PackIndex, type SessionState } from '@amma/engine';
 import { matchText } from '@amma/matcher';
 import type { Words } from './pack.ts';
 import { alertPhones, PlanView, renderAlert, renderSms, SendText } from './plan.tsx';
@@ -42,9 +42,14 @@ interface Props {
   profile: Profile;
   onDone: (updated: Profile) => void;
   onQuit: () => void;
+  /**
+   * `ask` is the assistant: only the "anything to ask or tell?" step, opened from any screen.
+   * It is not a weekly session and is not recorded as one.
+   */
+  mode?: 'weekly' | 'ask';
 }
 
-export function Session({ ix, words, places, profile, onDone, onQuit }: Props) {
+export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'weekly' }: Props) {
   const speaker = useMemo(() => new Speaker(), []);
   const state = useRef<SessionState>(createSession(profile, new Date().toISOString().slice(0, 10)));
   const [view, setView] = useState<View>({ say: [], showPlan: false, ended: false });
@@ -68,6 +73,23 @@ export function Session({ ix, words, places, profile, onDone, onQuit }: Props) {
     const r = step(ix, state.current, event);
     state.current = r.state;
     const v = toView(r.effects);
+    if (mode === 'ask' && r.state.ended) {
+      // The assistant has no check step. If what she described led to a danger-sign question, the same rule
+      // tables decide what to say about her answers. With nothing flagged it says nothing: it has not checked her.
+      const answered = signsFor(ix, r.state.phase, 'check').filter((s) => r.state.facts[signFact(s.id)] !== undefined);
+      const groups = [...new Set(answered.map((s) => s.group))];
+      const o = groups.length ? outcome(ix, groups, r.state.facts) : undefined;
+      if (o && o.level !== 'none_listed') {
+        r.state.level = o.level;
+        v.say.push(...o.cards);
+        if (o.level === 'urgent') {
+          v.calls = ix.pack.plan.flatMap((slot) => {
+            const p = r.state.profile.plan[slot.id];
+            return slot.callOnUrgent && p && 'contact' in p ? [{ slot: slot.id, name: p.contact.name, phone: p.contact.phone }] : [];
+          });
+        }
+      }
+    }
     setView(v);
     void speaker.play(words, v.say, setSpeaking);
   };

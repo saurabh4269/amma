@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { indexPack } from '@amma/engine';
+import { LanguagePack } from '@amma/schema';
 import { referenceLanguage } from '@amma/pack-tools';
 import { fixture } from '../../../packages/engine/test/fixture.ts';
 import { buildApp } from '../src/app.ts';
@@ -246,6 +247,39 @@ describe('telegram', () => {
     await telegram({ message: { chat: { id: 42 }, voice: { file_id: 'F1' } } });
     const texts = tg.filter((c) => c.method === 'sendMessage').map((c) => (c.body as { text: string }).text);
     expect(texts).toContain('🎤 I heard: "Asha Tai 9820000000"');
+  });
+
+  it('a spoken "yes" to a danger sign is taken, but a spoken "no" must be tapped', async () => {
+    const said = { next: 'Asha Tai 9820000000' };
+    const store = new SqliteStore(':memory:');
+    const sent: { text: string; reply_markup?: unknown }[] = [];
+    const app = buildApp({
+      ix: indexPack(fixture),
+      languages: [LanguagePack.parse({ id: 'en', name: 'English', content: { id: 'fixture', version: '0.0.1' }, translations: { p_yes: { text: 'Yes', status: 'team_draft' }, p_no: { text: 'No', status: 'team_draft' }, p_unsure: { text: 'Not sure', status: 'team_draft' } } })],
+      store, authToken: TOKEN, publicUrl: URL, today: () => '2026-10-04', ratePerMinute: 100,
+      telegram: {
+        token: 'BOT', secret: 's',
+        fetch: (async (url: string, init?: RequestInit) => {
+          if (String(url).endsWith('/sendMessage')) sent.push(JSON.parse(String(init?.body)) as { text: string });
+          if (String(url).includes('/file/')) return new Response(new Uint8Array([1]));
+          return new Response(JSON.stringify({ ok: true, result: { file_path: 'v.oga' } }));
+        }) as unknown as typeof fetch,
+        transcribe: async () => said.next,
+        clip: () => undefined,
+      },
+    });
+    app.log.level = 'silent';
+    let n = 0;
+    const up = (u: Record<string, unknown>) => app.inject({ method: 'POST', url: '/telegram/hook', headers: { 'x-telegram-bot-api-secret-token': 's' }, payload: { update_id: ++n, ...u } });
+    const type = (t: string) => up({ message: { chat: { id: 9 }, text: t } });
+    const voice = (t: string) => { said.next = t; return up({ message: { chat: { id: 9 }, voice: { file_id: 'F' } } }); };
+    for (const t of ['hi', '1', '1', '0', '0', '1']) await type(t); // language, pregnant, skip plan, end recall: now the first sign
+    const facts = () => store.get('telegram:9')!.conversation!.session.facts;
+    await voice('no');
+    expect(facts()['sign:bleed']).toBeUndefined(); // not taken
+    expect(sent.at(-1)!.text).toContain('Please tap your answer');
+    await voice('yes');
+    expect(facts()['sign:bleed']).toBe('yes');
   });
 
   it('START in the middle of a session goes back to the language choice and keeps her plan', async () => {

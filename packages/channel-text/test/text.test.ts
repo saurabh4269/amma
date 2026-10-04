@@ -62,6 +62,16 @@ describe('text channel', () => {
     expect([facts['sign:bleed'], facts['sign:head'], facts['sign:fever']]).toEqual(['yes', 'no', 'unsure']);
   });
 
+  it('answers a question asked in the middle of the check, then asks the same sign again', () => {
+    const turns = talk(['0', '0', '1']);
+    const before = turns.at(-1)!;
+    const after = receive(ix, lang, before.conversation, 'what to eat?');
+    expect(after.conversation).toBe(before.conversation); // the session has not moved
+    expect(after.said).toEqual(['q_food_a']);
+    expect(after.messages[0]).toBe('q_food_a');
+    expect(after.messages[1]).toMatch(/^1\. Yes/);
+  });
+
   it('splits a name from a phone number', () => {
     expect(parseContact('Sunita 9820000000')).toEqual({ name: 'Sunita', phone: '9820000000' });
     expect(parseContact('+221 77 123 45 67, Awa')).toEqual({ name: 'Awa', phone: '+221771234567' });

@@ -1,8 +1,9 @@
 import { render } from 'preact';
 import { App } from './app.tsx';
+import { AssistantShell } from './assistant.tsx';
 import './styles.css';
 
-render(<App />, document.getElementById('app')!);
+render(<AssistantShell><App /></AssistantShell>, document.getElementById('app')!);
 
 // When a new version has been installed in the background, the page is still running the old one.
 // It is reloaded at the next quiet moment (the home screen), never in the middle of a session.
