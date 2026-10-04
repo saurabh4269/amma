@@ -38,7 +38,7 @@ Limits of this table:
 
 ### B1. Clinical content (content pack `packs/content/in-mch`, version 0.1.0)
 
-Size of what we built from these, in the working tree at the time of writing: 254 cards, of which 167 carry a source quote and page, and 87 are interface wording with no health advice. 32 signs, 20 questions, 12 complaints, 8 tracks. (The last commit has 227 cards; family planning and immunisation tracks were added after it.) Every source quote is in `content-sources/extracts.md`.
+Size of what we built from these, 254 cards, of which 167 carry a source quote and page, and 87 are interface wording with no health advice. 32 signs, 20 questions, 12 complaints, 8 tracks. Every source quote is in `content-sources/extracts.md`.
 
 | Source | Year | Used for | License, as recorded in the pack | What it does not cover |
 |---|---|---|---|---|
