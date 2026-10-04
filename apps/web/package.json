@@ -14,7 +14,9 @@
     "@yaay/engine": "workspace:*",
     "@yaay/matcher": "workspace:*",
     "@yaay/schema": "workspace:*",
+    "@yaay/speech": "workspace:*",
     "idb-keyval": "^6.2.1",
+    "onnxruntime-web": "^1.30.0",
     "preact": "^10.26.0"
   },
   "devDependencies": {

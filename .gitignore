@@ -13,3 +13,4 @@ apps/web/public/packs/*.json
 *.sqlite
 content-sources/txt/
 data/
+apps/web/public/models/

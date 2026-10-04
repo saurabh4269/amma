@@ -1,0 +1,326 @@
+{
+  "note": "exploratory; see module docstring",
+  "n_clips": 3204,
+  "n_speakers": 16,
+  "n_sentences": 177,
+  "tiny|L1": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.1514,
+      "intent_acc": 0.4226,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.1317,
+      "intent_acc": 0.4226,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.1174,
+      "intent_acc": 0.3833,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.089,
+      "intent_acc": 0.3361,
+      "intent_coverage_at_1pct_error": 0.0016,
+      "intent_coverage_at_5pct_error": 0.0016
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.0826,
+      "intent_acc_all": 0.7175
+    }
+  },
+  "tiny|L2": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.4123,
+      "intent_acc": 0.6916,
+      "intent_coverage_at_1pct_error": 0.0019,
+      "intent_coverage_at_5pct_error": 0.0019
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.3458,
+      "intent_acc": 0.6907,
+      "intent_coverage_at_1pct_error": 0.0009,
+      "intent_coverage_at_5pct_error": 0.0009
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.3439,
+      "intent_acc": 0.6732,
+      "intent_coverage_at_1pct_error": 0.0012,
+      "intent_coverage_at_5pct_error": 0.0012
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.1635,
+      "intent_acc": 0.4204,
+      "intent_coverage_at_1pct_error": 0.0003,
+      "intent_coverage_at_5pct_error": 0.0003
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.1058,
+      "intent_acc_all": 0.7806
+    }
+  },
+  "tiny|L3": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.4413,
+      "intent_acc": 0.7406,
+      "intent_coverage_at_1pct_error": 0.0006,
+      "intent_coverage_at_5pct_error": 0.0006
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.3352,
+      "intent_acc": 0.666,
+      "intent_coverage_at_1pct_error": 0.0003,
+      "intent_coverage_at_5pct_error": 0.0003
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.3105,
+      "intent_acc": 0.6664,
+      "intent_coverage_at_1pct_error": 0.0041,
+      "intent_coverage_at_5pct_error": 0.0041
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.1507,
+      "intent_acc": 0.4519,
+      "intent_coverage_at_1pct_error": 0.0069,
+      "intent_coverage_at_5pct_error": 0.0081
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.1114,
+      "intent_acc_all": 0.7129
+    }
+  },
+  "tiny|final": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.7191,
+      "intent_acc": 0.9126,
+      "intent_coverage_at_1pct_error": 0.0287,
+      "intent_coverage_at_5pct_error": 0.3143
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.5602,
+      "intent_acc": 0.8283,
+      "intent_coverage_at_1pct_error": 0.0087,
+      "intent_coverage_at_5pct_error": 0.0877
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.5272,
+      "intent_acc": 0.8059,
+      "intent_coverage_at_1pct_error": 0.0072,
+      "intent_coverage_at_5pct_error": 0.0565
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.2965,
+      "intent_acc": 0.5846,
+      "intent_coverage_at_1pct_error": 0.0362,
+      "intent_coverage_at_5pct_error": 0.0752
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.2076,
+      "intent_acc_all": 0.7681
+    }
+  },
+  "base|L1": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.1174,
+      "intent_acc": 0.368,
+      "intent_coverage_at_1pct_error": 0.0006,
+      "intent_coverage_at_5pct_error": 0.0006
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.1008,
+      "intent_acc": 0.3649,
+      "intent_coverage_at_1pct_error": 0.0003,
+      "intent_coverage_at_5pct_error": 0.0003
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.0733,
+      "intent_acc": 0.3193,
+      "intent_coverage_at_1pct_error": 0.0003,
+      "intent_coverage_at_5pct_error": 0.0003
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.0796,
+      "intent_acc": 0.3027,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.0718,
+      "intent_acc_all": 0.7066
+    }
+  },
+  "base|L2": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.2837,
+      "intent_acc": 0.5599,
+      "intent_coverage_at_1pct_error": 0.0009,
+      "intent_coverage_at_5pct_error": 0.0009
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.1979,
+      "intent_acc": 0.4981,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.186,
+      "intent_acc": 0.5006,
+      "intent_coverage_at_1pct_error": 0.0009,
+      "intent_coverage_at_5pct_error": 0.0009
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.1152,
+      "intent_acc": 0.3748,
+      "intent_coverage_at_1pct_error": 0.0009,
+      "intent_coverage_at_5pct_error": 0.0009
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.0979,
+      "intent_acc_all": 0.769
+    }
+  },
+  "base|L3": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.4644,
+      "intent_acc": 0.7266,
+      "intent_coverage_at_1pct_error": 0.0059,
+      "intent_coverage_at_5pct_error": 0.0062
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.4135,
+      "intent_acc": 0.7278,
+      "intent_coverage_at_1pct_error": 0.0062,
+      "intent_coverage_at_5pct_error": 0.0066
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.3904,
+      "intent_acc": 0.716,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.2846,
+      "intent_acc": 0.5727,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.1097,
+      "intent_acc_all": 0.8105
+    }
+  },
+  "base|L4": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.4373,
+      "intent_acc": 0.7385,
+      "intent_coverage_at_1pct_error": 0.0012,
+      "intent_coverage_at_5pct_error": 0.0012
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.3439,
+      "intent_acc": 0.6835,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.3049,
+      "intent_acc": 0.6467,
+      "intent_coverage_at_1pct_error": 0.0028,
+      "intent_coverage_at_5pct_error": 0.0028
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.1701,
+      "intent_acc": 0.4491,
+      "intent_coverage_at_1pct_error": 0.0003,
+      "intent_coverage_at_5pct_error": 0.0003
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.1046,
+      "intent_acc_all": 0.7228
+    }
+  },
+  "base|L5": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.5496,
+      "intent_acc": 0.813,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.4329,
+      "intent_acc": 0.75,
+      "intent_coverage_at_1pct_error": 0.0,
+      "intent_coverage_at_5pct_error": 0.0
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.3711,
+      "intent_acc": 0.6991,
+      "intent_coverage_at_1pct_error": 0.0028,
+      "intent_coverage_at_5pct_error": 0.0028
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.1982,
+      "intent_acc": 0.4782,
+      "intent_coverage_at_1pct_error": 0.0016,
+      "intent_coverage_at_5pct_error": 0.0016
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.1357,
+      "intent_acc_all": 0.7341
+    }
+  },
+  "base|final": {
+    "new_speaker_k=all": {
+      "sentence_acc": 0.7179,
+      "intent_acc": 0.9082,
+      "intent_coverage_at_1pct_error": 0.0306,
+      "intent_coverage_at_5pct_error": 0.4067
+    },
+    "new_speaker_k=5": {
+      "sentence_acc": 0.6011,
+      "intent_acc": 0.8658,
+      "intent_coverage_at_1pct_error": 0.0693,
+      "intent_coverage_at_5pct_error": 0.1511
+    },
+    "new_speaker_k=3": {
+      "sentence_acc": 0.5297,
+      "intent_acc": 0.8155,
+      "intent_coverage_at_1pct_error": 0.0125,
+      "intent_coverage_at_5pct_error": 0.127
+    },
+    "new_speaker_k=1": {
+      "sentence_acc": 0.279,
+      "intent_acc": 0.5886,
+      "intent_coverage_at_1pct_error": 0.0122,
+      "intent_coverage_at_5pct_error": 0.0449
+    },
+    "same_speaker": {
+      "clips": 3204,
+      "clips_with_a_second_recording_of_the_same_sentence": 1768,
+      "sentence_acc_on_those": 0.2115,
+      "intent_acc_all": 0.77
+    }
+  }
+}

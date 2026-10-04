@@ -43,6 +43,8 @@ export const UI_DEFAULT = {
   delete: 'Delete this record',
   delete_confirm: 'Tap again to delete for good',
   sources: 'Sources',
+  mic_start: 'Tap and speak',
+  mic_stop: 'Tap when you have finished',
   find_near: 'Find places near me',
   straight_line: 'km in a straight line, not by road',
   nearest_hospital: 'Nearest hospital on the official list',

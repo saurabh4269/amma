@@ -49,3 +49,5 @@ fieldset { border: 2px solid var(--line); border-radius: 12px; display: flex; fl
 .headline { font-size: 1.4rem; font-weight: 700; margin: 0; }
 .place { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; }
 .place span { font-size: 0.85rem; }
+.mic { border-color: var(--accent); color: var(--accent); }
+.mic.recording { background: var(--yes); border-color: var(--yes); color: #fff; }

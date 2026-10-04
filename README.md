@@ -11,6 +11,8 @@ Nothing here has been reviewed by a clinician. The Hindi and Marathi wording is 
 | `packages/schema` | Definitions of content packs, language packs and records |
 | `packages/engine` | The session state machine, outcome rules, repeat scheduler, symptom clarifier, pack validator |
 | `packages/matcher` | Typed-text matching and the accept / confirm / abstain decision |
+| `packages/speech` | On-device speech: features, encoder, nearest-example scoring |
+| `packages/place-tools` | Builds facility lists from the data handover |
 | `packages/channel-text` | The same session over SMS or typed WhatsApp |
 | `packages/pack-tools` | Command line: validate and build packs |
 | `apps/web` | The offline web app |
@@ -27,7 +29,8 @@ pnpm install
 pnpm test                      # unit and property tests
 pnpm typecheck
 pnpm packs:validate            # prove the content pack's rules and sources
-cd apps/web && pnpm packs && pnpm dev          # run the app
+./fetch-models.sh              # speech encoder for the microphone (optional, 10 MB)
+cd apps/web && pnpm packs && pnpm places && pnpm dev   # run the app (places needs data/health-transfer)
 cd apps/web && npx playwright test             # browser tests, including offline
 ```
 

@@ -1,0 +1,9 @@
+{
+  "name": "@yaay/speech",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": { "@yaay/matcher": "workspace:*" },
+  "devDependencies": { "onnxruntime-node": "1.21.0" }
+}

@@ -5,6 +5,8 @@ and contains no measured numbers except where explicitly marked as copied from t
 """
 from __future__ import annotations
 
+import re
+
 from .data import REPORTS_DIR
 
 KS = ("1", "3", "5", "10")
@@ -209,5 +211,17 @@ def write_report(res: dict) -> None:
     }
     for k, v in subs.items():
         tpl = tpl.replace("{{" + k + "}}", v)
+
+    def value(m):
+        path, fmt = m.group(1), m.group(2)
+        x = res
+        for part in path.split("/"):
+            x = x[part]
+        return {"pct0": lambda: pct(x, 0), "pct1": lambda: pct(x, 1), "pct2": lambda: pct(x, 2),
+                "f0": lambda: f"{x:.0f}", "f2": lambda: f"{x:.2f}", "mb": lambda: f"{x / 1e6:.1f}",
+                "raw": lambda: str(x)}[fmt]()
+
+    tpl = re.sub(r"\{\{v:([^:}]+):(\w+)\}\}", value, tpl)
+    assert "{{" not in tpl, tpl[tpl.index("{{"):][:80]
     (REPORTS_DIR / "wolbanking77-fewshot.md").write_text(tpl)
     print("report:", REPORTS_DIR / "wolbanking77-fewshot.md")

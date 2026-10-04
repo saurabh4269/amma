@@ -5,6 +5,7 @@ import { matchText } from '@yaay/matcher';
 import type { Words } from './pack.ts';
 import { PlanView, renderSms } from './plan.tsx';
 import { Speaker } from './speaker.ts';
+import { addExample, loadExamples, startRecording, understand, voiceAvailable, type Recording } from './voice.ts';
 
 /** What one engine step asks the screen to show. */
 interface View {
@@ -48,7 +49,21 @@ export function Session({ ix, words, places, profile, onDone, onQuit }: Props) {
   const [view, setView] = useState<View>({ say: [], showPlan: false, ended: false });
   const [speaking, setSpeaking] = useState(-1);
 
+  // The last thing she said that has not yet been tied to a meaning, kept only until she confirms or corrects it.
+  const spoken = useRef<{ vector: Float32Array; guess?: string }>();
+  const learn = (meaning: string) => {
+    if (spoken.current) void addExample(words.lang.id, meaning, spoken.current.vector, profile.id);
+    spoken.current = undefined;
+  };
+
   const dispatch = (event: Event) => {
+    // Her "yes" to a played-back guess, or her tap on a picture after speaking, is what labels the recording.
+    if (event.type === 'chose' && spoken.current?.guess) {
+      if (event.option === 'yes') learn(spoken.current.guess);
+      else spoken.current.guess = undefined;
+    } else if (event.type === 'heard' && event.result.kind === 'accept' && event.result.meanings[0]) {
+      learn(event.result.meanings[0]);
+    }
     const r = step(ix, state.current, event);
     state.current = r.state;
     const v = toView(r.effects);
@@ -82,7 +97,23 @@ export function Session({ ix, words, places, profile, onDone, onQuit }: Props) {
       {(view.showPlan || urgent) && <PlanView ix={ix} words={words} profile={st.profile} />}
       {view.calls?.map((c) => <a class="big call" href={`tel:${c.phone}`}>📞 {words.ui('call')} {c.name}</a>)}
 
-      {view.listen && <Listen ix={ix} words={words} listen={view.listen} onHeard={(result) => dispatch({ type: 'heard', result })} />}
+      {view.listen && (
+        <Listen
+          key={`${st.nodeIndex}:${view.listen.mode}`}
+          ix={ix}
+          words={words}
+          listen={view.listen}
+          onHeard={(result) => dispatch({ type: 'heard', result })}
+          onSpoken={(vector, result) => {
+            spoken.current = { vector, guess: result.kind === 'confirm' ? result.meaning : undefined };
+            const r = step(ix, state.current, { type: 'heard', result });
+            state.current = r.state;
+            const v = toView(r.effects);
+            setView(v);
+            void speaker.play(words, v.say, setSpeaking);
+          }}
+        />
+      )}
       {view.input && <SlotInput key={view.input.slot} words={words} places={places} kind={view.input.kind} onFilled={(value) => dispatch({ type: 'filled', value })} />}
       {view.options && (
         <div class={view.options.length <= 3 ? 'row answers' : 'grid'}>
@@ -110,9 +141,33 @@ export function Session({ ix, words, places, profile, onDone, onQuit }: Props) {
  * or a helper types what she said. In the recall step the pictures stay hidden
  * until asked for, because seeing them turns recall into recognition.
  */
-function Listen({ ix, words, listen, onHeard }: { ix: PackIndex; words: Words; listen: Extract<Effect, { type: 'listen' }>; onHeard: (r: Heard) => void }) {
+function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words: Words; listen: Extract<Effect, { type: 'listen' }>; onHeard: (r: Heard) => void; onSpoken: (vector: Float32Array, r: Heard) => void }) {
+  // Whether the pictures are showing. The component is re-created when the step changes (see its key), so this starts fresh per step.
   const [open, setOpen] = useState(listen.mode === 'open');
-  useEffect(() => setOpen(listen.mode === 'open'), [listen]);
+  const [mic, setMic] = useState<'hidden' | 'ready' | 'recording' | 'thinking'>('hidden');
+  const recording = useRef<Recording>();
+  useEffect(() => {
+    void voiceAvailable().then((ok) => ok && setMic('ready'));
+  }, []);
+  const toggleMic = async () => {
+    try {
+      if (mic === 'ready') {
+        recording.current = await startRecording();
+        setMic('recording');
+      } else if (mic === 'recording' && recording.current) {
+        setMic('thinking');
+        const audio = await recording.current.stop();
+        const { vector, heard } = await understand(audio, await loadExamples(words.lang.id), listen.expect);
+        setMic('ready');
+        // With no example to compare against yet, show the pictures: her tap teaches the phone what she just said.
+        if (heard.kind === 'abstain') setOpen(true);
+        onSpoken(vector, heard);
+      }
+    } catch {
+      setMic('hidden'); // no microphone permission, or the model could not load: fall back to pictures and typing
+      setOpen(true);
+    }
+  };
   const label = (m: string): { text: string; pic?: string } => {
     const p = parseMeaning(m);
     const id =
@@ -123,6 +178,11 @@ function Listen({ ix, words, listen, onHeard }: { ix: PackIndex; words: Words; l
   };
   return (
     <section class="listen">
+      {mic !== 'hidden' && (
+        <button type="button" class={`big mic ${mic}`} disabled={mic === 'thinking'} onClick={() => void toggleMic()}>
+          {mic === 'recording' ? '⏹' : mic === 'thinking' ? '…' : '🎤'} {words.ui(mic === 'recording' ? 'mic_stop' : 'mic_start')}
+        </button>
+      )}
       <form
         class="row"
         onSubmit={(e) => {

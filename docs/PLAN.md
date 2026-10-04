@@ -406,6 +406,36 @@ What it means for the product: a clinic is near for most Gambians; a hospital is
 - **Half the public-map points for The Gambia** (39 of 73) have no coordinates and are left out.
 - **Financial inclusion surveys** for the brief's countries: only six unrelated countries were present.
 
+## 28. What the speech measurements say, and what we built on them
+
+**Status:** the main benchmark is still finishing its robustness and size stages; its report will be at `research/reports/wolbanking77-fewshot.md`. The numbers below are from its completed accuracy grid and from an extra check of mine (`research/diagnostics/same_phrase.py`, exploratory, written after the grid was seen).
+
+Data: WolBanking77 audio, 3,204 Wolof clips, 177 sentences, 10 banking and transport intents, 16 speaker ids. Not health speech, not pregnant speakers. Encoder: Whisper tiny or base, frozen, last layer, averaged over the real frames.
+
+| Question | Result |
+|---|---|
+| New speaker says a **new sentence** of a known intent, 1 to 10 examples per intent | About 39 to 48% correct, averaged over 1 to 10 examples. Not usable. |
+| New speaker says a **phrase the pack has** from 15 other speakers | 91% correct |
+| …from 5 other speakers | 83 to 87% |
+| …from 3 other speakers | 81% |
+| …from 1 other speaker | 58% |
+| Share that could be accepted without asking, at 1% error | About 3%. The similarity score does not say when the model is wrong. |
+
+**Against the bar written in advance** (zero danger-to-harmless errors while accepting 70%): not met, by a wide margin. So, as the plan said, recall ships with pictures and typing as the dependable route and voice as an option.
+
+**What was built:**
+
+- Voice never accepts a match by itself. It plays its best guess back ("Did you say: high fever?") and she answers yes or no.
+- With no example to compare against, it does not guess. The pictures open, and her tap labels what she just said.
+- Every confirmation or correction stores that vector as an example of her own words, on her phone. Audio is not kept. Over weeks the phone learns how she says each sign.
+- A language pack can still ship examples from a few speakers; the measurements say three to five speakers per phrase give roughly four in five right before any personal learning.
+- Size: 10 MB quantised encoder plus a 14 MB runtime; the whole app installs at about 25 MB. The quantised encoder's vector differs from the full one (cosine 0.945 on the test clip); its effect on accuracy is one of the things the benchmark is still measuring.
+- The feature computation is our own short implementation, checked to reproduce the research harness's vector (cosine above 0.999).
+
+**Not measured:** whether her own stored examples make it better for her (the dataset cannot test that), anything on Hindi or Marathi, anything on a real low-end phone.
+
+**What would improve it:** a small trained layer on top of the frozen encoder, frame-by-frame alignment in place of averaging, and recordings of the actual sign phrases from several speakers per language.
+
 ## Sources opened today
 
 - Gambia danger-sign survey: https://pmc.ncbi.nlm.nih.gov/articles/PMC11122691

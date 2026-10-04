@@ -3,3 +3,6 @@ packages:
   - apps/*
 allowBuilds:
   esbuild: true
+  onnxruntime-node: true
+  sharp: false
+  protobufjs: false

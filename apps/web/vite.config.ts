@@ -9,7 +9,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       // Everything the session needs is precached, so it runs with no network after the first visit.
-      workbox: { globPatterns: ['**/*.{js,css,html,json,svg,png,opus,mp3,webmanifest}'], maximumFileSizeToCacheInBytes: 60 * 1024 * 1024 },
+      workbox: { globPatterns: ['**/*.{js,mjs,css,html,json,svg,png,opus,mp3,webmanifest,wasm,onnx}'], maximumFileSizeToCacheInBytes: 60 * 1024 * 1024 },
       manifest: {
         name: 'Yaay',
         short_name: 'Yaay',
