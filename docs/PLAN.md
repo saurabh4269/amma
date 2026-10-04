@@ -408,18 +408,25 @@ What it means for the product: a clinic is near for most Gambians; a hospital is
 
 ## 28. What the speech measurements say, and what we built on them
 
-**Status:** the main benchmark is still finishing its robustness and size stages; its report will be at `research/reports/wolbanking77-fewshot.md`. The numbers below are from its completed accuracy grid and from an extra check of mine (`research/diagnostics/same_phrase.py`, exploratory, written after the grid was seen).
+The benchmark has finished. Full report: `research/reports/wolbanking77-fewshot.md`; protocol written before any result: `research/reports/protocol.md`. My extra same-phrase check (`research/diagnostics/same_phrase.py`) is exploratory and was written after the first results were seen.
 
-Data: WolBanking77 audio, 3,204 Wolof clips, 177 sentences, 10 banking and transport intents, 16 speaker ids. Not health speech, not pregnant speakers. Encoder: Whisper tiny or base, frozen, last layer, averaged over the real frames.
+Data: WolBanking77 audio, 3,204 Wolof clips, 177 read sentences, 10 banking and transport intents, 16 speaker ids, CC BY 4.0. Not health speech, not pregnant speakers, no out-of-scope audio. Encoder: Whisper tiny or base, frozen, last layer, averaged over the real frames. Speakers in the test are never in the examples.
 
-| Question | Result |
-|---|---|
-| New speaker says a **new sentence** of a known intent, 1 to 10 examples per intent | About 39 to 48% correct, averaged over 1 to 10 examples. Not usable. |
-| New speaker says a **phrase the pack has** from 15 other speakers | 91% correct |
-| …from 5 other speakers | 83 to 87% |
-| …from 3 other speakers | 81% |
-| …from 1 other speaker | 58% |
-| Share that could be accepted without asking, at 1% error | About 3%. The similarity score does not say when the model is wrong. |
+**Pre-registered result: the matcher does not work as an unconfirmed classifier.** Share of clips given the right intent, 50 speaker-held-out runs, chance is 10%:
+
+| Examples per intent | Whisper tiny | Whisper base | Base, sentence not among the examples |
+|---|---|---|---|
+| 1 | 29.5% | 29.4% | 21.6% |
+| 3 | 43.6% | 44.4% | 32.8% |
+| 5 | 50.9% | 51.9% | 37.9% |
+| 10 | 63.3% | 63.9% | 46.6% |
+
+- **Confidence is unusable.** With ten examples, a threshold tuned on the test data itself accepts only 1.6% of clips at 1% error. A threshold calibrated on other speakers for 5% error accepts 3.5% and is still wrong 10.3% of the time.
+- **Noise and phone lines hurt.** Phone-quality audio costs about 3 points; noise at 10 dB costs about 10.
+- **The compressed model is as good as the full one** (within 0.3 points), so the 10 MB file is the right one to ship.
+- **Tiny and base are indistinguishable**, so the smaller is used.
+
+**Exploratory, after the fact:** when the examples include the same phrases said by other people, it behaves like a phrase matcher: 91% right with 15 other speakers, 81 to 87% with 3 to 5, 58% with one. The benchmark's own after-the-fact check (all clips from six other speakers) gives 85%.
 
 **Against the bar written in advance** (zero danger-to-harmless errors while accepting 70%): not met, by a wide margin. So, as the plan said, recall ships with pictures and typing as the dependable route and voice as an option.
 
@@ -429,7 +436,7 @@ Data: WolBanking77 audio, 3,204 Wolof clips, 177 sentences, 10 banking and trans
 - With no example to compare against, it does not guess. The pictures open, and her tap labels what she just said.
 - Every confirmation or correction stores that vector as an example of her own words, on her phone. Audio is not kept. Over weeks the phone learns how she says each sign.
 - A language pack can still ship examples from a few speakers; the measurements say three to five speakers per phrase give roughly four in five right before any personal learning.
-- Size: 10 MB quantised encoder plus a 14 MB runtime; the whole app installs at about 25 MB. The quantised encoder's vector differs from the full one (cosine 0.945 on the test clip); its effect on accuracy is one of the things the benchmark is still measuring.
+- Size: 10 MB quantised encoder plus a 14 MB runtime. The quantised encoder's vector differs slightly from the full one (cosine 0.945 on the test clip); the benchmark found the compressed model's accuracy within 0.3 points.
 - The feature computation is our own short implementation, checked to reproduce the research harness's vector (cosine above 0.999).
 
 **Not measured:** whether her own stored examples make it better for her (the dataset cannot test that), anything on Hindi or Marathi, anything on a real low-end phone.

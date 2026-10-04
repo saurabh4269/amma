@@ -16,9 +16,9 @@ That one command downloads the dataset (pinned revision, ~490 MB) and the two en
 
 - `research/reports/wolbanking77-fewshot.results.json` (raw results)
 - `research/reports/wolbanking77-fewshot.md` (report; tables are generated from the JSON, prose comes
-  from `research/reports/_prose/report.template.md`)
+  from `src/fewshot_intent/prose.py`)
 
-CPU only, no ffmpeg. A cold run takes roughly 1.5-2 hours on a 12-thread laptop CPU (almost all of it is
+CPU only, no ffmpeg. A cold run takes roughly 2 hours on a 12-thread laptop CPU (almost all of it is
 encoder forward passes on 30 s padded inputs); a warm run with cached embeddings takes a few minutes.
 Splits, noise and sampling are seeded, so the accuracy numbers are deterministic given the same library
 versions (`uv.lock`); latency numbers vary with machine load.
@@ -32,5 +32,5 @@ what earlier stages wrote to the results JSON.
 - `src/fewshot_intent/embed.py` - Whisper encoder, pooling over real frames only, embedding cache
 - `src/fewshot_intent/evaluate.py` - speaker-held-out episodes, classifiers, risk-coverage metrics
 - `src/fewshot_intent/export.py` - ONNX export, int8 quantisation, latency, int8 embeddings
-- `src/fewshot_intent/report.py` - report tables
+- `src/fewshot_intent/report.py`, `prose.py` - report tables and text
 - `../reports/protocol.md` - the protocol, written before any result was seen, with deviations listed

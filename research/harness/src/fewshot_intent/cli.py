@@ -83,7 +83,11 @@ def stage_onnx(res, clips):
     from .export import export, latency, onnx_embed
     enc, layer, clf = res["selection"]["best"].split("|")
     info = export(enc, layer)
+    if not info["notes"]:  # ONNX files were cached: keep the notes from the run that exported them
+        info["notes"] = res.get("onnx", {}).get("notes", [])
     info["latency"] = latency(enc, info["files"], clips)
+    import os
+    info["latency"]["load_average_1min_at_measurement"] = os.getloadavg()[0]
     tag = "selected" if "selected" in info["files"] else "full"
     f = info["files"][tag]
     ref = embed(clips, enc, "clean")

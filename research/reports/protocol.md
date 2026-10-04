@@ -117,4 +117,18 @@ means "avoid a wrong in-scope answer"; rejecting unknown meanings is not measure
 
 ## Deviations
 
-(none at time of writing)
+Everything above this line is unchanged from the version written before the first run. Recorded
+afterwards:
+
+1. **Layer grid (section 2).** `transformers` does not expose the last encoder block's output before the
+   final LayerNorm; its last hidden state already is `final`. `Ln` and `final` were therefore the same
+   tensor. The grid actually evaluated is `L1..L(n-1)` plus `final` (4 layers for tiny, 6 for base; 20
+   cells, not 24). The first grid run listed the duplicate under both names with identical numbers; the
+   duplicate label was dropped and the grid stage re-run from cached vectors. No number changed.
+2. **Post-hoc diagnostics.** After the main results were seen, three exploratory checks were added
+   (`fewshot diagnostics`): nearest-other-clip composition, 1-NN with the whole support pool as support,
+   and support-pool mean-centring. They are reported in a separate, labelled section and were not used
+   for model selection or thresholds.
+3. **Latency (section 8)** was measured on a machine that was also running a desktop session (1-minute
+   load average recorded in the results JSON), not on an idle machine.
+4. Section 8: the selected layer was `final`, so only the full encoder was exported.

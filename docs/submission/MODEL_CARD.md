@@ -105,3 +105,16 @@ The plan said what would follow: recall ships with pictures and typing as the de
 ## What would improve it
 
 A small trained layer on top of the frozen encoder. Frame-by-frame alignment in place of averaging. Recordings of the actual sign phrases from several speakers per language, with consent.
+
+## Final benchmark numbers (added when the run completed)
+
+The full report is `research/reports/wolbanking77-fewshot.md`. Where an earlier section of this card differs, these numbers are the final ones.
+
+- Right intent for a new speaker, by examples per intent (1, 3, 5, 10): 29.5%, 43.6%, 50.9%, 63.3% with Whisper tiny; chance is 10%.
+- When the sentence is not among the examples: 21.6% to 46.6% (Whisper base).
+- At ten examples, a threshold tuned on the test data accepts 1.6% of clips at 1% error. Calibrated on other speakers for 5% error, it accepts 3.5% and is wrong 10.3% of the time.
+- Phone-quality audio costs about 3 points; noise at 10 dB about 10.
+- The compressed model is within 0.3 points of the full one.
+- The bar set in advance (no danger-to-harmless errors while accepting 70%) was not met. Voice in the app therefore never accepts a match without her confirming it.
+- Not measured: out-of-scope speech, health phrases, Hindi, Marathi, a real phone.
+

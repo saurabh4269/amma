@@ -1,7 +1,6 @@
 """Builds reports/wolbanking77-fewshot.md from the results JSON.
 
-All numbers are read from the JSON at build time. The prose (reports/_prose/*.md) is hand-written
-and contains no measured numbers except where explicitly marked as copied from the tables.
+All tables and inline figures are read from the JSON at build time; the hand-written text is in prose.py.
 """
 from __future__ import annotations
 
@@ -181,8 +180,7 @@ def t_diag(res):
 
 
 def write_report(res: dict) -> None:
-    prose_dir = REPORTS_DIR / "_prose"
-    tpl = (prose_dir / "report.template.md").read_text()
+    from .prose import TEMPLATE as tpl
     ds1, ds2, ds3 = t_dataset(res)
     best = res["selection"]["best"]
     per_enc = {f"whisper-{e} {b.split('|')[1]} {b.split('|')[2]}": res["grid"][b]
