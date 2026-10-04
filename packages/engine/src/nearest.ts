@@ -38,5 +38,7 @@ export function suggestFacilities(packs: PlacePack[], lat: number, lon: number, 
   all.sort((a, b) => a.km - b.km);
   if (!all[0] || all[0].km > maxKm) return { nearest: [] };
   const isHospital = (l: FacilityLevel) => l === 'hospital';
-  return { nearest: all.slice(0, count), hospital: all.find((n) => n.typed && isHospital(n.facility.level)) };
+  // The list is sorted by distance, so a hospital beyond the limit means there is none within reach on any official list.
+  const hospital = all.find((n) => n.typed && isHospital(n.facility.level));
+  return { nearest: all.slice(0, count), hospital: hospital && hospital.km <= maxKm ? hospital : undefined };
 }

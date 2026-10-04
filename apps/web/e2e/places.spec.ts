@@ -29,13 +29,22 @@ test('near Bansang, The Gambia: offers nearby places and the nearest listed hosp
   await expect(page.locator('.plan')).toContainText('km');
 });
 
-test('in Mumbai, where no list is installed, it says so and lets her type', async ({ page, context }) => {
+test('in Mumbai: offers nearby places from the public map and does not claim an official hospital', async ({ page, context }) => {
   await context.grantPermissions(['geolocation']);
   await context.setGeolocation({ latitude: 19.07, longitude: 72.87 });
   await toHospitalStep(page);
   await page.getByRole('button', { name: /Find places near me/ }).click();
+  await expect(page.locator('.place').first()).toContainText('from a public map, not an official list');
+  await expect(page.getByText('Nearest hospital on the official list')).toHaveCount(0);
+});
+
+test('where no list is installed, it says so and lets her type', async ({ page, context }) => {
+  await context.grantPermissions(['geolocation']);
+  await context.setGeolocation({ latitude: 28.61, longitude: 77.21 }); // Delhi: outside every installed list
+  await toHospitalStep(page);
+  await page.getByRole('button', { name: /Find places near me/ }).click();
   await expect(page.getByText('No facility list is installed for where you are')).toBeVisible();
-  await page.locator('input[name=name]').fill('Rural Hospital');
+  await page.locator('input[name=name]').fill('District Hospital');
   await page.locator('button.primary').click();
   await expect(page.getByText('How will you get there?')).toBeVisible();
 });

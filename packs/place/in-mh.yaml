@@ -1,0 +1,15 @@
+# Maharashtra, India. From OpenStreetMap only (fetched with packages/place-tools/src/fetch-osm.ts).
+# No official facility list with coordinates was found for India, so nothing here is marked as typed:
+# the app labels these as "from a public map" and offers no "nearest hospital on the official list".
+id: in-mh
+name: Maharashtra
+dedupeMetres: 0
+sources:
+  - id: osm
+    title: OpenStreetMap health facility points, Maharashtra (Overpass query)
+    license: ODbL
+    url: https://www.openstreetmap.org/copyright
+    typedLevels: false
+    reader: healthsites
+    file: ../osm-fetch/maharashtra.csv
+    levels: { hospital: hospital, clinic: clinic, doctors: clinic, health_post: post }

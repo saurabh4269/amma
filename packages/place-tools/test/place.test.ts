@@ -45,6 +45,13 @@ describe('place pack build', () => {
     expect(s.hospital!.km).toBeGreaterThan(20);
   });
 
+  it('does not offer an official hospital that is beyond the distance limit', async () => {
+    const pack = await buildPlacePack(config(), dir, '2026-10-04');
+    const s = suggestFacilities([pack], 13.305, -16.405, 2, 10);
+    expect(s.nearest).toHaveLength(2);
+    expect(s.hospital).toBeUndefined();
+  });
+
   it('says nothing when no pack covers where she is', async () => {
     const pack = await buildPlacePack(config(), dir, '2026-10-04');
     expect(suggestFacilities([pack], 19.07, 72.87, 3, 100)).toEqual({ nearest: [] });
