@@ -59,7 +59,12 @@ test('a problem described to the assistant can raise a danger sign and bring up 
 test('a problem she describes when asked something else is taken up by the assistant, then she is back where she was', async ({ page }) => {
   await page.route(/onrender\.com\/health/, (r) => r.fulfill({ json: { ok: true } }));
   await page.route(/onrender\.com\/match/, (r) => r.fulfill({ json: { meaning: 'complaint:pain' }, headers: { 'access-control-allow-origin': '*' } }));
-  await page.addInitScript(() => localStorage.setItem('amma.onlineHelp.v2', 'yes'));
+  const advised: unknown[] = [];
+  await page.route(/onrender\.com\/advise/, async (r) => {
+    advised.push(r.request().postDataJSON());
+    await r.fulfill({ json: { text: 'Rest when you can. Tell your health worker about it.' }, headers: { 'access-control-allow-origin': '*' } });
+  });
+  await page.addInitScript(() => localStorage.setItem('amma.onlineHelp.v3', 'yes'));
   await page.goto('/');
   await page.locator('button.big.ghost').click();
   await page.locator('input[name=label]').fill('elsewhere');
@@ -77,6 +82,16 @@ test('a problem she describes when asked something else is taken up by the assis
   // The assistant opens on it and asks about it; she confirms the whole of it in the summary at the end.
   await expect(page.locator('.top-title')).toBeVisible();
   await expect(page.getByText('Where is the pain?')).toBeVisible();
+
+  // The booklet has no card for back pain. A general answer is shown, set apart and under its caution.
+  await page.getByRole('button', { name: 'in the back' }).click();
+  await page.getByRole('button', { name: 'mild' }).click();
+  await page.getByRole('button', { name: 'since today' }).click();
+  await page.locator('.opt-yes').last().click(); // "Is this right?"
+  await expect(page.locator('.said').last()).toContainText('I have written this on your card');
+  await expect(page.locator('.advice-caution')).toContainText('written by an AI');
+  await expect(page.locator('.advice-text')).toContainText('Rest when you can');
+  expect(advised[0]).toMatchObject({ summary: 'Pain, in the back, mild, since today', phase: 'pregnant' });
   await page.getByRole('button', { name: /Back/ }).last().click();
   await expect(page.getByText('Which signs mean you must go to the hospital straight away?')).toBeVisible();
 });

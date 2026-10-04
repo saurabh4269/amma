@@ -4,7 +4,7 @@ import { Profile, type LanguagePack } from '@amma/schema';
 import { attributesOf, type PackIndex } from '@amma/engine';
 import { askAside, asideMeanings, begin, beginAside, interpret, receive, receiveAside, REPEAT, type Turn } from '@amma/channel-text';
 import { matchText, normalise } from '@amma/matcher';
-import type { Candidate, Details, Pick } from './llm.ts';
+import type { Advise, Candidate, Details, Pick } from './llm.ts';
 import type { Store, User } from './store.ts';
 import { twiml, validSignature, voiceTwiml } from './twilio.ts';
 
@@ -36,6 +36,8 @@ export interface Config {
   pick?: Pick;
   /** Reads the details of a complaint that are already in her words, so they are not asked again. */
   details?: Details;
+  /** Writes a short, general answer when the pack has no card for what she raised. Always shown under a caution. */
+  advise?: Advise;
   speech?: {
     transcribe: (audio: Uint8Array, locale: string | undefined) => Promise<string>;
     /** Web origins allowed to call it. */
@@ -72,7 +74,8 @@ const SERVER_UI = {
   not_heard: 'I could not make out that voice note. Please say it again, or type it.',
   voice_note: 'You can also send a voice note. It goes to a speech service to be turned into text and is not kept.',
   first_this: 'I understood: {topic}. I will help with that now. So that I ask the right questions, tell me one thing first:',
-  ai_note: 'When your words are not recognised, they are sent to an AI model (OpenAI) only to work out which listed topic you mean. It does not write the answers. Send STOP if you do not agree.',
+  ai_note: 'When your words are not recognised, they are sent to an AI model (OpenAI) to work out which listed topic you mean. If the booklet has no answer, the AI may write a short general one, clearly marked. Send STOP if you do not agree.',
+  ai_caution: '⚠️ General information written by an AI. It is not from the official health booklet and no doctor has checked it. Ask your ASHA, ANM or doctor before acting on it.',
 } as const;
 
 interface TelegramUpdate {
@@ -104,6 +107,9 @@ interface Reply {
   ended: boolean;
 }
 const DEFAULT_LOCALE = 'en-IN';
+
+/** What she raised is about her health but the pack has no card for it. */
+const OTHER = 'other:health';
 
 /** Words that take her back to the language choice. */
 const RESTART = /^\s*\/?(start|restart|menu|language)\s*$/i;
@@ -247,6 +253,30 @@ export function buildApp(cfg: Config): FastifyInstance {
     }
   };
 
+  /** A general answer for something the pack has no card for, under its caution. Any failure means no answer. */
+  const adviceFor = async (about: { said?: string; summary?: string }, phase: string, lang: LanguagePack | undefined, log: { warn: (o: object, m: string) => void }): Promise<string | undefined> => {
+    if (!cfg.advise) return undefined;
+    try {
+      const text = await cfg.advise({ ...about, phase, language: lang?.name ?? cfg.ix.pack.refLang });
+      return text ? `${ui(lang, 'ai_caution')}\n\n${text}` : undefined;
+    } catch (e) {
+      log.warn({ err: String(e) }, 'general answer failed');
+      return undefined;
+    }
+  };
+  /** The last problem she described, as its labels: "Pain, in the back, strong". No words of hers are kept to build it. */
+  const describedLast = (profile: Profile | undefined): string | undefined => {
+    const last = profile?.complaints.at(-1);
+    const c = last && cfg.ix.pack.complaints.find((x) => x.id === last.complaint);
+    if (!last || !c) return undefined;
+    const ref = (card: string) => cfg.ix.card.get(card)?.ref ?? card;
+    const parts = Object.entries(last.attrs).flatMap(([attr, v]) => {
+      const o = cfg.ix.pack.attributes.find((a) => a.id === attr)?.options.find((x) => x.id === v);
+      return o ? [ref(o.label)] : [];
+    });
+    return [ref(c.label), ...parts].join(', ');
+  };
+
   /**
    * What did she mean? Wherever she is, her words may be an answer to what was asked, or something else entirely:
    * a problem she wants to describe, or a question. The phrase list is tried first; the model only when it does not know.
@@ -273,6 +303,7 @@ export function buildApp(cfg: Config): FastifyInstance {
       extra.push({ id: 'phase:pregnant', label: 'She is pregnant now' }, { id: 'phase:after_birth', label: 'Her baby has already been born' });
       asked = 'Are you pregnant now, or has the baby been born?';
     } else {
+      if (cfg.advise) extra.push({ id: OTHER, label: 'She is asking a health question, or describing a health problem, that is none of the listed ones' });
       const a = (user.aside ?? user.conversation)?.awaiting;
       if (a?.kind === 'choice') {
         // Her own word for one of the answers needs no help.
@@ -324,6 +355,40 @@ export function buildApp(cfg: Config): FastifyInstance {
     // For a problem, what her words already said about it, so the app does not ask again.
     const attrs = meaning ? await detailsOf(body.text, meaning, lang, req.log) : undefined;
     return { meaning: meaning ?? null, attrs: attrs ?? {} };
+  });
+
+  // For the web app: a general answer when the pack has no card. Same limits and same pages as /stt.
+  app.options('/advise', async (req, reply) => {
+    const origin = allowOrigin(req.headers.origin);
+    if (!origin) return reply.code(403).send();
+    return reply.headers({ 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'origin' }).code(204).send();
+  });
+  app.post('/advise', async (req, reply) => {
+    if (!cfg.advise || !cfg.speech) return reply.code(404).send();
+    const origin = allowOrigin(req.headers.origin);
+    if (!origin) return reply.code(403).send({ error: 'origin not allowed' });
+    void reply.headers({ 'access-control-allow-origin': origin, vary: 'origin' });
+    const hour = Math.floor(Date.now() / 3_600_000);
+    const day = Math.floor(hour / 24);
+    if (sttDay.day !== day) sttDay = { day, count: 0 };
+    const seen = sttHits.get(req.ip);
+    const used = seen?.hour === hour ? seen.count : 0;
+    if (used >= cfg.speech.perHour || sttDay.count >= cfg.speech.perDay) return reply.code(429).send({ error: 'too many requests' });
+    sttHits.set(req.ip, { hour, count: used + 1 });
+    sttDay.count += 1;
+    const body = req.body as { said?: unknown; summary?: unknown; lang?: unknown; phase?: unknown };
+    const said = typeof body?.said === 'string' ? body.said : undefined;
+    const summary = typeof body?.summary === 'string' ? body.summary : undefined;
+    if (!said && !summary) return reply.code(400).send({ error: 'bad request' });
+    const lang = cfg.languages.find((l) => l.id === body.lang);
+    let text: string | undefined;
+    try {
+      text = await cfg.advise({ said, summary, phase: body.phase === 'after_birth' ? 'after_birth' : 'pregnant', language: lang?.name ?? cfg.ix.pack.refLang });
+    } catch (e) {
+      req.log.warn({ err: String(e) }, 'general answer failed');
+    }
+    req.log.info({ advise: true, chars: text?.length ?? 0 }, 'general answer'); // its length, never the words
+    return { text: text ?? null };
   });
 
   // Telegram: typed text, button presses and voice notes in; text, buttons and the cards' audio out.
@@ -420,7 +485,19 @@ export function buildApp(cfg: Config): FastifyInstance {
       });
       return { ok: true };
     }
-    const out = handle(address, body, 'text', route);
+    let out = handle(address, body, 'text', route);
+    // The pack had no card for it. A general answer is written, marked as such, and she is taken back to where she was.
+    const after = cfg.store.get(address);
+    const hers2 = cfg.languages.find((l) => l.id === after?.lang);
+    if (cfg.advise && after?.profile) {
+      busy('typing');
+      const noted = cfg.ix.pack.prompts.noted;
+      const advice =
+        route?.id === OTHER ? await adviceFor({ said: body }, after.profile.phase, hers2, req.log)
+        : noted && out.said.includes(noted) ? await adviceFor({ summary: describedLast((after.aside ?? after.conversation)?.session.profile ?? after.profile) }, after.profile.phase, hers2, req.log)
+        : undefined;
+      if (advice) out = { ...out, parts: [...out.parts.slice(0, -1), { text: advice, lang: hers2 }, ...out.parts.slice(-1)] };
+    }
     const lang = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
     // She is told where a voice note goes at the moment she agrees, in her language.
     // Said in the very first message (in English, before a language is chosen) and again in her language once it is.
@@ -449,7 +526,8 @@ export function buildApp(cfg: Config): FastifyInstance {
       const question = part.text.replace(/^\d+\. .+$\n?/gm, '').trim();
       const text = numbered.length && question && numbered.every((m) => m[2]!.length <= 60) ? question : part.text;
       // A plan question takes typed or spoken words; it still gets a way out, and yes/no where that is the answer.
-      const awaiting = cfg.store.get(address)?.conversation?.awaiting;
+      const at = cfg.store.get(address);
+      const awaiting = (at?.aside ?? at?.conversation)?.awaiting;
       if (last && awaiting?.kind === 'input') {
         const say = (card: string) => lang?.translations[card]?.text ?? cfg.ix.card.get(card)?.ref ?? card;
         if (awaiting.slotKind === 'yesno') buttons.push({ text: say(cfg.ix.pack.prompts.yes!), callback_data: '1' }, { text: say(cfg.ix.pack.prompts.no!), callback_data: '2' });
@@ -586,6 +664,11 @@ export function buildApp(cfg: Config): FastifyInstance {
       const i = route?.id.startsWith('option:') && awaiting.kind === 'choice' ? awaiting.options.findIndex((o) => `option:${o.id}` === route.id) : -1;
       return i >= 0 ? String(i + 1) : body;
     };
+    if (route?.id === OTHER) {
+      const at = user.aside ?? user.conversation;
+      const back = at ? receive(cfg.ix, chosen, at, REPEAT).messages : [ui(chosen, 'again')];
+      return { parts: back.map((text) => ({ text, lang: chosen })), said: [], ended: false };
+    }
     if (user.aside) return asideTurn(user, receiveAside(cfg.ix, chosen, user.aside, answerOf(user.aside.awaiting), meant?.id, meant?.details));
 
     const conv = user.conversation;

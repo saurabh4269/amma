@@ -69,6 +69,7 @@ test('"teach the phone my voice" stores an example per sign, which the session t
 test('online listening: asked first, then free speech is understood, shown back, and remembered for offline', async ({ page }) => {
   let calls = 0;
   await page.route(/onrender\.com\/health/, (r) => r.fulfill({ json: { ok: true } }));
+  await page.route(/onrender\.com\/advise/, (r) => r.fulfill({ json: { text: null }, headers: { 'access-control-allow-origin': '*' } }));
   await page.route(/onrender\.com\/stt/, (r) => {
     calls += 1;
     return r.fulfill({ json: { text: 'since yesterday I have a high fever' }, headers: { 'access-control-allow-origin': '*' } });
@@ -103,6 +104,7 @@ test('online listening: asked first, then free speech is understood, shown back,
 test('words the phrase list does not know: the model suggests, and it only counts once she says yes', async ({ page }) => {
   const asked: { text: string; expect: string[] }[] = [];
   await page.route(/onrender\.com\/health/, (r) => r.fulfill({ json: { ok: true } }));
+  await page.route(/onrender\.com\/advise/, (r) => r.fulfill({ json: { text: null }, headers: { 'access-control-allow-origin': '*' } }));
   await page.route(/onrender\.com\/stt/, (r) => r.fulfill({ json: { text: 'my skull has been throbbing since morning' }, headers: { 'access-control-allow-origin': '*' } }));
   await page.route(/onrender\.com\/match/, async (r) => {
     asked.push(r.request().postDataJSON() as { text: string; expect: string[] });

@@ -8,7 +8,7 @@ import { alertPhones, PlanView, renderAlert, renderSms, SendText } from './plan.
 import { NearMe } from './near-me.tsx';
 import { Speaker } from './speaker.ts';
 import { askAbout, type About } from './ask-bus.ts';
-import { addExample, embedAudio, loadExamples, matchOnline, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, warmVoice, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
+import { addExample, adviseOnline, embedAudio, loadExamples, matchOnline, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, warmVoice, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
 
 /** What one engine step asks the screen to show. */
 interface View {
@@ -53,6 +53,18 @@ interface Props {
   about?: About;
 }
 
+/** The last problem she described, as its labels in her language: "Pain, in the back, strong". */
+function describedLast(ix: PackIndex, words: Words, profile: Profile): string | undefined {
+  const last = profile.complaints.at(-1);
+  const c = last && ix.pack.complaints.find((x) => x.id === last.complaint);
+  if (!last || !c) return undefined;
+  const parts = Object.entries(last.attrs).flatMap(([attr, v]) => {
+    const o = ix.pack.attributes.find((a) => a.id === attr)?.options.find((x) => x.id === v);
+    return o ? [words.card(o.label)] : [];
+  });
+  return [words.card(c.label), ...parts].join(', ');
+}
+
 /** Every question and problem the "anything to ask or tell?" step listens for. */
 function askMeanings(ix: PackIndex, profile: Profile): string[] {
   const only = { ...ix, pack: { ...ix.pack, flow: ['open' as const] } };
@@ -71,11 +83,29 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
   const [said, setSaid] = useState<string>();
   const page = useRef<HTMLElement>(null);
   // Each reply starts at the top; then the screen follows the line being spoken, down to the buttons.
+  // A general answer written by the model, for something the booklet has no card for. Always shown under its caution.
+  const [advice, setAdvice] = useState<{ text?: string }>();
+  const turn = useRef(0);
   const show = (v: View, her?: string) => {
     setView(v);
     setSaid(her);
+    setAdvice(undefined);
+    const mine = ++turn.current;
+    // Two moments have no card behind them: a problem she described that led to no danger sign, and words nothing matched.
+    const { noted, not_sure } = ix.pack.prompts;
+    const about =
+      noted && v.say.includes(noted) ? { summary: describedLast(ix, words, state.current.profile) }
+      : not_sure && v.say.includes(not_sure) && her ? { said: her }
+      : undefined;
+    const written = about && (about.said || about.summary) ? adviseOnline(about, words.lang.id, state.current.phase) : undefined;
+    if (written) {
+      setAdvice({});
+      void written.then((text) => mine === turn.current && setAdvice(text ? { text } : undefined));
+    }
     window.scrollTo({ top: 0 });
     void speaker.play(words, v.say, (i) => {
+      // The cards are spoken first; the general answer after them, in the phone's own voice.
+      if (i === -1 && written) void written.then((text) => text && mine === turn.current && speaker.speak(text, words.lang.locale ?? words.lang.id));
       setSpeaking(i);
       const lines = page.current?.querySelectorAll('.line');
       (i >= 0 ? lines?.[i] : undefined)?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
@@ -151,6 +181,12 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
           </p>
         ))}
       </section>
+      {advice && (
+        <section class="advice" aria-live="polite">
+          <p class="advice-caution">⚠️ {words.ui('ai_caution')}</p>
+          {advice.text ? <p class="advice-text">{advice.text}</p> : <p class="muted small">{words.ui('ai_writing')}</p>}
+        </section>
+      )}
       {speaker.usesDeviceVoice(words, view.say) && view.say.length > 0 && <p class="muted small">{words.ui('device_voice')}</p>}
       {speaker.usesUnapprovedVoice(words, view.say) && <p class="muted small">{words.ui('synthetic_voice')}</p>}
 

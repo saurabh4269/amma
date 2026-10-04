@@ -63,7 +63,8 @@ export class Speaker {
     });
   }
 
-  private speak(text: string, lang: string): Promise<void> {
+  /** Text that has no recorded clip, read by the phone's own voice. */
+  speak(text: string, lang: string): Promise<void> {
     return new Promise((resolve) => {
       const synth = globalThis.speechSynthesis;
       if (!synth) return resolve();

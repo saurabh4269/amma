@@ -393,13 +393,15 @@ describe('the language model only picks from the list', () => {
 });
 
 describe('model suggestions on the server', () => {
-  const make = (answer: string | undefined, given: Record<string, string> = {}) => {
+  const make = (answer: string | undefined, given: Record<string, string> = {}, advice?: string) => {
     const detailsAsked: string[][] = [];
+    const advised: { said?: string; summary?: string; phase: string; language: string }[] = [];
     const asked: { text: string; ids: string[] }[] = [];
     const sent: string[] = [];
     const store = new SqliteStore(':memory:');
     const app = buildApp({
       ix: indexPack(fixture), languages: [referenceLanguage(fixture, 'English')], store, authToken: TOKEN, publicUrl: URL, today: () => '2026-10-04', ratePerMinute: 100,
+      advise: advice === undefined ? undefined : async (about) => { advised.push(about); return advice || undefined; },
       details: async (_text, _topic, list) => { detailsAsked.push(list.map((d) => d.id)); return given; },
       pick: async (text, cands) => { asked.push({ text, ids: cands.map((c) => c.id) }); return text === 'hi' ? undefined : answer; },
       speech: { transcribe: async () => '', origins: ['https://app.example'], perHour: 50, perDay: 100 },
@@ -408,7 +410,7 @@ describe('model suggestions on the server', () => {
     app.log.level = 'silent';
     let n = 0;
     const type = (t: string) => app.inject({ method: 'POST', url: '/telegram/hook', headers: { 'x-telegram-bot-api-secret-token': 's' }, payload: { update_id: ++n, message: { chat: { id: 3 }, text: t } } });
-    return { app, asked, sent, store, type, detailsAsked };
+    return { app, asked, sent, store, type, detailsAsked, advised };
   };
 
   it('the web app gets a meaning only from the ones it asked about, and only meanings the pack has', async () => {
@@ -457,6 +459,26 @@ describe('model suggestions on the server', () => {
     const sub = (store.get('telegram:3')!.aside!.session as unknown as { sub: { clar: { attrs: Record<string, string>; asking?: string } } }).sub;
     expect(sub.clar.attrs).toEqual({ site: 'lower' });
     expect(sub.clar.asking).not.toBe('site');
+  });
+
+  it('where the pack has no card, a general answer is written, marked as AI, and she is taken back to where she was', async () => {
+    const { type, sent, store, advised } = make('other:health', {}, 'Rest when you can. Tell your health worker.');
+    for (const t of ['1', '1', '0', '0', '1']) await type(t); // in the check
+    const at = store.get('telegram:3')!.conversation!.awaiting;
+    await type('can I eat papaya while pregnant');
+    expect(advised[0]).toMatchObject({ said: 'can I eat papaya while pregnant', phase: 'pregnant' });
+    expect(sent.at(-2)).toContain('written by an AI');
+    expect(sent.at(-2)).toContain('Rest when you can');
+    expect(sent.at(-1)).toContain('bleed_a'); // the same sign, asked again
+    expect(store.get('telegram:3')!.conversation!.awaiting).toEqual(at);
+  });
+
+  it('with general answers switched off, nothing is written and no such option is offered to the model', async () => {
+    const { type, asked, sent } = make(undefined);
+    for (const t of ['1', '1', '0', '0', '1']) await type(t);
+    await type('can I eat papaya while pregnant');
+    expect(asked.at(-1)!.ids).not.toContain('other:health');
+    expect(sent.join(' ')).not.toContain('written by an AI');
   });
 
   it('her stage and her language can be said in words', async () => {

@@ -177,8 +177,9 @@ export async function understand(vector: Float32Array, examples: Example[], expe
 // Without a connection, or if she said no, everything stays on the phone as before.
 
 const SPEECH_URL = (import.meta.env.VITE_SPEECH_URL as string | undefined) ?? 'https://amma-server.onrender.com';
-// The key carries a version: what she is asked to agree to changed when the language model was added.
-const CONSENT_KEY = 'amma.onlineHelp.v2';
+// The key carries a version: what she is asked to agree to changed when the language model was added,
+// and again when it was allowed to write a general answer where the booklet has none.
+const CONSENT_KEY = 'amma.onlineHelp.v3';
 export type OnlineChoice = 'yes' | 'no' | undefined;
 
 export const onlineChoice = (): OnlineChoice => {
@@ -231,6 +232,26 @@ export async function matchOnline(text: string, lang: string, expect: string[]):
     if (!res.ok) return undefined;
     const { meaning, attrs } = (await res.json()) as { meaning?: string | null; attrs?: Record<string, string> };
     return meaning && expect.includes(meaning) ? { meaning, attrs } : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * A short general answer, written by the model, for something the booklet has no card for. Only with her
+ * agreement and a connection. The caller shows it under a caution that says where it came from.
+ */
+export async function adviseOnline(about: { said?: string; summary?: string }, lang: string, phase: string): Promise<string | undefined> {
+  if (!navigator.onLine || onlineChoice() !== 'yes') return undefined;
+  try {
+    const res = await fetch(`${SPEECH_URL}/advise`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ...about, lang, phase }),
+      signal: AbortSignal.timeout(12_000),
+    });
+    if (!res.ok) return undefined;
+    return ((await res.json()) as { text?: string | null }).text ?? undefined;
   } catch {
     return undefined;
   }
