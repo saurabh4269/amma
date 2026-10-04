@@ -21,6 +21,19 @@ export interface Config {
    * Leave out to switch the feature off.
    */
   callback?: { accountSid: string; fromNumber: string; fetch: typeof fetch; perHour: number };
+  /** A Telegram bot as another text-and-voice channel. Leave out to switch it off. */
+  telegram?: TelegramConfig;
+}
+
+export interface TelegramConfig {
+  token: string;
+  /** Telegram repeats this in a header on every update, so updates from anyone else are refused. */
+  secret: string;
+  fetch: typeof fetch;
+  /** Turns a voice note into text. The audio goes to an outside speech service, which the consent message says. */
+  transcribe?: (audio: Uint8Array, locale: string | undefined) => Promise<string>;
+  /** The bytes of a card's audio clip, if the language pack has one. */
+  clip: (lang: LanguagePack, card: string) => Uint8Array | undefined;
 }
 
 /** Wording the server needs before any session exists. Overridable per language under `ui`. */
@@ -29,7 +42,14 @@ const SERVER_UI = {
     'This service gives pregnancy and newborn information from official health booklets. It does not replace a health worker. It keeps your answers under this phone number and no message text. Send STOP at any time to delete everything.',
   stopped: 'Everything kept for this number has been deleted.',
   again: 'Send any message to start a new session.',
+  voice_note: 'You can also send a voice note. It goes to a speech service to be turned into text and is not kept.',
 } as const;
+
+interface TelegramUpdate {
+  update_id?: number;
+  message?: { chat: { id: number }; text?: string; voice?: { file_id: string } };
+  callback_query?: { id: string; data?: string; message?: { chat: { id: number } } };
+}
 
 /** One piece of a reply, with the language it is in so a call can speak it with the right voice. */
 interface Part {
@@ -38,6 +58,8 @@ interface Part {
 }
 interface Reply {
   parts: Part[];
+  /** Cards spoken in this turn, for channels that send audio as well. */
+  said: string[];
   /** The session finished: a call can hang up. */
   ended: boolean;
 }
@@ -97,6 +119,65 @@ export function buildApp(cfg: Config): FastifyInstance {
     );
   });
 
+  // Telegram: typed text, button presses and voice notes in; text, buttons and the cards' audio out.
+  app.post('/telegram/hook', async (req, reply) => {
+    const tg = cfg.telegram;
+    if (!tg) return reply.code(404).send();
+    if (req.headers['x-telegram-bot-api-secret-token'] !== tg.secret) return reply.code(403).send('bad secret');
+    const update = req.body as TelegramUpdate;
+    // Telegram resends an update until it gets a 200; answering a repeat would advance the session twice.
+    if (update.update_id === undefined || !cfg.store.firstTime(`tg:${update.update_id}`)) return { ok: true };
+    const chat = update.message?.chat.id ?? update.callback_query?.message?.chat.id;
+    if (chat === undefined) return { ok: true };
+    const address = `telegram:${chat}`;
+    const api = (method: string, body: string | FormData, headers?: Record<string, string>) =>
+      tg.fetch(`https://api.telegram.org/bot${tg.token}/${method}`, { method: 'POST', body, headers });
+    const json = (method: string, payload: object) => api(method, JSON.stringify(payload), { 'content-type': 'application/json' });
+
+    let body = update.callback_query?.data ?? update.message?.text ?? '';
+    if (update.callback_query) void json('answerCallbackQuery', { callback_query_id: update.callback_query.id });
+    const voice = update.message?.voice;
+    if (voice && tg.transcribe) {
+      try {
+        const file = (await (await json('getFile', { file_id: voice.file_id })).json()) as { result?: { file_path?: string } };
+        const audio = await (await tg.fetch(`https://api.telegram.org/file/bot${tg.token}/${file.result?.file_path}`)).arrayBuffer();
+        const lang = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
+        body = await tg.transcribe(new Uint8Array(audio), lang?.locale);
+      } catch (e) {
+        req.log.error({ err: String(e) }, 'voice note could not be transcribed');
+        body = '';
+      }
+    }
+    if (body === '/start') body = '';
+
+    const firstContact = !cfg.store.get(address)?.consented;
+    const out = handle(address, body, 'text');
+    const lang = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
+    // She is told where a voice note goes at the moment she agrees, in her language.
+    if (firstContact && lang && tg.transcribe && out.parts[0]) out.parts[0].text += `\n${ui(lang, 'voice_note')}`;
+    for (const [i, part] of out.parts.entries()) {
+      // Numbered lines become buttons, so she can tap an answer.
+      const numbers = i === out.parts.length - 1 ? [...part.text.matchAll(/^(\d+)\. (.+)$/gm)] : [];
+      await json('sendMessage', {
+        chat_id: chat,
+        text: part.text,
+        reply_markup: numbers.length ? { inline_keyboard: numbers.map((m) => [{ text: m[2]!.slice(0, 60), callback_data: m[1] }]) } : undefined,
+      });
+    }
+    // The same cards as one audio message: the clips are plain MP3 and play back to back when joined.
+    if (lang) {
+      const clips = out.said.flatMap((card) => tg.clip(lang, card) ?? []);
+      if (clips.length) {
+        const form = new FormData();
+        form.set('chat_id', String(chat));
+        form.set('audio', new Blob(clips, { type: 'audio/mpeg' }), 'amma.mp3');
+        form.set('title', 'AMMA');
+        await api('sendAudio', form);
+      }
+    }
+    return { ok: true };
+  });
+
   // Missed call: refuse the call so she is not charged, then ring her back.
   const callbacks = new Map<string, { hour: number; count: number }>();
   app.post('/twilio/missed', async (req, reply) => {
@@ -129,7 +210,7 @@ export function buildApp(cfg: Config): FastifyInstance {
   function repeatLast(user: User): Reply {
     const lang = cfg.languages.find((l) => l.id === user.lang);
     const turn = receive(cfg.ix, lang!, user.conversation!, REPEAT);
-    return { parts: turn.messages.map((text) => ({ text, lang })), ended: false };
+    return { parts: turn.messages.map((text) => ({ text, lang })), said: [], ended: false };
   }
 
   function handle(address: string, body: string, channel: 'text' | 'voice'): Reply {
@@ -138,7 +219,7 @@ export function buildApp(cfg: Config): FastifyInstance {
 
     if (STOP.test(body)) {
       cfg.store.forget(address);
-      return { parts: [{ text: ui(lang, 'stopped'), lang }], ended: true };
+      return { parts: [{ text: ui(lang, 'stopped'), lang }], said: [], ended: true };
     }
 
     // First contact: say what this is and what is kept. Choosing a language is the consent.
@@ -147,9 +228,9 @@ export function buildApp(cfg: Config): FastifyInstance {
       if (!picked) {
         if (channel === 'voice') {
           // On a call each language announces itself in its own voice; the explanation follows once she has chosen.
-          return { parts: cfg.languages.map((l, i) => ({ text: (l.ui.press_for ?? `${l.name}: {n}`).replace('{n}', String(i + 1)), lang: l })), ended: false };
+          return { parts: cfg.languages.map((l, i) => ({ text: (l.ui.press_for ?? `${l.name}: {n}`).replace('{n}', String(i + 1)), lang: l })), said: [], ended: false };
         }
-        return { parts: [{ text: `${SERVER_UI.consent}\n\n${languageMenu()}` }], ended: false };
+        return { parts: [{ text: `${SERVER_UI.consent}\n\n${languageMenu()}` }], said: [], ended: false };
       }
       user.lang = picked.id;
       user.consented = true;
@@ -175,7 +256,7 @@ export function buildApp(cfg: Config): FastifyInstance {
     cfg.store.put(user);
     const lang = cfg.languages.find((l) => l.id === user.lang);
     const texts = turn.ended ? [...turn.messages, ui(lang, 'again')] : turn.messages;
-    return { parts: texts.map((text) => ({ text, lang })), ended: turn.ended };
+    return { parts: texts.map((text) => ({ text, lang })), said: turn.said, ended: turn.ended };
   }
 
   return app;

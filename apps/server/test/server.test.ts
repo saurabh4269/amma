@@ -12,6 +12,7 @@ const URL = 'https://example.org';
 function server() {
   const store = new SqliteStore(':memory:');
   const placed: { url: string; body: string; auth: string }[] = [];
+  const tg: { method: string; body: unknown }[] = [];
   const fakeFetch = (async (url: string, init: RequestInit) => {
     placed.push({ url, body: String(init.body), auth: (init.headers as Record<string, string>).authorization ?? '' });
     return new Response('{}', { status: 201 });
@@ -25,7 +26,21 @@ function server() {
     today: () => '2026-10-04',
     ratePerMinute: 100,
     callback: { accountSid: 'AC123', fromNumber: '+15550001111', fetch: fakeFetch, perHour: 2 },
+    telegram: {
+      token: 'BOT',
+      secret: 'tg-secret',
+      fetch: (async (url: string, init?: RequestInit) => {
+        tg.push({ method: String(url).split('/').pop()!, body: typeof init?.body === 'string' ? (JSON.parse(init.body) as Record<string, unknown>) : init?.body ? 'form' : undefined });
+        if (String(url).includes('/file/')) return new Response(new Uint8Array([1, 2, 3]));
+        return new Response(JSON.stringify({ ok: true, result: { file_path: 'voice/1.oga' } }));
+      }) as unknown as typeof fetch,
+      transcribe: async () => 'Asha Tai 9820000000',
+      clip: (_lang, card) => (card === 'p_plan_intro' ? new Uint8Array([9]) : undefined),
+    },
   });
+  let u = 0;
+  const telegram = async (update: Record<string, unknown>, secret = 'tg-secret') =>
+    (await app.inject({ method: 'POST', url: '/telegram/hook', headers: { 'x-telegram-bot-api-secret-token': secret }, payload: { update_id: ++u, ...update } })).statusCode;
   app.log.level = 'silent';
   let n = 0;
   const send = async (body: string, over: { from?: string; sid?: string; signature?: string } = {}) => {
@@ -58,7 +73,7 @@ function server() {
     });
     return res.body;
   };
-  return { store, send, call, missed, placed };
+  return { store, send, call, missed, placed, telegram, tg };
 }
 
 describe('message webhook', () => {
@@ -181,5 +196,50 @@ describe('phone call', () => {
     await call({ Direction: 'outbound-api', To: '+2200000001', Digits: '1' }, '+15550001111');
     expect(store.get('voice:+2200000001')?.consented).toBe(true);
     expect(store.get('voice:+15550001111')).toBeUndefined();
+  });
+});
+
+describe('telegram', () => {
+  const text = (t: string) => ({ message: { chat: { id: 42 }, text: t } });
+
+  it('refuses an update without the secret Telegram was given', async () => {
+    const { telegram, tg } = server();
+    expect(await telegram(text('hi'), 'wrong')).toBe(403);
+    expect(tg).toHaveLength(0);
+  });
+
+  it('explains itself first, then turns numbered choices into buttons and sends the card audio', async () => {
+    const { telegram, tg, store } = server();
+    await telegram(text('/start'));
+    expect((tg[0]!.body as { text: string }).text).toContain('STOP');
+    await telegram({ callback_query: { id: 'c1', data: '1', message: { chat: { id: 42 } } } });
+    expect(store.get('telegram:42')?.consented).toBe(true);
+    expect(tg.map((c) => c.method)).toContain('sendAudio'); // the plan introduction has a clip in this test
+    // Skip the plan, finish recall: the check then offers yes / no / not sure as buttons.
+    await telegram(text('0'));
+    await telegram(text('0'));
+    await telegram(text('1'));
+    const last = tg.filter((c) => c.method === 'sendMessage').at(-1)!.body as { reply_markup?: { inline_keyboard: { text: string; callback_data: string }[][] } };
+    expect(last.reply_markup?.inline_keyboard.map((r) => r[0]!.callback_data)).toEqual(['1', '2', '3']);
+  });
+
+  it('a voice note is transcribed and used as her answer', async () => {
+    const { telegram, store } = server();
+    await telegram(text('hi'));
+    await telegram(text('1'));
+    await telegram({ message: { chat: { id: 42 }, voice: { file_id: 'F1' } } });
+    expect(store.get('telegram:42')?.conversation?.session.profile.plan.decider).toEqual({ kind: 'contact', contact: { name: 'Asha Tai', phone: '9820000000' } });
+  });
+
+  it('answers a repeated update only once', async () => {
+    const { tg } = server();
+    const s = server();
+    const once = async () => (await s.telegram(text('hi'))) === 200;
+    await once();
+    const n = s.tg.length;
+    const res = await (async () => { const r = await s.telegram(text('hi')); return r; })();
+    expect(res).toBe(200);
+    expect(s.tg.length).toBeGreaterThan(n); // a new update id is a new message
+    expect(tg).toHaveLength(0);
   });
 });

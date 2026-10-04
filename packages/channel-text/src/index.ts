@@ -23,13 +23,16 @@ export interface Turn {
   conversation: Conversation;
   /** Messages to send, in order. */
   messages: string[];
+  /** The cards spoken in this turn, in order, for channels that can also send their audio. */
+  said: string[];
   ended: boolean;
 }
 
 const text = (ix: PackIndex, lang: LanguagePack, card: string) => lang.translations[card]?.text ?? ix.card.get(card)?.ref ?? card;
 
-function render(ix: PackIndex, lang: LanguagePack, effects: Effect[], profile: Profile): { messages: string[]; awaiting: Awaiting; ended: boolean } {
+function render(ix: PackIndex, lang: LanguagePack, effects: Effect[], profile: Profile): { messages: string[]; said: string[]; awaiting: Awaiting; ended: boolean } {
   const lines: string[] = [];
+  const said: string[] = [];
   let awaiting: Awaiting = { kind: 'none' };
   let listen: string[] | undefined;
   let ended = false;
@@ -37,6 +40,7 @@ function render(ix: PackIndex, lang: LanguagePack, effects: Effect[], profile: P
     switch (e.type) {
       case 'say':
         lines.push(...e.cards.map((c) => text(ix, lang, c)));
+        said.push(...e.cards);
         break;
       case 'listen':
         listen = e.expect;
@@ -65,7 +69,7 @@ function render(ix: PackIndex, lang: LanguagePack, effects: Effect[], profile: P
         break;
     }
   }
-  return { messages: lines.length ? [lines.join('\n')] : [], awaiting, ended };
+  return { messages: lines.length ? [lines.join('\n')] : [], said, awaiting, ended };
 }
 
 function planText(v: PlanValue): string {
@@ -106,7 +110,7 @@ export function interpret(body: string, awaiting: Awaiting, lang: LanguagePack):
 export function begin(ix: PackIndex, lang: LanguagePack, profile: Profile, date: string): Turn {
   const r = step(ix, createSession(profile, date), { type: 'start' });
   const out = render(ix, lang, r.effects, r.state.profile);
-  return { conversation: { session: r.state, awaiting: out.awaiting }, messages: out.messages, ended: out.ended };
+  return { conversation: { session: r.state, awaiting: out.awaiting }, messages: out.messages, said: out.said, ended: out.ended };
 }
 
 /** Sent in place of a message to ask for the last question again without answering it. */
@@ -123,11 +127,11 @@ export function receive(ix: PackIndex, lang: LanguagePack, conversation: Convers
         : a.kind === 'input'
           ? text(ix, lang, ix.pack.plan.find((s) => s.id === a.slot)?.ask ?? '')
           : '';
-    return { conversation, messages: again ? [again] : [], ended: conversation.session.ended };
+    return { conversation, messages: again ? [again] : [], said: [], ended: conversation.session.ended };
   }
   const r = step(ix, conversation.session, event);
   const out = render(ix, lang, r.effects, r.state.profile);
-  return { conversation: { session: r.state, awaiting: out.awaiting }, messages: out.messages, ended: out.ended };
+  return { conversation: { session: r.state, awaiting: out.awaiting }, messages: out.messages, said: out.said, ended: out.ended };
 }
 
 export { CHOICE };
