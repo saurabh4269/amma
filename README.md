@@ -1,17 +1,43 @@
 # AMMA
 
+**Telegram bot:** https://t.me/worldbank42_bot
+
+**Web app:** https://amma-mauve.vercel.app
+
 **A voice companion that helps a pregnant woman and her family remember the danger signs, agree what they will do, and act in time. It works on the family's phone with no internet.**
 
 "Amma" means mother.
 
-Many women do reach the clinic during pregnancy, but the visit is short and they go home without knowing which signs mean "go back now". When a sign does appear, the family loses hours deciding who takes her, where, and how. AMMA is five minutes a week, at home, in her own language:
+We are building a voice helper for pregnant women who can't easily read, don't have reliable internet, and get only a few rushed minutes at the clinic.
 
-1. She says the danger signs aloud. AMMA repeats only the ones she forgot.
-2. It asks whether she has any of them today. She taps yes, no, or not sure.
-3. If she says yes, it plays back the plan her family made in advance and offers one tap to call them.
-4. It carries on after the birth, for the mother and the baby.
+### The problem
 
-Everything AMMA says comes from official health booklets. The AI's only job is to understand what she says. It never writes advice and never decides whether she is well.
+Many women do go to the clinic, but they come home without knowing the warning signs that mean "go back now", such as heavy bleeding, a bad headache with blurred vision, or the baby not moving. Even when they do know, the family often hasn't agreed who decides, who takes her, or where to go, and those delays cost lives.
+
+### What it does
+
+Once a week, for about five minutes, on the family's smartphone and with no internet:
+
+1. It asks her to name the warning signs out loud, in her own language. It listens, works out which ones she remembered, and repeats only the ones she missed.
+2. It asks if she has any of those signs today. She taps yes, no, or not sure.
+3. She can ask a question by speaking. It plays back an answer from an approved list, or says "Not sure, ask a person."
+4. It sends a text to her basic phone with her next visit, the signs to watch, and who to call, so she has it on days the smartphone is away.
+5. It shows a short summary for the midwife, so the few minutes at the clinic are used well.
+
+In the first session, the family also makes a plan: who decides with her, who takes her, which clinic. If she ever taps "yes" on a warning sign, the app plays that plan back and offers to call those people.
+
+It keeps going after the birth, covering warning signs for the mother and the newborn.
+
+### Where the AI is
+
+The AI's only job is understanding what she says in her own language. It never writes advice and never decides whether she is okay.
+
+Everything the app says comes from a fixed list taken from official health booklets. "Go now" comes only from her own taps.
+
+### How she reaches it
+
+- The offline app on the smartphone is the main one.
+- WhatsApp, SMS and phone calls offer the same help for when she only has her basic phone. These need a network.
 
 <p align="center">
   <img src="docs/images/person.png" width="205" alt="Her page: status, one Start button, clinic card, teach voice, send audio">
@@ -25,11 +51,47 @@ Everything AMMA says comes from official health booklets. The AI's only job is t
 
 | | |
 |---|---|
-| **Web app** (works offline after the first visit; on Android, "Add to Home screen") | https://amma-mauve.vercel.app |
 | **Telegram bot** (same session by chat, voice notes and audio replies) | https://t.me/worldbank42_bot |
+| **Web app** (works offline after the first visit; on Android, "Add to Home screen") | https://amma-mauve.vercel.app |
 | **Messaging server** health check | https://amma-server.onrender.com/health |
 
 The bot runs on a free server that sleeps when idle, so the first reply can take up to a minute. Send `/start` to choose a language and `/stop` to delete your record.
+
+## Set it up
+
+Node 24 and pnpm 11. This repository is one pnpm workspace: the session engine, the offline web app, and the messaging server.
+
+```
+git clone https://github.com/saurabh4269/amma.git
+cd amma
+corepack enable
+pnpm install
+```
+
+The web app, at http://localhost:5173:
+
+```
+cd apps/web
+pnpm packs       # turn the content and language packs into one file the app can load
+pnpm dev
+```
+
+Checks, from the repository root:
+
+```
+pnpm test               # unit and property tests
+pnpm packs:validate     # every health card has a source, and the outcome rules hold
+cd apps/web
+npx playwright test     # browser tests, including one with the network cut
+```
+
+The microphone is optional. From the repository root, this fetches the speech model, which is not stored here (about 10 MB):
+
+```
+./fetch-models.sh
+```
+
+"Find places near me" needs facility lists. From `apps/web`, `pnpm places` reads `data/health-transfer/`, which is not stored here. See `packs/place/`. The messaging server is a separate container; the steps are in `docs/DEPLOY.md`.
 
 > **Status.** This is a working prototype built for the World Bank Small AI for Development hackathon (Health track). No clinician has reviewed the content, no native speaker has reviewed the translations or the audio, and it has never been used by a real patient. It must not be used for care as it stands. The section [What is not done](#what-is-not-done) lists every gap we know of.
 
@@ -318,20 +380,6 @@ docs/              plan, build notes, deployment, submission documents
 - **Nothing is hardcoded.** Card text, rules, languages, thresholds and limits are data in packs, checked on every build.
 - **Tests:** 63 unit and property tests, and 9 browser tests, including one that cuts the network and one that plays a real Wolof recording in as the microphone.
 - **Stack:** TypeScript, Preact, Vite, ONNX Runtime Web, Fastify, SQLite; Python for the research.
-
-## Run it
-
-```
-pnpm install
-pnpm test                 # unit and property tests
-pnpm packs:validate       # prove the content pack's rules and sources
-./fetch-models.sh         # speech model for the microphone (10 MB, optional)
-cd apps/web
-pnpm packs && pnpm dev    # the app, at http://localhost:5173
-npx playwright test       # browser tests
-```
-
-The clinic finder needs facility lists built from public data that is not stored in this repository (`pnpm places`, see `packs/place/`). Server and deployment steps are in `docs/DEPLOY.md`.
 
 ## What happens next
 
