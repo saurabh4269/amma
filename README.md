@@ -8,36 +8,28 @@
 
 "Amma" means mother.
 
-We are building a voice helper for pregnant women who can't easily read, don't have reliable internet, and get only a few rushed minutes at the clinic.
+Many women do reach the clinic during pregnancy, but the visit is short and they go home without knowing which signs mean "go back now". When a sign does appear, the family loses hours deciding who takes her, where, and how. AMMA is five minutes a week, at home, in her own language:
 
-### The problem
+1. She says the danger signs aloud. AMMA repeats only the ones she forgot.
+2. It asks whether she has any of them today. She taps yes, no, or not sure.
+3. If she says yes, it plays back the plan her family made in advance and offers one tap to call them.
+4. It carries on after the birth, for the mother and the baby.
 
-Many women do go to the clinic, but they come home without knowing the warning signs that mean "go back now", such as heavy bleeding, a bad headache with blurred vision, or the baby not moving. Even when they do know, the family often hasn't agreed who decides, who takes her, or where to go, and those delays cost lives.
+Everything AMMA says comes from official health booklets. The AI's only job is to understand what she says. It never writes advice and never decides whether she is well.
 
-### What it does
+She is often a woman who cannot easily read, whose internet comes and goes, and who gets only a few rushed minutes at the clinic. The signs she comes home without are ordinary and serious: heavy bleeding, a bad headache with blurred vision, the baby not moving. Knowing them is not the whole problem. The family still has to have agreed, in a calm moment, who decides, who takes her, and where they will go.
 
-Once a week, for about five minutes, on the family's smartphone and with no internet:
+A week on the family's smartphone, with no internet, is about five minutes:
 
-1. It asks her to name the warning signs out loud, in her own language. It listens, works out which ones she remembered, and repeats only the ones she missed.
-2. It asks if she has any of those signs today. She taps yes, no, or not sure.
-3. She can ask a question by speaking. It plays back an answer from an approved list, or says "Not sure, ask a person."
-4. It sends a text to her basic phone with her next visit, the signs to watch, and who to call, so she has it on days the smartphone is away.
-5. It shows a short summary for the midwife, so the few minutes at the clinic are used well.
+- She names the signs out loud, in her own language. AMMA repeats only the ones she missed.
+- She says whether she has any of them today.
+- She can ask a question by speaking. The answer is one from the booklet, or "Not sure, ask a person."
+- A text goes to her basic phone: the next visit, the signs to watch, and who to call, for the days the smartphone is not at home.
+- A short summary is there for the midwife, so the clinic minutes are spent on what she came to say.
 
-In the first session, the family also makes a plan: who decides with her, who takes her, which clinic. If she ever taps "yes" on a warning sign, the app plays that plan back and offers to call those people.
+The first time, the family makes the plan: who decides with her, who takes her, which clinic. After the birth, the same weekly session covers the mother and the newborn.
 
-It keeps going after the birth, covering warning signs for the mother and the newborn.
-
-### Where the AI is
-
-The AI's only job is understanding what she says in her own language. It never writes advice and never decides whether she is okay.
-
-Everything the app says comes from a fixed list taken from official health booklets. "Go now" comes only from her own taps.
-
-### How she reaches it
-
-- The offline app on the smartphone is the main one.
-- WhatsApp, SMS and phone calls offer the same help for when she only has her basic phone. These need a network.
+She reaches it in two ways. The offline app on the smartphone is the one that matters. WhatsApp, SMS, and a phone call offer the same session when she only has her basic phone, and those need a network.
 
 <p align="center">
   <img src="docs/images/person.png" width="205" alt="Her page: status, one Start button, clinic card, teach voice, send audio">
