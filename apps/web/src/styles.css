@@ -214,3 +214,9 @@ fieldset { border: 1.5px solid var(--line); border-radius: 16px; background: var
 .send .row > * { flex: 1 1 0; text-align: center; text-decoration: none; }
 .alert { display: flex; flex-direction: column; gap: 10px; }
 @media print { .no-print, .top button { display: none !important; } body { background: #fff; } }
+
+.place-row { display: flex; gap: 8px; align-items: stretch; }
+.place-row .place { flex: 1; }
+.map-link { display: flex; align-items: center; justify-content: center; min-width: 56px; border-radius: 18px; background: #fff; text-decoration: none; font-size: 1.5rem; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.directions { display: inline-block; margin-left: 8px; font-weight: 600; white-space: nowrap; }
+.near .find { min-height: 56px; }

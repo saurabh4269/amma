@@ -30,6 +30,8 @@ let embedder: Promise<Embedder> | undefined;
 export async function voiceAvailable(): Promise<boolean> {
   if (!navigator.mediaDevices?.getUserMedia) return false;
   try {
+    // Offline, the model is in the service worker's store; a network check would wrongly hide the microphone.
+    if (typeof caches !== 'undefined' && (await caches.match(MODEL_DIR + MODEL_FILE, { ignoreSearch: true }))) return true;
     return (await fetch(MODEL_DIR + MODEL_FILE, { method: 'HEAD' })).ok;
   } catch {
     return false;

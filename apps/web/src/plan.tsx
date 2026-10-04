@@ -20,7 +20,13 @@ export function PlanView({ ix, words, profile }: { ix: PackIndex; words: Words; 
       {rows.map(({ slot, v }) => (
         <>
           <dt>{words.card(slot.label)}</dt>
-          <dd>{planText(v)}</dd>
+          <dd>
+            {planText(v)}
+            {v.kind === 'facility' && v.lat !== undefined && v.lon !== undefined && (
+              <a class="directions" href={`https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lon}`} target="_blank" rel="noreferrer">🧭 {words.ui('directions')}</a>
+            )}
+            {v.kind === 'facility' && v.phone && <a class="directions" href={`tel:${v.phone}`}>📞 {words.ui('call')}</a>}
+          </dd>
         </>
       ))}
     </dl>
@@ -74,6 +80,8 @@ export function renderAlert(ix: PackIndex, words: Words, profile: Profile, facts
 export function SendText({ words, text, phones, label }: { words: Words; text: string; phones: string[]; label: string }) {
   const [copied, setCopied] = useState(false);
   const encoded = encodeURIComponent(text);
+  // iPhones want the message after "&", every other phone after "?".
+  const smsSep = /iPad|iPhone|iPod/.test(navigator.userAgent) ? '&' : '?';
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(text);
@@ -94,7 +102,7 @@ export function SendText({ words, text, phones, label }: { words: Words; text: s
   return (
     <div class="send">
       <p class="sms current">{text}</p>
-      <a class="big send-sms" href={`sms:${phones.join(',')}?body=${encoded}`}>✉ {label}</a>
+      <a class="big send-sms" href={`sms:${phones.join(',')}${smsSep}body=${encoded}`}>✉ {label}</a>
       <div class="row">
         <a class="action send-wa" href={`https://wa.me/?text=${encoded}`} target="_blank" rel="noreferrer">WhatsApp</a>
         {typeof navigator.share === 'function' && (

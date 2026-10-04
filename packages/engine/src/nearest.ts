@@ -42,3 +42,24 @@ export function suggestFacilities(packs: PlacePack[], lat: number, lon: number, 
   const hospital = all.find((n) => n.typed && isHospital(n.facility.level));
   return { nearest: all.slice(0, count), hospital: hospital && hospital.km <= maxKm ? hospital : undefined };
 }
+
+const fold = (t: string) => t.normalize('NFKD').replace(/\p{M}+/gu, '').toLowerCase();
+
+/**
+ * Facilities whose name contains what she typed, for when the phone cannot give its location.
+ * With a known position the nearer ones come first; without one, the order is by name.
+ */
+export function searchFacilities(packs: PlacePack[], query: string, count: number, from?: { lat: number; lon: number }): Near[] {
+  const q = fold(query.trim());
+  if (q.length < 2) return [];
+  const hits: Near[] = [];
+  for (const p of packs) {
+    const typed = new Set(p.sources.filter((s) => s.typedLevels).map((s) => s.id));
+    for (const f of p.facilities) {
+      if (!fold(f.name).includes(q)) continue;
+      hits.push({ facility: f, km: from ? haversineKm(from.lat, from.lon, f.lat, f.lon) : NaN, typed: typed.has(f.source) });
+    }
+  }
+  hits.sort((a, b) => (from ? a.km - b.km : a.facility.name.localeCompare(b.facility.name)));
+  return hits.slice(0, count);
+}

@@ -34,18 +34,22 @@ export class Speaker {
       if (mine !== this.token) return;
       onCard?.(i);
       const clip = words.lang.audio[id];
-      if (clip) await this.playClip(`packs/${words.lang.id}/${clip.file}`);
-      else await this.speak(words.card(id), words.lang.id);
+      // A clip that cannot be played (not downloaded yet and no network) falls back to the phone's own voice,
+      // so a card is never silent.
+      const played = clip ? await this.playClip(`packs/${words.lang.id}/${clip.file}`) : false;
+      if (!played && mine === this.token) await this.speak(words.card(id), words.lang.locale ?? words.lang.id);
     }
     if (mine === this.token) onCard?.(-1);
   }
 
-  private playClip(url: string): Promise<void> {
+  /** Resolves true when the clip played to the end or was stopped by her, false when it could not be played. */
+  private playClip(url: string): Promise<boolean> {
     return new Promise((resolve) => {
       const a = new Audio(url);
       this.audio = a;
-      a.onended = a.onerror = a.onpause = () => resolve();
-      a.play().catch(() => resolve());
+      a.onended = a.onpause = () => resolve(true);
+      a.onerror = () => resolve(false);
+      a.play().catch(() => resolve(false));
     });
   }
 

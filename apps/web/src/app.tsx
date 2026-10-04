@@ -56,6 +56,15 @@ export function App() {
   useEffect(() => {
     if (words) warmLanguage(words.lang);
   }, [words?.lang.id]);
+  // Pick up a newly installed version, but only from the home screen so no session is lost.
+  useEffect(() => {
+    const reloadIfIdle = () => {
+      if (screen.at === 'home' && (window as unknown as { ammaUpdateReady?: boolean }).ammaUpdateReady) location.reload();
+    };
+    reloadIfIdle();
+    window.addEventListener('amma-update', reloadIfIdle);
+    return () => window.removeEventListener('amma-update', reloadIfIdle);
+  }, [screen.at]);
 
   if (error) return <main class="page"><p class="warn">{error}</p></main>;
   if (!loaded || !words) {

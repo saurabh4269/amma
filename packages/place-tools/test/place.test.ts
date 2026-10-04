@@ -2,7 +2,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { suggestFacilities } from '@amma/engine';
+import { searchFacilities, suggestFacilities } from '@amma/engine';
 import { buildPlacePack, PlaceConfig } from '../src/index.ts';
 
 const dir = mkdtempSync(join(tmpdir(), 'place-'));
@@ -50,6 +50,13 @@ describe('place pack build', () => {
     const s = suggestFacilities([pack], 13.305, -16.405, 2, 10);
     expect(s.nearest).toHaveLength(2);
     expect(s.hospital).toBeUndefined();
+  });
+
+  it('finds a place by part of its name, nearest first when a position is known', async () => {
+    const pack = await buildPlacePack(config(), dir, '2026-10-04');
+    expect(searchFacilities([pack], 'hospital', 5).map((n) => n.facility.name)).toEqual(['Big Hospital', 'Tagged hospital']);
+    expect(searchFacilities([pack], 'HOSPITAL', 5, { lat: 13.3, lon: -16.4 })[0]!.facility.name).toBe('Tagged hospital');
+    expect(searchFacilities([pack], 'h', 5)).toEqual([]);
   });
 
   it('says nothing when no pack covers where she is', async () => {
