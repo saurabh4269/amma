@@ -18,8 +18,28 @@ export async function loadBundle(): Promise<Loaded> {
   const res = await fetch('packs/bundle.json');
   if (!res.ok) throw new Error(`packs/bundle.json: ${res.status}`);
   const bundle = (await res.json()) as Bundle;
-  const places = await fetch('packs/places.json').then((r) => (r.ok ? (r.json() as Promise<PlacePack[]>) : []), () => []);
-  return { ix: indexPack(bundle.content), languages: bundle.languages, places };
+  return { ix: indexPack(bundle.content), languages: bundle.languages, places: [] };
+}
+
+/** Facility lists are large and only needed at the plan's hospital step, so they load after the first screen. */
+export async function loadPlaces(): Promise<PlacePack[]> {
+  return fetch('packs/places.json').then((r) => (r.ok ? (r.json() as Promise<PlacePack[]>) : []), () => []);
+}
+
+const warmed = new Set<string>();
+/**
+ * Fetch one language's audio clips quietly, a few at a time, so the service worker keeps them for offline use.
+ * Only the language in use is fetched: seven languages of audio would be a long download nobody asked for.
+ */
+export function warmLanguage(lang: LanguagePack): void {
+  if (warmed.has(lang.id) || !navigator.onLine) return;
+  warmed.add(lang.id);
+  const files = Object.values(lang.audio).map((a) => `packs/${lang.id}/${a.file}`);
+  let next = 0;
+  const worker = async () => {
+    while (next < files.length) await fetch(files[next++]!).then((r) => r.arrayBuffer()).catch(() => undefined);
+  };
+  for (let i = 0; i < 4; i++) void worker();
 }
 
 /** Wording for one language, falling back to the pack's reference text so nothing is ever blank. */

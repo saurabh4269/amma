@@ -9,7 +9,20 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       // Everything the session needs is precached, so it runs with no network after the first visit.
-      workbox: { globPatterns: ['**/*.{js,mjs,css,html,json,svg,png,opus,mp3,webmanifest,wasm,onnx}'], maximumFileSizeToCacheInBytes: 60 * 1024 * 1024 },
+      workbox: {
+        // Installed up front: the app itself, its wording, and the speech model. Small in file count, so the first screen is not held up.
+        globPatterns: ['**/*.{js,mjs,css,html,svg,png,webmanifest,wasm,onnx}', 'packs/bundle.json'],
+        maximumFileSizeToCacheInBytes: 60 * 1024 * 1024,
+        // Card audio and facility lists are kept the first time they are fetched. The app fetches the chosen
+        // language's clips in the background after it opens, so they are there when the network is not.
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => /\/packs\/.+\.(mp3|json)$/.test(url.pathname) && !url.pathname.endsWith('bundle.json'),
+            handler: 'CacheFirst',
+            options: { cacheName: 'amma-media', cacheableResponse: { statuses: [200] } },
+          },
+        ],
+      },
       manifest: {
         name: 'AMMA',
         short_name: 'AMMA',

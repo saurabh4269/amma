@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { Profile } from '@amma/schema';
 import { ClinicCard, weeksPregnant } from './clinic-card.tsx';
-import { loadBundle, Words, type Loaded } from './pack.ts';
+import { loadBundle, loadPlaces, warmLanguage, Words, type Loaded } from './pack.ts';
 import { Session } from './session.tsx';
 import { Setup } from './setup.tsx';
 import { ShareAudio } from './share-audio.tsx';
@@ -39,7 +39,10 @@ export function App() {
     setOpen(next);
   };
   useEffect(() => {
-    loadBundle().then(setLoaded, (e: unknown) => setError(String(e)));
+    loadBundle().then((l) => {
+      setLoaded(l);
+      void loadPlaces().then((places) => setLoaded((cur) => (cur ? { ...cur, places } : cur)));
+    }, (e: unknown) => setError(String(e)));
     void refresh();
     void requestPersistence();
   }, []);
@@ -50,6 +53,9 @@ export function App() {
     const lang = loaded.languages.find((l) => l.id === active) ?? loaded.languages[0];
     return lang && new Words(loaded.ix, lang);
   }, [loaded, langId, screen]);
+  useEffect(() => {
+    if (words) warmLanguage(words.lang);
+  }, [words?.lang.id]);
 
   if (error) return <main class="page"><p class="warn">{error}</p></main>;
   if (!loaded || !words) {
