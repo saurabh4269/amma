@@ -9,7 +9,7 @@ Marks used below: **[checked]** was run on 2026-10-04 on a local Docker 28.5; **
 From the repo root:
 
 ```
-docker build -f Dockerfile.server -t amma-server .
+docker build -t amma-server .
 ```
 
 **[checked]** Builds to about 260 MB. The image holds the server, the five workspace packages it imports, `packs/content` and `packs/lang`. It does not hold `data/`, `research/`, `content-sources/`, `apps/web` or any `.env` file (`.dockerignore` lets in only what the Dockerfile copies).
