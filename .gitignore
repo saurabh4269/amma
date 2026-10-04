@@ -15,3 +15,4 @@ content-sources/txt/
 data/
 apps/web/public/models/
 apps/web/public/packs/*/
+.vercel

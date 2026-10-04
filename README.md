@@ -2,6 +2,8 @@
 
 An offline voice companion for pregnancy and the six weeks after birth. A woman and her household recall the danger signs, agree what they will do, and act on it. See `docs/PLAN.md` for what and why, and `docs/BUILD.md` for how.
 
+**Live demo:** https://amma-mauve.vercel.app (open it once with a connection; after that it works offline).
+
 Nothing here has been reviewed by a clinician. The Hindi and Marathi wording is draft text. Do not use it with real patients.
 
 ## Layout
