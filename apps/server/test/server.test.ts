@@ -92,7 +92,7 @@ describe('message webhook', () => {
 
   it('runs a session to an urgent outcome and keeps the record but no conversation', async () => {
     const { send, store } = server();
-    for (const m of ['hi', '1', 'Asha Tai 9820000000', '0', '1', '2', '1', '2']) await send(m);
+    for (const m of ['hi', '1', '1', 'Asha Tai 9820000000', '0', '1', '2', '1', '2']) await send(m);
     const last = await send('1');
     expect(last.xml).toContain('out_urgent');
     expect(last.xml).toContain('Asha Tai: 9820000000');
@@ -141,13 +141,15 @@ describe('phone call', () => {
     expect(store.get('voice:+910000000009')).toBeUndefined();
     const picked = await call({ Digits: '1' });
     expect(picked).toContain('STOP');
-    expect(picked).toContain('p_plan_intro');
+    expect(picked).toContain('1. Pregnant');
+    expect(await call({ Digits: '1' })).toContain('p_plan_intro');
     expect(store.get('voice:+910000000009')?.consented).toBe(true);
   });
 
   it('takes key presses and speech, reaches an urgent outcome, reads out who to call, and hangs up', async () => {
     const { call, store } = server();
     await call();
+    await call({ Digits: '1' });
     await call({ Digits: '1' });
     await call({ SpeechResult: 'Asha Tai 9820000000' });
     await call({ Digits: '0' });
@@ -165,6 +167,7 @@ describe('phone call', () => {
   it('a dropped call picks up at the same question instead of treating the new call as an answer', async () => {
     const { call, store } = server();
     await call();
+    await call({ Digits: '1' });
     await call({ Digits: '1' });
     const before = JSON.stringify(store.get('voice:+910000000009'));
     const again = await call();
@@ -214,7 +217,10 @@ describe('telegram', () => {
     expect((tg[0]!.body as { text: string }).text).toContain('STOP');
     await telegram({ callback_query: { id: 'c1', data: '1', message: { chat: { id: 42 } } } });
     expect(store.get('telegram:42')?.consented).toBe(true);
+    await telegram(text('1')); // pregnant
     expect(tg.map((c) => c.method)).toContain('sendAudio'); // the plan introduction has a clip in this test
+    const planQuestion = tg.filter((c) => c.method === 'sendMessage').at(-1)!.body as { reply_markup?: { inline_keyboard: { text: string; callback_data: string }[][] } };
+    expect(planQuestion.reply_markup?.inline_keyboard.at(-1)).toEqual([{ text: 'Skip', callback_data: '0' }]);
     // Skip the plan, finish recall: the check then offers yes / no / not sure as buttons.
     await telegram(text('0'));
     await telegram(text('0'));
@@ -227,19 +233,31 @@ describe('telegram', () => {
     const { telegram, store } = server();
     await telegram(text('hi'));
     await telegram(text('1'));
+    await telegram(text('1'));
     await telegram({ message: { chat: { id: 42 }, voice: { file_id: 'F1' } } });
     expect(store.get('telegram:42')?.conversation?.session.profile.plan.decider).toEqual({ kind: 'contact', contact: { name: 'Asha Tai', phone: '9820000000' } });
   });
 
-  it('answers a repeated update only once', async () => {
-    const { tg } = server();
-    const s = server();
-    const once = async () => (await s.telegram(text('hi'))) === 200;
-    await once();
-    const n = s.tg.length;
-    const res = await (async () => { const r = await s.telegram(text('hi')); return r; })();
-    expect(res).toBe(200);
-    expect(s.tg.length).toBeGreaterThan(n); // a new update id is a new message
-    expect(tg).toHaveLength(0);
+  it('START in the middle of a session goes back to the language choice and keeps her plan', async () => {
+    const { telegram, tg, store } = server();
+    for (const t of ['hi', '1', '1', 'Asha Tai 9820000000']) await telegram(text(t));
+    expect(store.get('telegram:42')?.conversation).toBeDefined();
+    await telegram(text('/start'));
+    expect((tg.filter((c) => c.method === 'sendMessage').at(-1)!.body as { text: string }).text).toContain('1. English');
+    expect(store.get('telegram:42')?.conversation).toBeUndefined();
+    await telegram(text('1'));
+    await telegram(text('2')); // this time: the baby is born
+    const user = store.get('telegram:42')!;
+    expect(user.profile?.phase).toBe('after_birth');
+    expect(user.conversation?.session.phase).toBe('after_birth');
   });
+
+  it('tapping a button removes the buttons from the message that was answered', async () => {
+    const { telegram, tg } = server();
+    await telegram(text('hi'));
+    await telegram({ callback_query: { id: 'c1', data: '1', message: { message_id: 7, chat: { id: 42 } } } });
+    const edit = tg.find((c) => c.method === 'editMessageReplyMarkup')!.body as { message_id: number; reply_markup: { inline_keyboard: unknown[] } };
+    expect(edit).toMatchObject({ message_id: 7, reply_markup: { inline_keyboard: [] } });
+  });
+
 });

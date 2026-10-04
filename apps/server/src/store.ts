@@ -8,6 +8,8 @@ export interface User {
   address: string;
   lang?: string;
   consented: boolean;
+  /** Whether she has said, for this start, if she is pregnant or the baby is born. */
+  phaseChosen?: boolean;
   profile?: Profile;
   conversation?: Conversation;
 }

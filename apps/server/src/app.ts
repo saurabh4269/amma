@@ -41,14 +41,18 @@ const SERVER_UI = {
   consent:
     'This service gives pregnancy and newborn information from official health booklets. It does not replace a health worker. It keeps your answers under this phone number and no message text. Send STOP at any time to delete everything.',
   stopped: 'Everything kept for this number has been deleted.',
-  again: 'Send any message to start a new session.',
+  again: 'Send any message to start a new session. Send START to choose the language again.',
+  phase_ask: 'Which is it now?',
+  pregnant: 'Pregnant',
+  after_birth: 'Baby is born',
+  skip: 'Skip',
   voice_note: 'You can also send a voice note. It goes to a speech service to be turned into text and is not kept.',
 } as const;
 
 interface TelegramUpdate {
   update_id?: number;
   message?: { chat: { id: number }; text?: string; voice?: { file_id: string } };
-  callback_query?: { id: string; data?: string; message?: { chat: { id: number } } };
+  callback_query?: { id: string; data?: string; message?: { message_id?: number; chat: { id: number } } };
 }
 
 /** One piece of a reply, with the language it is in so a call can speak it with the right voice. */
@@ -64,6 +68,9 @@ interface Reply {
   ended: boolean;
 }
 const DEFAULT_LOCALE = 'en-IN';
+
+/** Words that take her back to the language choice. */
+const RESTART = /^\s*\/?(start|restart|menu|language)\s*$/i;
 
 const STOP = /^\s*(stop|unsubscribe|बंद|रोको|थांबा)\s*$/i;
 
@@ -135,7 +142,12 @@ export function buildApp(cfg: Config): FastifyInstance {
     const json = (method: string, payload: object) => api(method, JSON.stringify(payload), { 'content-type': 'application/json' });
 
     let body = update.callback_query?.data ?? update.message?.text ?? '';
-    if (update.callback_query) void json('answerCallbackQuery', { callback_query_id: update.callback_query.id });
+    if (update.callback_query) {
+      void json('answerCallbackQuery', { callback_query_id: update.callback_query.id });
+      // Take the buttons off the message she answered, so an old question cannot be answered twice.
+      const answered = update.callback_query.message?.message_id;
+      if (answered !== undefined) void json('editMessageReplyMarkup', { chat_id: chat, message_id: answered, reply_markup: { inline_keyboard: [] } });
+    }
     const voice = update.message?.voice;
     if (voice && tg.transcribe) {
       try {
@@ -148,7 +160,6 @@ export function buildApp(cfg: Config): FastifyInstance {
         body = '';
       }
     }
-    if (body === '/start') body = '';
 
     const firstContact = !cfg.store.get(address)?.consented;
     const out = handle(address, body, 'text');
@@ -157,11 +168,19 @@ export function buildApp(cfg: Config): FastifyInstance {
     if (firstContact && lang && tg.transcribe && out.parts[0]) out.parts[0].text += `\n${ui(lang, 'voice_note')}`;
     for (const [i, part] of out.parts.entries()) {
       // Numbered lines become buttons, so she can tap an answer.
-      const numbers = i === out.parts.length - 1 ? [...part.text.matchAll(/^(\d+)\. (.+)$/gm)] : [];
+      const last = i === out.parts.length - 1;
+      const buttons = last ? [...part.text.matchAll(/^(\d+)\. (.+)$/gm)].map((m) => ({ text: m[2]!.slice(0, 60), callback_data: m[1]! })) : [];
+      // A plan question takes typed or spoken words; it still gets a way out, and yes/no where that is the answer.
+      const awaiting = cfg.store.get(address)?.conversation?.awaiting;
+      if (last && awaiting?.kind === 'input') {
+        const say = (card: string) => lang?.translations[card]?.text ?? cfg.ix.card.get(card)?.ref ?? card;
+        if (awaiting.slotKind === 'yesno') buttons.push({ text: say(cfg.ix.pack.prompts.yes!), callback_data: '1' }, { text: say(cfg.ix.pack.prompts.no!), callback_data: '2' });
+        buttons.push({ text: ui(lang, 'skip'), callback_data: '0' });
+      }
       await json('sendMessage', {
         chat_id: chat,
         text: part.text,
-        reply_markup: numbers.length ? { inline_keyboard: numbers.map((m) => [{ text: m[2]!.slice(0, 60), callback_data: m[1] }]) } : undefined,
+        reply_markup: buttons.length ? { inline_keyboard: buttons.map((b) => [b]) } : undefined,
       });
     }
     // The same cards as one audio message: the clips are plain MP3 and play back to back when joined.
@@ -222,8 +241,17 @@ export function buildApp(cfg: Config): FastifyInstance {
       return { parts: [{ text: ui(lang, 'stopped'), lang }], said: [], ended: true };
     }
 
+    // "Start over": back to the language choice, mid-session or not. Her plan and history are kept.
+    if (RESTART.test(body) && user.consented) {
+      user.lang = undefined;
+      user.consented = false;
+      user.phaseChosen = false;
+      user.conversation = undefined;
+      cfg.store.put(user);
+    }
+
     // First contact: say what this is and what is kept. Choosing a language is the consent.
-    if (!user.consented || !lang) {
+    if (!user.consented || !cfg.languages.some((l) => l.id === user.lang)) {
       const picked = cfg.languages[Number(body.trim()) - 1];
       if (!picked) {
         if (channel === 'voice') {
@@ -234,17 +262,29 @@ export function buildApp(cfg: Config): FastifyInstance {
       }
       user.lang = picked.id;
       user.consented = true;
-      user.profile = Profile.parse({ id: address, label: '', lang: picked.id, phase: 'pregnant' });
-      const reply = finishTurn(user, begin(cfg.ix, picked, user.profile, cfg.today()));
-      // Said again in her own language, now that we know it.
-      return { ...reply, parts: [{ text: ui(picked, 'consent'), lang: picked }, ...reply.parts] };
+      user.phaseChosen = false;
+      cfg.store.put(user);
+      // Said again in her own language, now that we know it, then the one thing we need to know to begin.
+      return { parts: [{ text: ui(picked, 'consent'), lang: picked }, { text: phaseMenu(picked), lang: picked }], said: [], ended: false };
+    }
+    const chosen = cfg.languages.find((l) => l.id === user.lang)!;
+
+    if (!user.phaseChosen) {
+      const answer = body.trim();
+      if (answer !== '1' && answer !== '2') return { parts: [{ text: phaseMenu(chosen), lang: chosen }], said: [], ended: false };
+      const phase = answer === '1' ? 'pregnant' : 'after_birth';
+      user.phaseChosen = true;
+      user.profile = Profile.parse({ ...(user.profile ?? { id: address, label: '' }), lang: chosen.id, phase });
+      return finishTurn(user, begin(cfg.ix, chosen, user.profile, cfg.today()));
     }
 
     if (!user.conversation) {
-      return finishTurn(user, begin(cfg.ix, lang, user.profile!, cfg.today()));
+      return finishTurn(user, begin(cfg.ix, chosen, user.profile!, cfg.today()));
     }
-    return finishTurn(user, receive(cfg.ix, lang, user.conversation, body));
+    return finishTurn(user, receive(cfg.ix, chosen, user.conversation, body));
   }
+
+  const phaseMenu = (l: LanguagePack) => `${ui(l, 'phase_ask')}\n1. ${ui(l, 'pregnant')}\n2. ${ui(l, 'after_birth')}`;
 
   function finishTurn(user: User, turn: Turn): Reply {
     if (turn.ended) {
