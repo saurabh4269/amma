@@ -1,0 +1,30 @@
+# Senegal. Licenses and URLs are copied from the data manifest; "unknown" there stays "unknown" here.
+id: sn
+name: Sénégal
+dedupeMetres: 300
+sources:
+  - id: maina
+    title: "Maina et al., public health facilities in sub-Saharan Africa (00_SSA_MFL.xlsx)"
+    license: unknown
+    url: https://ndownloader.figshare.com/files/14379593
+    typedLevels: true
+    reader: maina
+    file: datasets/Maina-Scientific-Data/00_SSA_MFL.xlsx
+    country: Senegal
+    levels:
+      Centre Hospitalier Universitaire: hospital
+      Centre Hospitalier National: hospital
+      Hôpital: hospital
+      Hôpital Général: hospital
+      Hôpital Régional: hospital
+      Health Centre: health_centre
+      Poste de Santé: post
+  - id: healthsites
+    title: healthsites.io facility points, Senegal
+    license: ODbL
+    url: unknown
+    typedLevels: false
+    reader: healthsites
+    file: datasets/healthsites.io/csv/senegal.csv
+    levels: { hospital: hospital, clinic: clinic, doctors: clinic, health_post: post }
+    skip: [pharmacy, dentist, laboratory, optometrist]

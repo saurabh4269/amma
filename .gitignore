@@ -9,6 +9,7 @@ research/**/.venv/
 research/**/__pycache__/
 test-results/
 playwright-report/
-apps/web/public/packs/bundle.json
+apps/web/public/packs/*.json
 *.sqlite
 content-sources/txt/
+data/

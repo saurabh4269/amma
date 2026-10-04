@@ -5,7 +5,7 @@ export const Contact = z.strictObject({ name: z.string(), phone: z.string() });
 
 export const PlanValue = z.union([
   z.strictObject({ kind: z.literal('contact'), contact: Contact }),
-  z.strictObject({ kind: z.literal('facility'), name: z.string(), phone: z.string().optional(), minutes: z.number().optional() }),
+  z.strictObject({ kind: z.literal('facility'), name: z.string(), phone: z.string().optional(), /** Straight-line distance from home, in kilometres. Not a travel time. */ km: z.number().optional() }),
   z.strictObject({ kind: z.literal('transport'), contact: Contact }),
   z.strictObject({ kind: z.literal('yesno'), value: z.boolean() }),
 ]);

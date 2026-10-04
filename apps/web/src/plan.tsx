@@ -4,7 +4,7 @@ import type { Words } from './pack.ts';
 
 export function planText(v: PlanValue): string {
   if (v.kind === 'yesno') return v.value ? '✓' : '✕';
-  if (v.kind === 'facility') return [v.name, v.phone].filter(Boolean).join(' · ');
+  if (v.kind === 'facility') return [v.name, v.phone, v.km === undefined ? undefined : `${v.km} km`].filter(Boolean).join(' · ');
   return [v.contact.name, v.contact.phone].filter(Boolean).join(' · ');
 }
 

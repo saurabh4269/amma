@@ -43,6 +43,12 @@ export const UI_DEFAULT = {
   delete: 'Delete this record',
   delete_confirm: 'Tap again to delete for good',
   sources: 'Sources',
+  find_near: 'Find places near me',
+  straight_line: 'km in a straight line, not by road',
+  nearest_hospital: 'Nearest hospital on the official list',
+  no_coverage: 'No facility list is installed for where you are. Type the name.',
+  no_location: 'The phone could not give its location. Type the name.',
+  unconfirmed: 'from a public map, not an official list',
   not_installed: 'The content pack is not installed.',
 } as const;
 export type UiKey = keyof typeof UI_DEFAULT;

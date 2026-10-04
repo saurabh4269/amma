@@ -39,7 +39,7 @@ export function App() {
 
   if (error) return <main class="page"><p class="warn">{error}</p></main>;
   if (!loaded || !words) return <main class="page"><p>…</p></main>;
-  const { ix, languages } = loaded;
+  const { ix, languages, places } = loaded;
   const home = () => {
     void refresh();
     setScreen({ at: 'home' });
@@ -147,6 +147,7 @@ export function App() {
         <Session
           ix={ix}
           words={words}
+          places={places}
           profile={screen.profile}
           onQuit={() => setScreen({ at: 'person', profile: screen.profile, pin: screen.pin })}
           onDone={async (updated) => {

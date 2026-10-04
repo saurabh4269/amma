@@ -1,4 +1,4 @@
-import type { ContentPack, LanguagePack } from '@yaay/schema';
+import type { ContentPack, LanguagePack, PlacePack } from '@yaay/schema';
 import { indexPack, type PackIndex } from '@yaay/engine';
 import { UI_DEFAULT, type UiKey } from './ui.ts';
 
@@ -10,13 +10,16 @@ export interface Bundle {
 export interface Loaded {
   ix: PackIndex;
   languages: LanguagePack[];
+  /** Facility lists. Empty when none is installed; the app then asks her to type the place. */
+  places: PlacePack[];
 }
 
 export async function loadBundle(): Promise<Loaded> {
   const res = await fetch('packs/bundle.json');
   if (!res.ok) throw new Error(`packs/bundle.json: ${res.status}`);
   const bundle = (await res.json()) as Bundle;
-  return { ix: indexPack(bundle.content), languages: bundle.languages };
+  const places = await fetch('packs/places.json').then((r) => (r.ok ? (r.json() as Promise<PlacePack[]>) : []), () => []);
+  return { ix: indexPack(bundle.content), languages: bundle.languages, places };
 }
 
 /** Wording for one language, falling back to the pack's reference text so nothing is ever blank. */

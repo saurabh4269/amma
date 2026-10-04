@@ -47,3 +47,5 @@ fieldset { border: 2px solid var(--line); border-radius: 12px; display: flex; fl
 .listen form { flex-direction: row; } .listen form input { flex: 1; } .listen form button { flex: 0 0 auto; }
 .card ul { margin: 6px 0 0; padding-left: 20px; } .card .urgent h3 { color: var(--yes); }
 .headline { font-size: 1.4rem; font-weight: 700; margin: 0; }
+.place { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; }
+.place span { font-size: 0.85rem; }
