@@ -1,0 +1,1526 @@
+# Written by `pack-tools speak`. Add approvedBy to a clip once a speaker has listened to it.
+audio:
+  o_today:
+    file: audio/o_today.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: f8ea95ebe8398c0c
+  a_onset:
+    file: audio/a_onset.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: befdbe62605f1408
+  o_few_days:
+    file: audio/o_few_days.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: a31086dddb349c7c
+  o_longer:
+    file: audio/o_longer.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: f4226a2c7656338e
+  a_strength:
+    file: audio/a_strength.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 34cc1f71d41ee658
+  o_mild:
+    file: audio/o_mild.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: c9d09d51dc009d9b
+  o_strong:
+    file: audio/o_strong.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 509daa0ea72c026a
+  o_head:
+    file: audio/o_head.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: f550078447512b73
+  a_pain_site:
+    file: audio/a_pain_site.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 8366569c7f12cebe
+  o_belly:
+    file: audio/o_belly.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0071b2a1a1d0ccd2
+  o_leg:
+    file: audio/o_leg.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: aa6556ffca8403fd
+  o_chest:
+    file: audio/o_chest.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 28491f25f582967d
+  o_elsewhere:
+    file: audio/o_elsewhere.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 894c3654cbf1d810
+  o_comes_goes:
+    file: audio/o_comes_goes.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 348d91d68df45815
+  a_pain_pattern:
+    file: audio/a_pain_pattern.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 6c02aeaebf3874ce
+  o_constant:
+    file: audio/o_constant.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d4b53a8afb92056e
+  a_swelling_site:
+    file: audio/a_swelling_site.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 041dba4ec9523795
+  o_feet:
+    file: audio/o_feet.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 6ab2d8bedce456f1
+  o_all_over:
+    file: audio/o_all_over.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 21bd790d6e374c17
+  c_pain:
+    file: audio/c_pain.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 10a2e8a9becf6860
+  c_bleeding:
+    file: audio/c_bleeding.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 97513daa78bc8cbb
+  c_swelling:
+    file: audio/c_swelling.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0da85da0b58fee50
+  c_fever:
+    file: audio/c_fever.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: bd324927db0bbe71
+  c_water:
+    file: audio/c_water.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: b0c28452b59e9bad
+  c_breathless:
+    file: audio/c_breathless.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 1723c30f7edf5956
+  c_fit:
+    file: audio/c_fit.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 6e61ef693e4536e8
+  c_baby_feeding:
+    file: audio/c_baby_feeding.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 7b95192c3ba88110
+  c_baby_breathing:
+    file: audio/c_baby_breathing.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: bcb30b2aa366bc21
+  c_baby_quiet:
+    file: audio/c_baby_quiet.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 95650d47f67cb5eb
+  t_immunisation:
+    file: audio/t_immunisation.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2977385103efa834
+  t_family_planning:
+    file: audio/t_family_planning.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: a8f8673fba5edffc
+  c_baby_temp:
+    file: audio/c_baby_temp.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 35d6fda2f9a59b65
+  tfp_fertility:
+    file: audio/tfp_fertility.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 469115d0e7d2b108
+  tfp_spacing:
+    file: audio/tfp_spacing.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 4ed21f719d3ce358
+  tfp_methods:
+    file: audio/tfp_methods.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 4d4d1d620a023156
+  tfp_iucd:
+    file: audio/tfp_iucd.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0cbb03b03aff2725
+  tfp_complete:
+    file: audio/tfp_complete.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 673a1c59d7e50e8c
+  tfp_free:
+    file: audio/tfp_free.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: b8a5651e7250fb00
+  tim_m1:
+    file: audio/tim_m1.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d7e5effda7c9b723
+  tim_birth:
+    file: audio/tim_birth.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 217b370f4a652f7c
+  tim_visits:
+    file: audio/tim_visits.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: a9b5a67fcdaa37f5
+  tim_m2:
+    file: audio/tim_m2.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: cede7a6ed0f24b46
+  tim_m3:
+    file: audio/tim_m3.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 047af2d68e1bc268
+  tim_keep:
+    file: audio/tim_keep.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 347e1b58cd7c901d
+  tim_states:
+    file: audio/tim_states.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: ae499115f75f3c4c
+  q_birth_vaccines_l:
+    file: audio/q_birth_vaccines_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: a03f544e406d43e2
+  q_next_vaccines_l:
+    file: audio/q_next_vaccines_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: a0aed2ab0b1f5161
+  q_spacing_l:
+    file: audio/q_spacing_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: f3dea525c0765b41
+  q_birth_vaccines_a:
+    file: audio/q_birth_vaccines_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 217b370f4a652f7c
+  q_fp_methods_l:
+    file: audio/q_fp_methods_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 69bc478da9fa266f
+  q_spacing_a:
+    file: audio/q_spacing_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 4ed21f719d3ce358
+  q_next_vaccines_a:
+    file: audio/q_next_vaccines_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 797fe85ffd632942
+  q_solid_food_l:
+    file: audio/q_solid_food_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3e5b75635c4358c7
+  q_hand_wash_l:
+    file: audio/q_hand_wash_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: b2357d6da8a29ffc
+  q_fp_methods_a:
+    file: audio/q_fp_methods_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: f922db20e82c7526
+  q_solid_food_a:
+    file: audio/q_solid_food_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: f67b63e1b21304f9
+  q_hand_wash_a:
+    file: audio/q_hand_wash_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 11cad444b05d0065
+  s_decider:
+    file: audio/s_decider.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: c2a0dc5d7184c9d9
+  s_decider_ask:
+    file: audio/s_decider_ask.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 76b543cf8fce804a
+  s_escort_ask:
+    file: audio/s_escort_ask.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 4569c9f8b0a97ac7
+  s_escort:
+    file: audio/s_escort.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 6c237cf8c22d9401
+  s_worker:
+    file: audio/s_worker.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 09636d16c54a21cc
+  s_facility_ask:
+    file: audio/s_facility_ask.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 1e89fc8684c264c9
+  s_worker_ask:
+    file: audio/s_worker_ask.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 35708f76dd5e2123
+  s_facility:
+    file: audio/s_facility.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: a59f5a45f05b3d07
+  s_transport:
+    file: audio/s_transport.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 386b89d194873ed9
+  s_transport_ask:
+    file: audio/s_transport_ask.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 820b27ad898a2ac3
+  s_money_ask:
+    file: audio/s_money_ask.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 04499a5ee43afef7
+  s_money:
+    file: audio/s_money.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2e302ce253546383
+  p_recall_more:
+    file: audio/p_recall_more.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 9b1e02f946b6431a
+  p_recall_missed:
+    file: audio/p_recall_missed.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: fd8a53e48c5bc4b6
+  p_recall_all:
+    file: audio/p_recall_all.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 7b696691f11a37ff
+  p_recall_ask:
+    file: audio/p_recall_ask.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: e2b0bff102a9dc5b
+  p_open_more:
+    file: audio/p_open_more.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 1b24e2625f184d89
+  p_open_ask:
+    file: audio/p_open_ask.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2e2302bfd0c49531
+  p_did_you_say:
+    file: audio/p_did_you_say.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 1808e5329e535cda
+  p_check_intro:
+    file: audio/p_check_intro.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 5cadcecddba1e1ae
+  p_yes:
+    file: audio/p_yes.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: cf80a91ab1fb2088
+  p_no:
+    file: audio/p_no.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: ffc118edf602d6fb
+  p_unsure:
+    file: audio/p_unsure.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 79e152a5fe42bff9
+  p_not_sure:
+    file: audio/p_not_sure.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 260be0c740fa90e9
+  p_done:
+    file: audio/p_done.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 35d011ee5c9a343f
+  p_plan_intro:
+    file: audio/p_plan_intro.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 9ac093b1006229b8
+  p_clarify_summary:
+    file: audio/p_clarify_summary.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 6b1ad2ffe89367fb
+  q_checkups_l:
+    file: audio/q_checkups_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 46e950891849dd48
+  p_track_intro:
+    file: audio/p_track_intro.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 57e9474376f63113
+  p_plan_playback:
+    file: audio/p_plan_playback.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 10bfbc819030b5fa
+  q_iron_l:
+    file: audio/q_iron_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0af2a38c5e1c176f
+  q_calcium_l:
+    file: audio/q_calcium_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: df1eeff47b0bd995
+  q_iron_a:
+    file: audio/q_iron_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 7dfb2230e348f866
+  q_checkups_a:
+    file: audio/q_checkups_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 43cf605492a76f49
+  q_calcium_a:
+    file: audio/q_calcium_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 4417455856a1f4d8
+  q_rest_l:
+    file: audio/q_rest_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 91f300d6d399be9d
+  q_weight_l:
+    file: audio/q_weight_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: efb1fe9979c15a4a
+  q_rest_a:
+    file: audio/q_rest_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 77efb70545892979
+  q_cost_l:
+    file: audio/q_cost_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 83cb6533a8c583dc
+  q_ride_l:
+    file: audio/q_ride_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: abbd67ada81685d7
+  q_weight_a:
+    file: audio/q_weight_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: de325e29d7939ce0
+  q_doctor_day_l:
+    file: audio/q_doctor_day_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: b974be371afa0dc9
+  q_ride_a:
+    file: audio/q_ride_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3fb1a276a62117e8
+  q_cost_a:
+    file: audio/q_cost_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: b1fcc2533d76238f
+  q_where_birth_l:
+    file: audio/q_where_birth_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 25d310131cf5e2f8
+  q_first_feed_l:
+    file: audio/q_first_feed_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: a62f0662cc6bdc2f
+  q_doctor_day_a:
+    file: audio/q_doctor_day_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: ba5a2ae816f9987e
+  q_baby_food_l:
+    file: audio/q_baby_food_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 91c6308876c66714
+  q_first_feed_a:
+    file: audio/q_first_feed_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 02ae2510496e2ac7
+  q_where_birth_a:
+    file: audio/q_where_birth_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: ac7120f83150d7c0
+  q_baby_bath_l:
+    file: audio/q_baby_bath_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: da1a4ce53b087f21
+  q_cord_l:
+    file: audio/q_cord_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 77523544a613ddc0
+  q_baby_food_a:
+    file: audio/q_baby_food_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0a04214f52b1e8c8
+  q_cord_a:
+    file: audio/q_cord_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3d331a0e2e1f3a84
+  q_baby_bath_a:
+    file: audio/q_baby_bath_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: c62bdfe9e3836a96
+  q_small_baby_l:
+    file: audio/q_small_baby_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 41c9e0aaa3247e9e
+  out_preg_urgent:
+    file: audio/out_preg_urgent.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0a9f2bd137ac8350
+  out_mother_urgent:
+    file: audio/out_mother_urgent.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 61a1d1441203d8cf
+  q_small_baby_a:
+    file: audio/q_small_baby_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 9f7084635fc3b3a0
+  out_newborn_urgent:
+    file: audio/out_newborn_urgent.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 4ec8a8ec164b1a88
+  out_ask:
+    file: audio/out_ask.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 63d78b23e1341c63
+  pp_bleeding_l:
+    file: audio/pp_bleeding_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 862b0f35fa1ab418
+  pp_bleeding_a:
+    file: audio/pp_bleeding_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 524d62cd8578758d
+  pp_bleeding_t:
+    file: audio/pp_bleeding_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 12c1a6eeb2f97e74
+  pp_fever_l:
+    file: audio/pp_fever_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: eb6fd6ee7e1c46a7
+  out_none:
+    file: audio/out_none.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: a2b0fb570ddddb78
+  pp_fits_l:
+    file: audio/pp_fits_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 6e61ef693e4536e8
+  pp_fever_t:
+    file: audio/pp_fever_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2a63f3f2e1d3b755
+  pp_fever_a:
+    file: audio/pp_fever_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: e80ab7aaea845cd4
+  pp_fits_a:
+    file: audio/pp_fits_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 6942f7d9b773f070
+  pp_fits_t:
+    file: audio/pp_fits_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: f309a00dca1fcdb6
+  pp_headache_l:
+    file: audio/pp_headache_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: c000ef052cfdd7f9
+  pp_breathing_l:
+    file: audio/pp_breathing_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 068ad1e5c4b478af
+  pp_headache_t:
+    file: audio/pp_headache_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2954c783a4c54539
+  pp_headache_a:
+    file: audio/pp_headache_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 91937c2328d865e0
+  pp_breathing_t:
+    file: audio/pp_breathing_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d1d477025d907d20
+  pp_calf_l:
+    file: audio/pp_calf_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 71b257e3536e430f
+  pp_breathing_a:
+    file: audio/pp_breathing_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 7da770ac97c15bbe
+  nb_feed_l:
+    file: audio/nb_feed_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 92f48e79aee947f7
+  pp_calf_t:
+    file: audio/pp_calf_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: bf5632001fe72538
+  pp_calf_a:
+    file: audio/pp_calf_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3c392911fec469fe
+  nb_fits_l:
+    file: audio/nb_fits_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 35072afbef85723a
+  nb_feed_a:
+    file: audio/nb_feed_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3faf45b1ab835f97
+  nb_feed_t:
+    file: audio/nb_feed_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 44471a7c1862fb43
+  nb_fits_a:
+    file: audio/nb_fits_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: eb8bee5bb265c3e5
+  nb_breathing_l:
+    file: audio/nb_breathing_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d731dbe8f28c30c1
+  nb_fits_t:
+    file: audio/nb_fits_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 17faecadad8f4c98
+  nb_breathing_a:
+    file: audio/nb_breathing_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 380e09da24219a3a
+  nb_chest_l:
+    file: audio/nb_chest_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: e4ff4d2ff89198bd
+  nb_breathing_t:
+    file: audio/nb_breathing_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 975724541e12dfcc
+  nb_chest_a:
+    file: audio/nb_chest_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: f0d6cd465d3db4bd
+  nb_chest_t:
+    file: audio/nb_chest_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 6f905f06572e85e4
+  nb_hot_l:
+    file: audio/nb_hot_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 61da9b44cc2d780c
+  nb_hot_a:
+    file: audio/nb_hot_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: dc919a1d7a55c4c4
+  nb_cold_l:
+    file: audio/nb_cold_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: b1603fa3df844932
+  nb_hot_t:
+    file: audio/nb_hot_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: eb1e41aeb8c47b99
+  nb_cold_a:
+    file: audio/nb_cold_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 1655772ee6cbc02b
+  nb_movement_l:
+    file: audio/nb_movement_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 1f4810c21875b44f
+  nb_cold_t:
+    file: audio/nb_cold_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: c8287eda3449a372
+  nb_movement_a:
+    file: audio/nb_movement_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0c9ef3dfad0e3a25
+  nb_yellow_l:
+    file: audio/nb_yellow_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2efb84c823b3f0bd
+  nb_movement_t:
+    file: audio/nb_movement_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: cc4c3775bc86042b
+  bleeding_l:
+    file: audio/bleeding_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: cb9dc033179cbc03
+  nb_yellow_a:
+    file: audio/nb_yellow_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: beda59d91e1da9b0
+  bleeding_t:
+    file: audio/bleeding_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: bff8606418e9d38b
+  nb_yellow_t:
+    file: audio/nb_yellow_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0f8244b4939da263
+  bleeding_a:
+    file: audio/bleeding_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 70aef04da57bb05f
+  breathless_l:
+    file: audio/breathless_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 411ca3adbdc10959
+  fever_l:
+    file: audio/fever_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d7d3b9365f75b909
+  breathless_a:
+    file: audio/breathless_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 1f16cc29c07bc452
+  breathless_t:
+    file: audio/breathless_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2367d52568bb3ffa
+  fever_t:
+    file: audio/fever_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 4535e1717b1a5a3d
+  headache_l:
+    file: audio/headache_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 012372a88f884a52
+  fever_a:
+    file: audio/fever_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 49a18f1a11a1092b
+  fits_l:
+    file: audio/fits_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 6e61ef693e4536e8
+  headache_t:
+    file: audio/headache_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3606f2c089f36482
+  headache_a:
+    file: audio/headache_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: e58f2ae9aec458ad
+  fits_t:
+    file: audio/fits_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d167e5d743e0d464
+  swelling_l:
+    file: audio/swelling_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: b89d2af6eb4dc44c
+  fits_a:
+    file: audio/fits_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 9221e92c37bfa35b
+  early_pains_l:
+    file: audio/early_pains_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: c0dce97863778191
+  swelling_t:
+    file: audio/swelling_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 4f0040e7fb28b743
+  swelling_a:
+    file: audio/swelling_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 7f2594af17d8a098
+  movement_l:
+    file: audio/movement_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 582fac5cc9fa766d
+  early_pains_t:
+    file: audio/early_pains_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 797f9d491ab6ce6e
+  early_pains_a:
+    file: audio/early_pains_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d2a4fb43c56c9498
+  movement_t:
+    file: audio/movement_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 32af641dd04200bf
+  movement_a:
+    file: audio/movement_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 07b17639ae8f8333
+  waters_l:
+    file: audio/waters_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0a8dafec36c8ad54
+  long_labour_l:
+    file: audio/long_labour_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: cdf8a4fd2bb6d2a7
+  waters_t:
+    file: audio/waters_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: ecb5aa5f3b1406da
+  waters_a:
+    file: audio/waters_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3d77dae5957e0ba4
+  long_labour_a:
+    file: audio/long_labour_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 9282a031657ff948
+  birth_bleeding_l:
+    file: audio/birth_bleeding_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 8e6ed2055ef6a6bd
+  long_labour_t:
+    file: audio/long_labour_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: eb85e77d6d2e4c5f
+  birth_bleeding_a:
+    file: audio/birth_bleeding_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 1b146432657f5e29
+  pp_breast_l:
+    file: audio/pp_breast_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 9030563bf4ff7fca
+  birth_bleeding_t:
+    file: audio/birth_bleeding_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 49ea26f28025ee5f
+  pp_breast_t:
+    file: audio/pp_breast_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 248bd219d1759e4a
+  pp_urine_l:
+    file: audio/pp_urine_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 77f61ff2f340e4f5
+  pp_breast_a:
+    file: audio/pp_breast_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: c65533ddd333ebc5
+  pp_urine_t:
+    file: audio/pp_urine_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: ee273b327f3bb791
+  pp_urine_a:
+    file: audio/pp_urine_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: e76b2968a374365b
+  pp_wound_l:
+    file: audio/pp_wound_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: e72f630685bcee3e
+  pp_wound_t:
+    file: audio/pp_wound_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d0de31de3b02b889
+  pp_discharge_l:
+    file: audio/pp_discharge_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: aee0d0d5679295ed
+  pp_wound_a:
+    file: audio/pp_wound_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3a87132025ba69ed
+  pp_discharge_t:
+    file: audio/pp_discharge_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 5d4adcd8ad592bfc
+  nb_eyes_l:
+    file: audio/nb_eyes_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 04976d079e727d6a
+  pp_discharge_a:
+    file: audio/pp_discharge_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3b118f44b5270827
+  nb_eyes_t:
+    file: audio/nb_eyes_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0382db792f20f767
+  nb_eyes_a:
+    file: audio/nb_eyes_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 4c5b0191525ba3b4
+  nb_cord_l:
+    file: audio/nb_cord_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2a9b6400a0db5488
+  nb_cord_t:
+    file: audio/nb_cord_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: ab20cffb5bc741fa
+  nb_cord_a:
+    file: audio/nb_cord_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d65a1ed613403ac0
+  nb_mouth_l:
+    file: audio/nb_mouth_l.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 37b1af9466d4e60a
+  nb_mouth_t:
+    file: audio/nb_mouth_t.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3baed51aa1c95516
+  nb_mouth_a:
+    file: audio/nb_mouth_a.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 435a221f3016d98e
+  out_mother_soon:
+    file: audio/out_mother_soon.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 66b5ac40d6983b84
+  t_pregnancy_care:
+    file: audio/t_pregnancy_care.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: b611607456aa74ca
+  out_newborn_soon:
+    file: audio/out_newborn_soon.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 216c287dffba57b2
+  t_first_pregnancy:
+    file: audio/t_first_pregnancy.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 8240b7866fae6179
+  t_anaemia:
+    file: audio/t_anaemia.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 7c1ce07239758f10
+  t_diabetes:
+    file: audio/t_diabetes.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 364e7f66cc359eca
+  t_entitlements:
+    file: audio/t_entitlements.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 7d98926f4aa3a090
+  t_after_birth_care:
+    file: audio/t_after_birth_care.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 28b3cd27ccd8b1b6
+  tc_bp:
+    file: audio/tc_bp.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: ada27a2d03c88575
+  tc_tt:
+    file: audio/tc_tt.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: e665ca4ef043dbe1
+  tc_register:
+    file: audio/tc_register.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: eab73762115135be
+  tc_rest:
+    file: audio/tc_rest.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 77efb70545892979
+  tc_calcium:
+    file: audio/tc_calcium.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: ddda5d1d9c1c87fc
+  tc_iron:
+    file: audio/tc_iron.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: d0293e7aa01e138a
+  tc_salt:
+    file: audio/tc_salt.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2624d36c9e3cd509
+  tc_family:
+    file: audio/tc_family.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 861e3c6c5d477119
+  tc_prepare:
+    file: audio/tc_prepare.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: acecd45cd962b192
+  tf_warning:
+    file: audio/tf_warning.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3d9e1d4e00d9f245
+  tf_inform:
+    file: audio/tf_inform.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 1b33cc6d79fcd108
+  tf_husband:
+    file: audio/tf_husband.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 559f909845ff989e
+  ta_food:
+    file: audio/ta_food.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 40d67de3bd367bc2
+  ta_tablet:
+    file: audio/ta_tablet.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: be001c87d8826c3d
+  ta_after:
+    file: audio/ta_after.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 52160d3b7896c947
+  td_food:
+    file: audio/td_food.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 8efce9573cf49025
+  td_walk:
+    file: audio/td_walk.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: e7e1786f3413af64
+  td_test:
+    file: audio/td_test.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 439ea12654903224
+  te_transport:
+    file: audio/te_transport.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 3fb1a276a62117e8
+  td_after:
+    file: audio/td_after.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: b682cafa63e018a1
+  te_free:
+    file: audio/te_free.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: f0b0b87cff7de90a
+  tb_visits:
+    file: audio/tb_visits.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 0efd443a417e6e4e
+  te_baby:
+    file: audio/te_baby.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 796396b76ca935cd
+  te_jsy:
+    file: audio/te_jsy.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 45f404d7fabfb2f3
+  tb_tablets:
+    file: audio/tb_tablets.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 58fe50445aa4d5d3
+  tb_pad:
+    file: audio/tb_pad.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 057afb51da603bd5
+  tb_asha:
+    file: audio/tb_asha.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 2129dd5702841595
+  tb_milk:
+    file: audio/tb_milk.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 60254d7a69958d27
+  tb_sick:
+    file: audio/tb_sick.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 9bb4ce0f81cce98d
+  tb_warm:
+    file: audio/tb_warm.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: 7eac32faf5f647d8
+  tb_someone:
+    file: audio/tb_someone.mp3
+    voice:
+      kind: synthetic
+      by: elevenlabs:eleven_v3:EXAVITQu4vr4xnSDxMaL
+    of: eb95a2a9686202cb

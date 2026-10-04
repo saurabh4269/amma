@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "packs": "tsx ../../packages/pack-tools/src/cli.ts build ../../packs/content/in-mch public/packs/bundle.json ../../packs/lang/en ../../packs/lang/hi ../../packs/lang/mr",
+    "packs": "tsx ../../packages/pack-tools/src/cli.ts build ../../packs/content/in-mch public/packs/bundle.json ../../packs/lang/en ../../packs/lang/hi ../../packs/lang/mr ../../packs/lang/fr ../../packs/lang/sw ../../packs/lang/ha ../../packs/lang/wo",
     "places": "tsx ../../packages/place-tools/src/cli.ts ../../data/health-transfer public/packs/places.json ../../packs/place/gm.yaml ../../packs/place/sn.yaml ../../packs/place/in-mh.yaml",
     "dev": "vite",
     "build": "vite build",

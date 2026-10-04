@@ -46,7 +46,7 @@ RUN mkdir -p /data && chown node:node /data
 VOLUME /data
 
 ENV CONTENT_PACK=/app/packs/content/in-mch \
-    LANGUAGE_PACKS=/app/packs/lang/en,/app/packs/lang/hi,/app/packs/lang/mr \
+    LANGUAGE_PACKS=/app/packs/lang/en,/app/packs/lang/hi,/app/packs/lang/mr,/app/packs/lang/fr,/app/packs/lang/sw,/app/packs/lang/ha,/app/packs/lang/wo \
     DATABASE_FILE=/data/amma.sqlite \
     PORT=8080
 
