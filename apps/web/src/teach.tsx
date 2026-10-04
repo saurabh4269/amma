@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import type { Profile } from '@yaay/schema';
-import { meaning, signsFor, type PackIndex } from '@yaay/engine';
+import type { Profile } from '@amma/schema';
+import { meaning, signsFor, type PackIndex } from '@amma/engine';
 import type { Words } from './pack.ts';
 import { addExample, embedAudio, loadExamples, startRecording, voiceAvailable, type Recording } from './voice.ts';
 

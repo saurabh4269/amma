@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks';
-import type { LanguagePack, Phase } from '@yaay/schema';
-import type { PackIndex } from '@yaay/engine';
+import type { LanguagePack, Phase } from '@amma/schema';
+import type { PackIndex } from '@amma/engine';
 import type { Words } from './pack.ts';
 
 interface Props {

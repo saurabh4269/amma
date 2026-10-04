@@ -1,8 +1,8 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse } from 'yaml';
-import { ContentPack, LanguagePack } from '@yaay/schema';
-import { validatePack, type Problem } from '@yaay/engine';
+import { ContentPack, LanguagePack } from '@amma/schema';
+import { validatePack, type Problem } from '@amma/engine';
 
 /** Read every YAML file under a pack folder and merge them: lists are joined, maps are merged. */
 export function readPackFolder(dir: string): Record<string, unknown> {

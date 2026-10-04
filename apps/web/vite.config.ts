@@ -11,8 +11,8 @@ export default defineConfig({
       // Everything the session needs is precached, so it runs with no network after the first visit.
       workbox: { globPatterns: ['**/*.{js,mjs,css,html,json,svg,png,opus,mp3,webmanifest,wasm,onnx}'], maximumFileSizeToCacheInBytes: 60 * 1024 * 1024 },
       manifest: {
-        name: 'Yaay',
-        short_name: 'Yaay',
+        name: 'AMMA',
+        short_name: 'AMMA',
         description: 'A voice companion for pregnancy and the weeks after birth.',
         display: 'standalone',
         start_url: '.',

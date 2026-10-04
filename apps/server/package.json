@@ -1,5 +1,5 @@
 {
-  "name": "@yaay/server",
+  "name": "@amma/server",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -8,10 +8,10 @@
   },
   "dependencies": {
     "@fastify/formbody": "^8.0.0",
-    "@yaay/channel-text": "workspace:*",
-    "@yaay/engine": "workspace:*",
-    "@yaay/pack-tools": "workspace:*",
-    "@yaay/schema": "workspace:*",
+    "@amma/channel-text": "workspace:*",
+    "@amma/engine": "workspace:*",
+    "@amma/pack-tools": "workspace:*",
+    "@amma/schema": "workspace:*",
     "fastify": "^5.0.0"
   }
 }

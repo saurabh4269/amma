@@ -1,4 +1,4 @@
-# Plan v3: "Yaay" (working name)
+# Plan v3: AMMA (earlier working name: "Yaay")
 
 A voice companion that gets a pregnant woman and her household to recall the danger signs, agree in advance what they will do, and act on it. It runs offline on the household smartphone and reaches her basic phone by SMS, WhatsApp and calls.
 

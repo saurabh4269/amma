@@ -1,4 +1,4 @@
-import type { Profile } from '@yaay/schema';
+import type { Profile } from '@amma/schema';
 import type { PackIndex } from './index-pack.ts';
 
 /**

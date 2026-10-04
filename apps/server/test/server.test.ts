@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { indexPack } from '@yaay/engine';
-import { referenceLanguage } from '@yaay/pack-tools';
+import { indexPack } from '@amma/engine';
+import { referenceLanguage } from '@amma/pack-tools';
 import { fixture } from '../../../packages/engine/test/fixture.ts';
 import { buildApp } from '../src/app.ts';
 import { SqliteStore } from '../src/store.ts';

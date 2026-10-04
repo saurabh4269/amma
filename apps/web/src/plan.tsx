@@ -1,5 +1,5 @@
-import type { PlanValue, Profile } from '@yaay/schema';
-import type { Effect, PackIndex } from '@yaay/engine';
+import type { PlanValue, Profile } from '@amma/schema';
+import type { Effect, PackIndex } from '@amma/engine';
 import type { Words } from './pack.ts';
 
 export function planText(v: PlanValue): string {

@@ -1,5 +1,5 @@
 {
-  "name": "@yaay/web",
+  "name": "@amma/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,10 +11,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@yaay/engine": "workspace:*",
-    "@yaay/matcher": "workspace:*",
-    "@yaay/schema": "workspace:*",
-    "@yaay/speech": "workspace:*",
+    "@amma/engine": "workspace:*",
+    "@amma/matcher": "workspace:*",
+    "@amma/schema": "workspace:*",
+    "@amma/speech": "workspace:*",
     "idb-keyval": "^6.2.1",
     "onnxruntime-web": "^1.30.0",
     "preact": "^10.26.0"

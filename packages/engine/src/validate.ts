@@ -1,4 +1,4 @@
-import { CLINICAL_KINDS, PROMPT_ROLES, type CardKind, type ContentPack } from '@yaay/schema';
+import { CLINICAL_KINDS, PROMPT_ROLES, type CardKind, type ContentPack } from '@amma/schema';
 import { liveRows, nextAttribute, raisedSigns, type Attrs } from './clarifier.ts';
 import { indexPack, type PackIndex } from './index-pack.ts';
 import { checkTable } from './rules.ts';

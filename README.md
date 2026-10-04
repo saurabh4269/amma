@@ -1,4 +1,4 @@
-# Yaay (working name)
+# AMMA
 
 An offline voice companion for pregnancy and the six weeks after birth. A woman and her household recall the danger signs, agree what they will do, and act on it. See `docs/PLAN.md` for what and why, and `docs/BUILD.md` for how.
 
@@ -38,7 +38,7 @@ Server (needs a Twilio account):
 
 ```
 CONTENT_PACK=packs/content/in-mch LANGUAGE_PACKS=packs/lang/en,packs/lang/hi,packs/lang/mr \
-TWILIO_AUTH_TOKEN=... PUBLIC_URL=https://your-host pnpm --filter @yaay/server start
+TWILIO_AUTH_TOKEN=... PUBLIC_URL=https://your-host pnpm --filter @amma/server start
 ```
 
 ## The safety rule

@@ -1,4 +1,4 @@
-import type { Facility, FacilityLevel, PlacePack } from '@yaay/schema';
+import type { Facility, FacilityLevel, PlacePack } from '@amma/schema';
 
 const R_KM = 6371.0088;
 const rad = (d: number) => (d * Math.PI) / 180;

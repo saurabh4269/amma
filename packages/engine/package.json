@@ -1,8 +1,8 @@
 {
-  "name": "@yaay/engine",
+  "name": "@amma/engine",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "exports": { ".": "./src/index.ts" },
-  "dependencies": { "@yaay/schema": "workspace:*" }
+  "dependencies": { "@amma/schema": "workspace:*" }
 }

@@ -1,12 +1,12 @@
 {
-  "name": "yaay",
+  "name": "amma",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.24.0",
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc -p .",
-    "packs:validate": "pnpm --filter @yaay/pack-tools exec tsx src/cli.ts validate packs/content/in-mch"
+    "packs:validate": "pnpm --filter @amma/pack-tools exec tsx src/cli.ts validate packs/content/in-mch"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { LanguagePack, Profile } from '@yaay/schema';
-import { indexPack } from '@yaay/engine';
+import { LanguagePack, Profile } from '@amma/schema';
+import { indexPack } from '@amma/engine';
 import { fixture } from '../../engine/test/fixture.ts';
 import { begin, parseContact, receive, type Turn } from '../src/index.ts';
 

@@ -1,4 +1,4 @@
-import type { ClarifierRow } from '@yaay/schema';
+import type { ClarifierRow } from '@amma/schema';
 import type { PackIndex } from './index-pack.ts';
 
 export type Attrs = Record<string, string>;

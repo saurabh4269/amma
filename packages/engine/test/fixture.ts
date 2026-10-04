@@ -1,4 +1,4 @@
-import { ContentPack } from '@yaay/schema';
+import { ContentPack } from '@amma/schema';
 
 /**
  * A synthetic pack for engine tests. The wording is placeholder text and the

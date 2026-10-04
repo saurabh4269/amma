@@ -1,10 +1,10 @@
 import { get, set } from 'idb-keyval';
-import type { Heard } from '@yaay/engine';
-import type { Embedder, Example, OrtLike } from '@yaay/speech';
+import type { Heard } from '@amma/engine';
+import type { Embedder, Example, OrtLike } from '@amma/speech';
 
 const SAMPLE_RATE = 16_000;
 /** The speech code and the ONNX runtime are loaded only when the microphone is first used. */
-const speech = () => import('@yaay/speech');
+const speech = () => import('@amma/speech');
 
 /**
  * Voice on the phone itself. Her speech becomes a vector and is compared with examples

@@ -1,5 +1,5 @@
-import { indexPack } from '@yaay/engine';
-import { loadContentPack, loadLanguagePack, referenceLanguage } from '@yaay/pack-tools';
+import { indexPack } from '@amma/engine';
+import { loadContentPack, loadLanguagePack, referenceLanguage } from '@amma/pack-tools';
 import { buildApp } from './app.ts';
 import { SqliteStore } from './store.ts';
 
@@ -20,7 +20,7 @@ for (const dir of (process.env.LANGUAGE_PACKS ?? '').split(',').filter(Boolean))
   languages.push(lp.pack);
 }
 
-const store = new SqliteStore(process.env.DATABASE_FILE ?? 'yaay.sqlite');
+const store = new SqliteStore(process.env.DATABASE_FILE ?? 'amma.sqlite');
 const retentionDays = Number(process.env.RETENTION_DAYS ?? 400);
 setInterval(() => store.expire(new Date(Date.now() - retentionDays * 86_400_000).toISOString()), 3_600_000).unref();
 

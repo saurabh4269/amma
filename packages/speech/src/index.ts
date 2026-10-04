@@ -1,5 +1,5 @@
 import { LOG_MEL_DIMS, whisperLogMel } from './logmel.ts';
-import type { Scored } from '@yaay/matcher';
+import type { Scored } from '@amma/matcher';
 
 /**
  * Speech to one vector, with no transcript: Whisper's log-mel features, the encoder only,

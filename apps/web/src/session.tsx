@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import type { PlacePack, PlanSlot, PlanValue, Profile } from '@yaay/schema';
-import { createSession, parseMeaning, step, suggestFacilities, type Near, type Effect, type Event, type Heard, type Option, type PackIndex, type SessionState } from '@yaay/engine';
-import { matchText } from '@yaay/matcher';
+import type { PlacePack, PlanSlot, PlanValue, Profile } from '@amma/schema';
+import { createSession, parseMeaning, step, suggestFacilities, type Near, type Effect, type Event, type Heard, type Option, type PackIndex, type SessionState } from '@amma/engine';
+import { matchText } from '@amma/matcher';
 import type { Words } from './pack.ts';
 import { PlanView, renderSms } from './plan.tsx';
 import { Speaker } from './speaker.ts';

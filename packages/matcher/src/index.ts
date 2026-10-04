@@ -1,4 +1,4 @@
-import type { Heard } from '@yaay/engine';
+import type { Heard } from '@amma/engine';
 
 /** Lowercase, strip accents and punctuation, collapse spaces. Works for Latin and Devanagari text. */
 export function normalise(text: string): string {

@@ -1,8 +1,8 @@
 {
-  "name": "@yaay/channel-text",
+  "name": "@amma/channel-text",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "exports": { ".": "./src/index.ts" },
-  "dependencies": { "@yaay/engine": "workspace:*", "@yaay/matcher": "workspace:*", "@yaay/schema": "workspace:*" }
+  "dependencies": { "@amma/engine": "workspace:*", "@amma/matcher": "workspace:*", "@amma/schema": "workspace:*" }
 }

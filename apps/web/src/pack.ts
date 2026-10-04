@@ -1,5 +1,5 @@
-import type { ContentPack, LanguagePack, PlacePack } from '@yaay/schema';
-import { indexPack, type PackIndex } from '@yaay/engine';
+import type { ContentPack, LanguagePack, PlacePack } from '@amma/schema';
+import { indexPack, type PackIndex } from '@amma/engine';
 import { UI_DEFAULT, type UiKey } from './ui.ts';
 
 export interface Bundle {

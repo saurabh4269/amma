@@ -1,6 +1,6 @@
 import { DatabaseSync } from 'node:sqlite';
-import type { Profile } from '@yaay/schema';
-import type { Conversation } from '@yaay/channel-text';
+import type { Profile } from '@amma/schema';
+import type { Conversation } from '@amma/channel-text';
 
 /** Everything the server keeps about one phone number. No message text and no audio is stored. */
 export interface User {

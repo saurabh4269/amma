@@ -1,7 +1,7 @@
-import type { LanguagePack, PlanSlot, PlanValue } from '@yaay/schema';
-import { CHOICE, createSession, step, type Effect, type Event, type Option, type PackIndex, type SessionState } from '@yaay/engine';
-import { matchText } from '@yaay/matcher';
-import type { Profile } from '@yaay/schema';
+import type { LanguagePack, PlanSlot, PlanValue } from '@amma/schema';
+import { CHOICE, createSession, step, type Effect, type Event, type Option, type PackIndex, type SessionState } from '@amma/engine';
+import { matchText } from '@amma/matcher';
+import type { Profile } from '@amma/schema';
 
 /**
  * Runs the engine over a channel that only carries text: SMS, or typed WhatsApp.

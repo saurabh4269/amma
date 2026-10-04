@@ -1,8 +1,8 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import formbody from '@fastify/formbody';
-import { Profile, type LanguagePack } from '@yaay/schema';
-import type { PackIndex } from '@yaay/engine';
-import { begin, receive, REPEAT, type Turn } from '@yaay/channel-text';
+import { Profile, type LanguagePack } from '@amma/schema';
+import type { PackIndex } from '@amma/engine';
+import { begin, receive, REPEAT, type Turn } from '@amma/channel-text';
 import type { Store, User } from './store.ts';
 import { twiml, validSignature, voiceTwiml } from './twilio.ts';
 

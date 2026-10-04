@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
-import { ContentPack, Profile } from '@yaay/schema';
+import { ContentPack, Profile } from '@amma/schema';
 import {
   CHOICE, checkTable, createSession, indexPack, meaning, nextAttribute, outcome, raisedSigns, signFact, step, validatePack,
   type Effect, type Event, type SessionState,

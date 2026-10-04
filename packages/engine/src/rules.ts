@@ -1,4 +1,4 @@
-import { LEVELS, type Cond, type Level, type RuleRow, type RuleTable, type SignGroup } from '@yaay/schema';
+import { LEVELS, type Cond, type Level, type RuleRow, type RuleTable, type SignGroup } from '@amma/schema';
 import type { PackIndex } from './index-pack.ts';
 
 export type Facts = Record<string, string>;

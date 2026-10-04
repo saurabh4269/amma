@@ -29,37 +29,37 @@ importers:
 
   apps/server:
     dependencies:
+      '@amma/channel-text':
+        specifier: workspace:*
+        version: link:../../packages/channel-text
+      '@amma/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
+      '@amma/pack-tools':
+        specifier: workspace:*
+        version: link:../../packages/pack-tools
+      '@amma/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
       '@fastify/formbody':
         specifier: ^8.0.0
         version: 8.0.2
-      '@yaay/channel-text':
-        specifier: workspace:*
-        version: link:../../packages/channel-text
-      '@yaay/engine':
-        specifier: workspace:*
-        version: link:../../packages/engine
-      '@yaay/pack-tools':
-        specifier: workspace:*
-        version: link:../../packages/pack-tools
-      '@yaay/schema':
-        specifier: workspace:*
-        version: link:../../packages/schema
       fastify:
         specifier: ^5.0.0
         version: 5.12.5
 
   apps/web:
     dependencies:
-      '@yaay/engine':
+      '@amma/engine':
         specifier: workspace:*
         version: link:../../packages/engine
-      '@yaay/matcher':
+      '@amma/matcher':
         specifier: workspace:*
         version: link:../../packages/matcher
-      '@yaay/schema':
+      '@amma/schema':
         specifier: workspace:*
         version: link:../../packages/schema
-      '@yaay/speech':
+      '@amma/speech':
         specifier: workspace:*
         version: link:../../packages/speech
       idb-keyval:
@@ -84,34 +84,34 @@ importers:
 
   packages/channel-text:
     dependencies:
-      '@yaay/engine':
+      '@amma/engine':
         specifier: workspace:*
         version: link:../engine
-      '@yaay/matcher':
+      '@amma/matcher':
         specifier: workspace:*
         version: link:../matcher
-      '@yaay/schema':
+      '@amma/schema':
         specifier: workspace:*
         version: link:../schema
 
   packages/engine:
     dependencies:
-      '@yaay/schema':
+      '@amma/schema':
         specifier: workspace:*
         version: link:../schema
 
   packages/matcher:
     dependencies:
-      '@yaay/engine':
+      '@amma/engine':
         specifier: workspace:*
         version: link:../engine
 
   packages/pack-tools:
     dependencies:
-      '@yaay/engine':
+      '@amma/engine':
         specifier: workspace:*
         version: link:../engine
-      '@yaay/schema':
+      '@amma/schema':
         specifier: workspace:*
         version: link:../schema
       yaml:
@@ -120,10 +120,10 @@ importers:
 
   packages/place-tools:
     dependencies:
-      '@yaay/engine':
+      '@amma/engine':
         specifier: workspace:*
         version: link:../engine
-      '@yaay/schema':
+      '@amma/schema':
         specifier: workspace:*
         version: link:../schema
       csv-parse:
@@ -147,7 +147,7 @@ importers:
 
   packages/speech:
     dependencies:
-      '@yaay/matcher':
+      '@amma/matcher':
         specifier: workspace:*
         version: link:../matcher
     devDependencies:

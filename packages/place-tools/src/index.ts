@@ -4,8 +4,8 @@ import { parse as parseCsv } from 'csv-parse/sync';
 import ExcelJS from 'exceljs';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
-import { Facility, FacilityLevel, Id, PlacePack, PlaceSource } from '@yaay/schema';
-import { haversineKm } from '@yaay/engine';
+import { Facility, FacilityLevel, Id, PlacePack, PlaceSource } from '@amma/schema';
+import { haversineKm } from '@amma/engine';
 
 /**
  * A place pack is built from a small config that names the source files and says how each

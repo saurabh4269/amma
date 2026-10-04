@@ -1,4 +1,4 @@
-import type { Card, ContentPack, Sign, SignGroup, Phase, PromptRole } from '@yaay/schema';
+import type { Card, ContentPack, Sign, SignGroup, Phase, PromptRole } from '@amma/schema';
 
 /** A content pack with lookups built once. The engine only ever reads from this. */
 export interface PackIndex {

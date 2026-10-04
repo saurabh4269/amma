@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import { Profile } from '@yaay/schema';
+import { Profile } from '@amma/schema';
 import { ClinicCard } from './clinic-card.tsx';
 import { loadBundle, Words, type Loaded } from './pack.ts';
 import { Session } from './session.tsx';
@@ -16,7 +16,7 @@ type Screen =
   | { at: 'card'; profile: Profile; pin?: string }
   | { at: 'teach'; profile: Profile; pin?: string };
 
-const LANG_KEY = 'yaay.lang';
+const LANG_KEY = 'amma.lang';
 
 export function App() {
   const [loaded, setLoaded] = useState<Loaded>();
@@ -52,7 +52,7 @@ export function App() {
       return (
         <main class="page">
           <header class="top">
-            <h1>Yaay</h1>
+            <h1>AMMA</h1>
             <select
               aria-label={words.ui('language')}
               value={words.lang.id}

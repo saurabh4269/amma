@@ -1,4 +1,4 @@
-import type { Level, Phase, PlanSlot, PlanValue, Profile, Sign } from '@yaay/schema';
+import type { Level, Phase, PlanSlot, PlanValue, Profile, Sign } from '@amma/schema';
 import { nextAttribute, raisedSigns, summaryCards, type Attrs } from './clarifier.ts';
 import { meaning, parseMeaning, prompt, signsFor, type PackIndex } from './index-pack.ts';
 import { outcome, signFact, type Facts } from './rules.ts';

@@ -1,5 +1,5 @@
 import { del, get, set } from 'idb-keyval';
-import type { Profile } from '@yaay/schema';
+import type { Profile } from '@amma/schema';
 
 /** What is visible without the PIN: enough to list records, nothing about her health. */
 export interface ProfileMeta {
