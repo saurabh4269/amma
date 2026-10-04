@@ -8,6 +8,7 @@ defaultStatus: machine_draft
 
 templates:
   carry_over: "Prochaine visite au centre de santé : {next_visit}. Signes de danger à surveiller : {signs}. Si vous en voyez un, appelez {contact} et allez à l'hôpital."
+  urgent_alert: "Signe de danger pour {name} : {signs}. Nous devons aller à {facility} maintenant. Appelez et venez, s'il vous plaît."
 
 ui:
   add_person: "Ajouter une personne"

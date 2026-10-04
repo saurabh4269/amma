@@ -8,6 +8,7 @@ defaultStatus: machine_draft
 
 templates:
   carry_over: "Zuwa asibiti na gaba: {next_visit}. Alamomin haɗari da za ki lura da su: {signs}. Idan kin ga ɗaya, ki kira {contact} ki je asibiti."
+  urgent_alert: "Alamar haɗari ga {name}: {signs}. Muna buƙatar zuwa {facility} yanzu. Don Allah a kira kuma a zo."
 
 ui:
   add_person: "Ƙara mutum"

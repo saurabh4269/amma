@@ -3,7 +3,7 @@ import type { PlacePack, PlanSlot, PlanValue, Profile } from '@amma/schema';
 import { createSession, parseMeaning, step, suggestFacilities, type Near, type Effect, type Event, type Heard, type Option, type PackIndex, type SessionState } from '@amma/engine';
 import { matchText } from '@amma/matcher';
 import type { Words } from './pack.ts';
-import { PlanView, renderSms } from './plan.tsx';
+import { alertPhones, PlanView, renderAlert, renderSms, SendText } from './plan.tsx';
 import { Speaker } from './speaker.ts';
 import { addExample, loadExamples, startRecording, understand, voiceAvailable, type Recording } from './voice.ts';
 
@@ -97,6 +97,15 @@ export function Session({ ix, words, places, profile, onDone, onQuit }: Props) {
 
       {(view.showPlan || urgent) && <PlanView ix={ix} words={words} profile={st.profile} />}
       {view.calls?.map((c) => <a class="big call" href={`tel:${c.phone}`}>📞 {words.ui('call')} {c.name}</a>)}
+      {urgent && (() => {
+        const alert = renderAlert(ix, words, st.profile, st.facts);
+        return alert ? (
+          <section class="alert">
+            <h3>{words.ui('tell_them')}</h3>
+            <SendText words={words} text={alert} phones={alertPhones(ix, st.profile)} label={words.ui('send_sms')} />
+          </section>
+        ) : null;
+      })()}
 
       {view.listen && (
         <Listen
@@ -295,11 +304,5 @@ function SlotInput({ words, places, kind, onFilled }: { words: Words; places: Pl
 }
 
 function SmsButton({ ix, words, profile, sms }: { ix: PackIndex; words: Words; profile: Profile; sms: Extract<Effect, { type: 'compose_sms' }> }) {
-  const body = renderSms(ix, words, profile, sms);
-  return (
-    <>
-      <p class="sms">{body}</p>
-      <a class="big" href={`sms:${profile.phone ?? ''}?body=${encodeURIComponent(body)}`}>✉ {words.ui('send_sms')}</a>
-    </>
-  );
+  return <SendText words={words} text={renderSms(ix, words, profile, sms)} phones={profile.phone ? [profile.phone] : []} label={words.ui('send_sms')} />;
 }

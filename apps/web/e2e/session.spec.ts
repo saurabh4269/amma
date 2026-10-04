@@ -43,11 +43,34 @@ test('a full session in Hindi: plan, recall, a "yes", the urgent outcome, and th
   await expect(page.getByText('आज बताए गए खतरे के लक्षणों में से कोई नहीं')).toHaveCount(0);
   await expect(page.locator('a.call')).toHaveAttribute('href', 'tel:9820000000');
   await expect(page.locator('a[href^="sms:9000000001"]')).toBeVisible();
+  // The message for the people in her plan names the sign, and can go by SMS, WhatsApp or be copied.
+  const alert = page.locator('.alert');
+  await expect(alert.locator('.sms')).toContainText('सिरदर्द और धुंधला दिखाई देना');
+  await expect(alert.locator('.sms')).toContainText('नूर');
+  await expect(alert.locator('a.send-sms')).toHaveAttribute('href', /^sms:9820000000\?body=/);
+  await expect(alert.locator('a.send-wa')).toHaveAttribute('href', /^https:\/\/wa\.me\/\?text=/);
+  await alert.locator('.send-copy').click();
+  await expect(alert.locator('.send-copy')).toContainText('कॉपी हो गया');
   await page.locator('button.primary').click();
 
   await page.getByText('अस्पताल के लिए कार्ड').click();
-  await expect(page.getByText('सिरदर्द और धुंधला दिखाई देना')).toBeVisible();
-  await expect(page.getByText('1 / 11')).toBeVisible(); // recalled one of eleven taught signs
+  await expect(page.locator('.sheet.urgent')).toContainText('सिरदर्द और धुंधला दिखाई देना');
+  await expect(page.getByText('1 / 11').first()).toBeVisible(); // recalled one of eleven taught signs
+  // The card can be sent as text and printed.
+  await expect(page.locator('.card .send .sms')).toContainText('सिरदर्द और धुंधला दिखाई देना');
+  await expect(page.locator('.card a.send-sms')).toBeVisible();
+  await expect(page.getByRole('button', { name: /प्रिंट करें/ })).toBeVisible();
+});
+
+test('the clinic card opens before any session and says so', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('button.big.ghost').click();
+  await page.locator('input[name=label]').fill('new');
+  await page.locator('button.primary').click();
+  await page.getByText('Card for the clinic').click();
+  await expect(page.getByText('No session yet. After the first session')).toBeVisible();
+  await expect(page.locator('.headline')).toContainText('Pregnant');
+  await expect(page.locator('.card .send .sms')).toContainText('Card for the clinic: new');
 });
 
 test('after the birth, mother and newborn signs are asked, and all "no" never says she is fine', async ({ page }) => {

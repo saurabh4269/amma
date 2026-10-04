@@ -62,3 +62,7 @@ templates:
   - id: carry_over
     slots: [next_visit, signs, contact]
     ref: "Next clinic visit: {next_visit}. Danger signs to watch for: {signs}. If you see one, call {contact} and go to the hospital."
+  # Sent to the people in her plan when she has a danger sign.
+  - id: urgent_alert
+    slots: [name, signs, facility]
+    ref: "Danger sign for {name}: {signs}. We need to go to {facility} now. Please call and come."

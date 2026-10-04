@@ -8,6 +8,7 @@ defaultStatus: machine_draft
 
 templates:
   carry_over: "Kliniki ijayo: {next_visit}. Dalili za hatari za kuangalia: {signs}. Ukiona mojawapo, mpigie simu {contact} na uende hospitali."
+  urgent_alert: "Dalili ya hatari kwa {name}: {signs}. Tunahitaji kwenda {facility} sasa. Tafadhali piga simu na uje."
 
 ui:
   add_person: "Ongeza mtu"

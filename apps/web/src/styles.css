@@ -209,3 +209,8 @@ fieldset { border: 1.5px solid var(--line); border-radius: 16px; background: var
   button, a.big { transition: transform 120ms ease; }
   button:active, a.big:active { transform: scale(0.98); }
 }
+
+.send { display: flex; flex-direction: column; gap: 12px; }
+.send .row > * { flex: 1 1 0; text-align: center; text-decoration: none; }
+.alert { display: flex; flex-direction: column; gap: 10px; }
+@media print { .no-print, .top button { display: none !important; } body { background: #fff; } }

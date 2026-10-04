@@ -9,6 +9,7 @@ defaultStatus: machine_draft
 
 templates:
   carry_over: "Wisit bi ci topp: {next_visit}. Màndarga yu raglu yi nga war a seetlu: {signs}. Boo ci gisee benn, woowal {contact} te dem loppitaan."
+  urgent_alert: "Màndarga mu raglu ci {name}: {signs}. War nanu dem {facility} léegi. Su la neexee, woote te ñëw."
 
 ui:
   add_person: "Yokk nit"
