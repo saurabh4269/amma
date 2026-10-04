@@ -13,6 +13,14 @@ Many women do reach the clinic during pregnancy, but the visit is short and they
 
 Everything AMMA says comes from official health booklets. The AI's only job is to understand what she says. It never writes advice and never decides whether she is well.
 
+<p align="center">
+  <img src="docs/images/person.png" width="205" alt="Her page: status, one Start button, clinic card, teach voice, send audio">
+  <img src="docs/images/recall.png" width="205" alt="Saying the danger signs back by voice, by typing, or by tapping a picture">
+  <img src="docs/images/check.png" width="205" alt="One question per sign with Yes, No and Not sure">
+  <img src="docs/images/clinic-card.png" width="205" alt="The card she shows the midwife">
+</p>
+<p align="center"><sub>Her page · saying the signs back · the check · the card for the clinic. Screenshots are from the running app at phone size.</sub></p>
+
 ## Try it
 
 | | |
@@ -66,6 +74,17 @@ So AMMA does three things other tools mostly do not: it makes her **recall** the
 
 **First time only: the plan.** Who decides with her, who goes with her, who her health worker is, which hospital, what transport, whether money is set aside. For the hospital, "Find places near me" suggests the nearest facilities and, separately, the nearest hospital.
 
+<table>
+<tr>
+<td width="250"><img src="docs/images/plan-places.png" width="230" alt="Find places near me, near Bansang in The Gambia"></td>
+<td>
+<b>The hospital step, near Bansang in The Gambia.</b><br><br>
+The nearest place is a minor health centre. The nearest <i>hospital</i> on the official list is a different place, and is labelled.<br><br>
+Distances say "in a straight line, not by road", because that is all the data supports. The family can pick a suggestion or type their own choice.
+</td>
+</tr>
+</table>
+
 **Every week, about five minutes:**
 
 | Step | What happens | Who decides the result |
@@ -82,6 +101,14 @@ So AMMA does three things other tools mostly do not: it makes her **recall** the
 - **A "yes" on a less urgent sign** (for example a breast problem or an infected cord): "Go to the health centre as soon as possible", with one tap to call her health worker.
 - **Any "not sure":** "Speak to your health worker today."
 - **All "no":** "None of the listed danger signs today. Problems can come without warning, so if you are worried, speak to your health worker." It never says she is fine.
+
+<table>
+<tr>
+<td align="center"><img src="docs/images/missed.png" width="215" alt="Only the signs she missed are replayed"><br><sub>She named one sign. Only the ones she missed are replayed.</sub></td>
+<td align="center"><img src="docs/images/urgent.png" width="215" alt="Urgent outcome: her plan, call buttons and the SMS"><br><sub>A "yes": the instruction, her own plan, one tap to call, and the SMS for her basic phone.</sub></td>
+<td align="center"><img src="docs/images/none-listed.png" width="215" alt="All no: none of the listed signs today, and who to ask if worried"><br><sub>All "no": it says none of the listed signs, and who to ask. It never says she is fine.</sub></td>
+</tr>
+</table>
 
 **After the birth** the same session covers six signs for the mother and eight for the baby, on the home-visit days (1, 3, 7, 14, 21, 28, 42).
 
@@ -214,6 +241,13 @@ The app shows "draft wording" and "computer-made voice, not yet checked by a spe
 
 Adding a language needs no code: a folder with the wording, example phrases and audio, checked by `pack-tools`.
 
+<p align="center">
+  <img src="docs/images/check-hindi.png" width="215" alt="The check in Hindi">
+  <img src="docs/images/teach-hindi.png" width="215" alt="Teach the phone my voice, in Hindi">
+  <img src="docs/images/newborn-check.png" width="215" alt="A newborn sign after the birth">
+</p>
+<p align="center"><sub>The check in Hindi · "teach the phone my voice", where she says each sign in her own words · a newborn question after the birth.</sub></p>
+
 ## Channels
 
 | Channel | Status |
@@ -222,6 +256,21 @@ Adding a language needs no code: a folder with the wording, example phrases and 
 | **Telegram bot** | Live. Text, buttons, voice notes (transcribed by ElevenLabs, then matched to the same fixed phrases) and audio replies. |
 | **WhatsApp and SMS** | Built and tested against simulated requests. Not live: the Twilio trial account cannot send free-text WhatsApp replies. |
 | **Phone calls, and missed call with call back** | Built and tested against simulated requests. Not live: needs a purchased number. |
+
+```mermaid
+flowchart TB
+  subgraph Phone["On her family's phone (offline)"]
+    W[Web app] --> E1[Engine] --> P1[(Content and language packs)]
+    W --> S[10 MB speech model]
+  end
+  subgraph Server["Messaging server"]
+    T[Telegram] --> E2[Same engine]
+    WA[WhatsApp / SMS / calls] --> E2
+    E2 --> P2[(Same packs)]
+  end
+  W -. "SMS, call, Bluetooth audio" .-> B[Her basic phone]
+  WA -.-> B
+```
 
 All channels run the same engine and the same cards. Server channels keep answers under the phone number, keep no message text or audio, begin with a consent message, and delete everything on "STOP".
 
@@ -320,4 +369,4 @@ The clinic finder needs facility lists built from public data that is not stored
 
 Code is Apache-2.0. Our own wording is CC BY 4.0. Quoted source text belongs to its publishers. See `NOTICE.md` for the details, including the parts that are non-commercial or all rights reserved.
 
-Built by Saurabh Gupta, IIT Bombay.
+Built by Saurabh Gupta (IIT Bombay) and Shiwani Mishra.
