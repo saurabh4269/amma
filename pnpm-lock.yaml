@@ -35,6 +35,9 @@ importers:
       '@amma/engine':
         specifier: workspace:*
         version: link:../../packages/engine
+      '@amma/matcher':
+        specifier: workspace:*
+        version: link:../../packages/matcher
       '@amma/pack-tools':
         specifier: workspace:*
         version: link:../../packages/pack-tools

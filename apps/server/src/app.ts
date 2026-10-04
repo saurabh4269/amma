@@ -2,7 +2,9 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import formbody from '@fastify/formbody';
 import { Profile, type LanguagePack } from '@amma/schema';
 import type { PackIndex } from '@amma/engine';
-import { askAside, begin, interpret, receive, REPEAT, type Turn } from '@amma/channel-text';
+import { askAside, begin, candidates, interpret, receive, REPEAT, type Turn } from '@amma/channel-text';
+import { matchText } from '@amma/matcher';
+import type { Candidate, Pick } from './llm.ts';
 import type { Store, User } from './store.ts';
 import { twiml, validSignature, voiceTwiml } from './twilio.ts';
 
@@ -27,6 +29,11 @@ export interface Config {
    * Speech to text for the web app when it is online and she has agreed to it.
    * The key for the speech service stays on the server; the browser never sees it.
    */
+  /**
+   * A language model that picks which known meaning her words are closest to, for words the phrase list
+   * does not recognise. Used on the bot, and by the web app when she has agreed. Leave out to switch it off.
+   */
+  pick?: Pick;
   speech?: {
     transcribe: (audio: Uint8Array, locale: string | undefined) => Promise<string>;
     /** Web origins allowed to call it. */
@@ -62,6 +69,7 @@ const SERVER_UI = {
   tap_to_confirm: 'Please tap your answer, so a mishearing cannot hide a danger sign.',
   not_heard: 'I could not make out that voice note. Please say it again, or type it.',
   voice_note: 'You can also send a voice note. It goes to a speech service to be turned into text and is not kept.',
+  ai_note: 'When your words are not recognised, they are sent to an AI model (OpenAI) only to work out which listed topic you mean. It does not write the answers. Send STOP if you do not agree.',
 } as const;
 
 interface TelegramUpdate {
@@ -179,6 +187,58 @@ export function buildApp(cfg: Config): FastifyInstance {
     }
   });
 
+  /** The label of a meaning, in the reference wording and in her language, for the model to choose between. */
+  const describe = (meaning: string, lang: LanguagePack | undefined): Candidate | undefined => {
+    const [kind, id] = [meaning.slice(0, meaning.indexOf(':')), meaning.slice(meaning.indexOf(':') + 1)];
+    const card =
+      kind === 'sign' ? cfg.ix.sign.get(id)?.label
+      : kind === 'question' ? cfg.ix.pack.questions.find((q) => q.id === id)?.label
+      : kind === 'complaint' ? cfg.ix.pack.complaints.find((c) => c.id === id)?.label
+      : undefined;
+    if (!card) return undefined;
+    const ref = cfg.ix.card.get(card)?.ref ?? '';
+    const own = lang?.translations[card]?.text;
+    return { id: meaning, label: own && own !== ref ? `${ref} / ${own}` : ref };
+  };
+  /** Ask the model, but only among meanings that exist in the pack; any failure simply means "no suggestion". */
+  const suggest = async (text: string, meanings: string[], lang: LanguagePack | undefined, log: { warn: (o: object, m: string) => void }): Promise<string | undefined> => {
+    if (!cfg.pick) return undefined;
+    const list = meanings.flatMap((m) => describe(m, lang) ?? []);
+    try {
+      return await cfg.pick(text, list, lang?.name ?? cfg.ix.pack.refLang);
+    } catch (e) {
+      log.warn({ err: String(e) }, 'model suggestion failed');
+      return undefined;
+    }
+  };
+
+  // For the web app: which of these meanings did she mean? Same limits and same pages as /stt.
+  app.options('/match', async (req, reply) => {
+    const origin = allowOrigin(req.headers.origin);
+    if (!origin) return reply.code(403).send();
+    return reply.headers({ 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'origin' }).code(204).send();
+  });
+  app.post('/match', async (req, reply) => {
+    if (!cfg.pick || !cfg.speech) return reply.code(404).send();
+    const origin = allowOrigin(req.headers.origin);
+    if (!origin) return reply.code(403).send({ error: 'origin not allowed' });
+    void reply.headers({ 'access-control-allow-origin': origin, vary: 'origin' });
+    const hour = Math.floor(Date.now() / 3_600_000);
+    const day = Math.floor(hour / 24);
+    if (sttDay.day !== day) sttDay = { day, count: 0 };
+    const seen = sttHits.get(req.ip);
+    const used = seen?.hour === hour ? seen.count : 0;
+    if (used >= cfg.speech.perHour || sttDay.count >= cfg.speech.perDay) return reply.code(429).send({ error: 'too many requests' });
+    sttHits.set(req.ip, { hour, count: used + 1 });
+    sttDay.count += 1;
+    const body = req.body as { text?: unknown; lang?: unknown; expect?: unknown };
+    if (typeof body?.text !== 'string' || !Array.isArray(body.expect) || body.expect.length > 80) return reply.code(400).send({ error: 'bad request' });
+    const lang = cfg.languages.find((l) => l.id === body.lang);
+    const meaning = await suggest(body.text, body.expect.filter((m): m is string => typeof m === 'string'), lang, req.log);
+    req.log.info({ match: true, found: Boolean(meaning) }, 'model asked'); // whether it found one, never the words
+    return { meaning: meaning ?? null };
+  });
+
   // Telegram: typed text, button presses and voice notes in; text, buttons and the cards' audio out.
   app.post('/telegram/hook', async (req, reply) => {
     const tg = cfg.telegram;
@@ -255,10 +315,21 @@ export function buildApp(cfg: Config): FastifyInstance {
     }
 
     const firstContact = !cfg.store.get(address)?.consented;
-    const out = handle(address, body, 'text');
+    // Words the phrase list does not know go to the model for a suggestion, which she is then asked to confirm.
+    let hint: string | undefined;
+    const before = cfg.store.get(address);
+    const talking = before?.conversation;
+    const hers = cfg.languages.find((l) => l.id === before?.lang);
+    if (cfg.pick && talking && hers && body.trim() && !/^\/?\d*$/.test(body.trim()) && !STOP.test(body) && !RESTART.test(body) && talking.awaiting.kind !== 'input') {
+      const options = candidates(cfg.ix, talking);
+      if (options.length && matchText(body, hers.lexicon, options).kind === 'abstain') hint = await suggest(body, options, hers, req.log);
+    }
+    const out = handle(address, body, 'text', hint);
     const lang = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
     // She is told where a voice note goes at the moment she agrees, in her language.
-    if (firstContact && lang && tg.transcribe && out.parts[0]) out.parts[0].text += `\n${ui(lang, 'voice_note')}`;
+    // Said in the very first message (in English, before a language is chosen) and again in her language once it is.
+    if (firstContact && tg.transcribe && out.parts[0]) out.parts[0].text += `\n${ui(lang, 'voice_note')}`;
+    if (firstContact && cfg.pick && out.parts[0]) out.parts[0].text += `\n${ui(lang, 'ai_note')}`;
     for (const [i, part] of out.parts.entries()) {
       // Numbered lines become buttons, so she can tap an answer.
       const last = i === out.parts.length - 1;
@@ -325,7 +396,7 @@ export function buildApp(cfg: Config): FastifyInstance {
     return { parts: turn.messages.map((text) => ({ text, lang })), said: [], ended: false };
   }
 
-  function handle(address: string, body: string, channel: 'text' | 'voice'): Reply {
+  function handle(address: string, body: string, channel: 'text' | 'voice', hint?: string): Reply {
     const user: User = cfg.store.get(address) ?? { address, consented: false };
     const lang = cfg.languages.find((l) => l.id === user.lang);
 
@@ -377,7 +448,7 @@ export function buildApp(cfg: Config): FastifyInstance {
       if (aside) return { parts: [...aside.messages, ui(chosen, 'again')].map((text) => ({ text, lang: chosen })), said: aside.said, ended: false };
       return finishTurn(user, begin(cfg.ix, chosen, user.profile!, cfg.today()));
     }
-    return finishTurn(user, receive(cfg.ix, chosen, user.conversation, body));
+    return finishTurn(user, receive(cfg.ix, chosen, user.conversation, body, hint));
   }
 
   const phaseMenu = (l: LanguagePack) => `${ui(l, 'phase_ask')}\n1. ${ui(l, 'pregnant')}\n2. ${ui(l, 'after_birth')}`;

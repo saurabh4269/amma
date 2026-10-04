@@ -72,6 +72,28 @@ describe('text channel', () => {
     expect(after.messages[1]).toMatch(/^1\. Yes/);
   });
 
+  it('a model hint is played back for her to confirm, never taken as her answer', () => {
+    const turns = talk(['0', '0']); // now at recall
+    const before = turns.at(-1)!;
+    const hinted = receive(ix, lang, before.conversation, 'my head is pounding', 'sign:head');
+    expect(hinted.conversation.session.recalled).toEqual([]);
+    expect(hinted.messages[0]).toContain('p_did_you_say');
+    const yes = receive(ix, lang, hinted.conversation, '1');
+    expect(yes.conversation.session.recalled).toEqual(['head']);
+    // A hint for something this step is not listening for is ignored.
+    const stray = receive(ix, lang, before.conversation, 'my head is pounding', 'sign:nonsense');
+    expect(stray.conversation.session.recalled).toEqual([]);
+    expect(stray.messages.join(' ')).not.toContain('p_did_you_say');
+  });
+
+  it('a hinted question during the check brings up its fixed answer and nothing else', () => {
+    const turns = talk(['0', '0', '1']);
+    const before = turns.at(-1)!;
+    const after = receive(ix, lang, before.conversation, 'which foods are good for me', 'question:food');
+    expect(after.conversation).toBe(before.conversation);
+    expect(after.said).toEqual(['q_food_a']);
+  });
+
   it('splits a name from a phone number', () => {
     expect(parseContact('Sunita 9820000000')).toEqual({ name: 'Sunita', phone: '9820000000' });
     expect(parseContact('+221 77 123 45 67, Awa')).toEqual({ name: 'Awa', phone: '+221771234567' });

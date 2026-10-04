@@ -143,7 +143,20 @@ function askAgain(ix: PackIndex, lang: LanguagePack, a: Awaiting): string {
   return '';
 }
 
-export function receive(ix: PackIndex, lang: LanguagePack, conversation: Conversation, body: string): Turn {
+/** The meanings an outside model may choose between at this point: what the step listens for, plus every question. */
+export function candidates(ix: PackIndex, conversation: Conversation): string[] {
+  const a = conversation.awaiting;
+  const on = new Set(conversation.session.profile.tracks);
+  const questions = ix.pack.questions.filter((q) => q.tracks.length === 0 || q.tracks.some((t) => on.has(t))).map((q) => `question:${q.id}`);
+  return [...new Set([...(a.kind === 'choice' ? (a.listen ?? []) : []), ...questions])];
+}
+
+/**
+ * `hint` is a meaning suggested by a language model for words the phrase list did not recognise.
+ * It is never acted on directly: a hinted sign or complaint is played back for her to confirm,
+ * and a hinted question only brings up that question's fixed answer.
+ */
+export function receive(ix: PackIndex, lang: LanguagePack, conversation: Conversation, body: string, hint?: string): Turn {
   const a = conversation.awaiting;
   const same = (messages: string[], said: string[] = []): Turn => ({ conversation, messages, said, ended: conversation.session.ended });
   if (body === REPEAT) {
@@ -155,13 +168,18 @@ export function receive(ix: PackIndex, lang: LanguagePack, conversation: Convers
   const stepListens = a.kind === 'choice' && a.listen?.some((m) => m.startsWith('question:'));
   const isNumber = /^\d+$/.test(body.trim());
   if (!stepListens && !isNumber) {
-    const aside = askAside(ix, lang, conversation.session.profile, body);
+    const hinted = hint?.startsWith('question:') ? ix.pack.questions.find((q) => `question:${q.id}` === hint) : undefined;
+    const aside = askAside(ix, lang, conversation.session.profile, body) ?? (hinted ? { messages: [text(ix, lang, hinted.answer)], said: [hinted.answer] } : undefined);
     if (aside) {
       const again = askAgain(ix, lang, a);
       return same(again ? [...aside.messages, again] : aside.messages, aside.said);
     }
   }
-  const event = interpret(body, a, lang);
+  let event = interpret(body, a, lang);
+  // The phrase list did not know her words, but the model suggests one of the meanings this step listens for.
+  if (event?.type === 'heard' && event.result.kind === 'abstain' && hint && a.kind === 'choice' && a.listen?.includes(hint)) {
+    event = { type: 'heard', result: { kind: 'confirm', meaning: hint } };
+  }
   if (!event) {
     // Not an answer we offered: repeat the question rather than guess.
     const again = askAgain(ix, lang, a);

@@ -6,7 +6,7 @@ import type { Words } from './pack.ts';
 import { alertPhones, PlanView, renderAlert, renderSms, SendText } from './plan.tsx';
 import { NearMe } from './near-me.tsx';
 import { Speaker } from './speaker.ts';
-import { addExample, embedAudio, loadExamples, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
+import { addExample, embedAudio, loadExamples, matchOnline, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
 
 /** What one engine step asks the screen to show. */
 interface View {
@@ -213,6 +213,16 @@ function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words
             if (vector) return onSpoken(vector, heard);
             return onHeard(heard);
           }
+          // The phrase list did not know her words. The language model may suggest which meaning she meant;
+          // the suggestion is played back and only counts if she says yes.
+          const suggested = await matchOnline(text, words.lang.id, listen.expect);
+          if (suggested) {
+            const vector = await embedAudio(audio).catch(() => undefined);
+            setMic('ready');
+            const guess = { kind: 'confirm', meaning: suggested } as const;
+            if (vector) return onSpoken(vector, guess);
+            return onHeard(guess);
+          }
         }
         // No connection, no consent, or words the phrase list does not know: the model on the phone has a go.
         const { vector, heard } = await understand(audio, await loadExamples(words.lang.id), listen.expect);
@@ -265,8 +275,12 @@ function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words
         onSubmit={(e) => {
           e.preventDefault();
           const input = e.currentTarget.elements.namedItem('said') as HTMLInputElement;
-          onHeard(matchText(input.value, words.lang.lexicon, listen.expect));
+          const typed = input.value;
           input.value = '';
+          const byPhrase = matchText(typed, words.lang.lexicon, listen.expect);
+          if (byPhrase.kind !== 'abstain' || online !== 'yes') return onHeard(byPhrase);
+          // Typed words the phrase list does not know get the same help as spoken ones.
+          void matchOnline(typed, words.lang.id, listen.expect).then((m) => onHeard(m ? { kind: 'confirm', meaning: m } : byPhrase));
         }}
       >
         <input name="said" placeholder={words.ui('type_here')} autocomplete="off" />

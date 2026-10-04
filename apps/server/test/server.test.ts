@@ -4,6 +4,7 @@ import { LanguagePack } from '@amma/schema';
 import { referenceLanguage } from '@amma/pack-tools';
 import { fixture } from '../../../packages/engine/test/fixture.ts';
 import { buildApp } from '../src/app.ts';
+import { openAiPick } from '../src/llm.ts';
 import { SqliteStore } from '../src/store.ts';
 import { twilioSignature } from '../src/twilio.ts';
 
@@ -362,6 +363,72 @@ describe('speech to text for the web app', () => {
     expect(ok.statusCode).toBe(204);
     const no = await app.inject({ method: 'OPTIONS', url: '/stt', headers: { origin: 'https://elsewhere.example' } });
     expect(no.statusCode).toBe(403);
+  });
+});
+
+describe('the language model only picks from the list', () => {
+  const reply = (content: string) => (async () => new Response(JSON.stringify({ choices: [{ message: { content } }] }))) as unknown as typeof fetch;
+  const list = [{ id: 'sign:head', label: 'Headache' }, { id: 'question:food', label: 'What should I eat?' }];
+
+  it('returns an id from the list, and nothing for "none", an unknown id, or nonsense', async () => {
+    const pick = (content: string) => openAiPick({ apiKey: 'k', model: 'm', fetch: reply(content) })('my head hurts', list, 'English');
+    expect(await pick('{"meaning":"sign:head"}')).toBe('sign:head');
+    expect(await pick('{"meaning":"none"}')).toBeUndefined();
+    expect(await pick('{"meaning":"go to bed and rest"}')).toBeUndefined();
+    expect(await pick('not json')).toBeUndefined();
+  });
+
+  it('sends her words and the candidate ids, with the answer limited to those ids', async () => {
+    let sent: { response_format: { json_schema: { schema: { properties: { meaning: { enum: string[] } } } } }; messages: { content: string }[] } | undefined;
+    const f = (async (_u: string, init: RequestInit) => { sent = JSON.parse(String(init.body)); return new Response(JSON.stringify({ choices: [{ message: { content: '{"meaning":"none"}' } }] })); }) as unknown as typeof fetch;
+    await openAiPick({ apiKey: 'k', model: 'm', fetch: f })('my head hurts', list, 'English');
+    expect(sent!.response_format.json_schema.schema.properties.meaning.enum).toEqual(['sign:head', 'question:food', 'none']);
+    expect(sent!.messages[1]!.content).toContain('my head hurts');
+  });
+});
+
+describe('model suggestions on the server', () => {
+  const make = (answer: string | undefined) => {
+    const asked: { text: string; ids: string[] }[] = [];
+    const sent: string[] = [];
+    const store = new SqliteStore(':memory:');
+    const app = buildApp({
+      ix: indexPack(fixture), languages: [referenceLanguage(fixture, 'English')], store, authToken: TOKEN, publicUrl: URL, today: () => '2026-10-04', ratePerMinute: 100,
+      pick: async (text, cands) => { asked.push({ text, ids: cands.map((c) => c.id) }); return answer; },
+      speech: { transcribe: async () => '', origins: ['https://app.example'], perHour: 50, perDay: 100 },
+      telegram: { token: 'B', secret: 's', clip: () => undefined, fetch: (async (url: string, init?: RequestInit) => { if (String(url).endsWith('/sendMessage')) sent.push((JSON.parse(String(init?.body)) as { text: string }).text); return new Response('{"ok":true}'); }) as unknown as typeof fetch },
+    });
+    app.log.level = 'silent';
+    let n = 0;
+    const type = (t: string) => app.inject({ method: 'POST', url: '/telegram/hook', headers: { 'x-telegram-bot-api-secret-token': 's' }, payload: { update_id: ++n, message: { chat: { id: 3 }, text: t } } });
+    return { app, asked, sent, store, type };
+  };
+
+  it('the web app gets a meaning only from the ones it asked about, and only meanings the pack has', async () => {
+    const { app, asked } = make('sign:head');
+    const res = await app.inject({ method: 'POST', url: '/match', headers: { origin: 'https://app.example', 'content-type': 'application/json' }, payload: { text: 'my head is pounding', lang: 'en', expect: ['sign:head', 'sign:made-up', 'question:food'] } });
+    expect(res.json()).toEqual({ meaning: 'sign:head' });
+    expect(asked[0]!.ids).toEqual(['sign:head', 'question:food']); // the invented one never reaches the model
+    const other = await app.inject({ method: 'POST', url: '/match', headers: { origin: 'https://elsewhere.example', 'content-type': 'application/json' }, payload: { text: 'x', lang: 'en', expect: [] } });
+    expect(other.statusCode).toBe(403);
+  });
+
+  it('on the bot, words the phrase list does not know are suggested and played back to confirm', async () => {
+    const { type, sent, store, asked } = make('sign:head');
+    for (const t of ['hi', '1', '1', '0', '0']) await type(t); // language, pregnant, skip the plan: now at recall
+    expect(sent[0]).toContain('AI model'); // she was told before anything was sent to it
+    await type('my head is pounding');
+    expect(asked.at(-1)!.text).toBe('my head is pounding');
+    expect(sent.at(-1)).toContain('p_did_you_say');
+    expect(store.get('telegram:3')!.conversation!.session.recalled).toEqual([]); // not taken until she says yes
+    await type('1');
+    expect(store.get('telegram:3')!.conversation!.session.recalled).toEqual(['head']);
+  });
+
+  it('numbers, plan answers and STOP are never sent to the model', async () => {
+    const { type, asked } = make('sign:head');
+    for (const t of ['hi', '1', '1', 'Asha Tai 9820000000', '0', '1', '2', 'STOP']) await type(t);
+    expect(asked).toEqual([]);
   });
 });
 

@@ -95,3 +95,37 @@ test('online listening: asked first, then free speech is understood, shown back,
   await expect(page.locator('.said')).toContainText('High fever');
   expect(calls).toBe(1);
 });
+
+test('words the phrase list does not know: the model suggests, and it only counts once she says yes', async ({ page }) => {
+  const asked: { text: string; expect: string[] }[] = [];
+  await page.route(/onrender\.com\/health/, (r) => r.fulfill({ json: { ok: true } }));
+  await page.route(/onrender\.com\/stt/, (r) => r.fulfill({ json: { text: 'my skull has been throbbing since morning' }, headers: { 'access-control-allow-origin': '*' } }));
+  await page.route(/onrender\.com\/match/, async (r) => {
+    asked.push(r.request().postDataJSON() as { text: string; expect: string[] });
+    await r.fulfill({ json: { meaning: 'sign:headache' }, headers: { 'access-control-allow-origin': '*' } });
+  });
+  await page.goto('/');
+  await page.locator('button.big.ghost').click();
+  await page.locator('input[name=label]').fill('model');
+  await page.locator('button.primary').click();
+  await page.getByText('Start this week’s session').click();
+  for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Skip' }).click();
+
+  // The consent names both services before anything is sent.
+  await expect(page.locator('.online-ask')).toContainText('OpenAI');
+  await expect(page.locator('.online-ask')).toContainText('ElevenLabs');
+  await page.locator('.online-yes').click();
+
+  await speak(page);
+  await expect(page.locator('.heard')).toContainText('my skull has been throbbing', { timeout: 30_000 });
+  await expect(page.getByText('Did you say:')).toBeVisible();
+  await expect(page.locator('.said')).toContainText('Headache and blurring of vision');
+  expect(asked[0]!.text).toBe('my skull has been throbbing since morning');
+  expect(asked[0]!.expect).toContain('sign:headache');
+
+  // She says no: it is not counted, and she is asked again.
+  await page.locator('.opt-no').click();
+  await expect(page.getByText('Is there another one?')).toBeVisible();
+  await page.getByRole('button', { name: 'That is all' }).click();
+  await expect(page.locator('.said')).toContainText('Headache and blurring of vision are danger signs'); // replayed as missed
+});

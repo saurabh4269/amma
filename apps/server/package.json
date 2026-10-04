@@ -10,6 +10,7 @@
     "@fastify/formbody": "^8.0.0",
     "@amma/channel-text": "workspace:*",
     "@amma/engine": "workspace:*",
+    "@amma/matcher": "workspace:*",
     "@amma/pack-tools": "workspace:*",
     "@amma/schema": "workspace:*",
     "fastify": "^5.0.0"

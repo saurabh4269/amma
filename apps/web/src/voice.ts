@@ -131,7 +131,8 @@ export async function understand(audio: Float32Array, examples: Example[], expec
 // Without a connection, or if she said no, everything stays on the phone as before.
 
 const SPEECH_URL = (import.meta.env.VITE_SPEECH_URL as string | undefined) ?? 'https://amma-server.onrender.com';
-const CONSENT_KEY = 'amma.onlineSpeech';
+// The key carries a version: what she is asked to agree to changed when the language model was added.
+const CONSENT_KEY = 'amma.onlineHelp.v2';
 export type OnlineChoice = 'yes' | 'no' | undefined;
 
 export const onlineChoice = (): OnlineChoice => {
@@ -157,6 +158,28 @@ export async function transcribeOnline(blob: Blob, locale: string): Promise<stri
     });
     if (!res.ok) return undefined;
     return ((await res.json()) as { text?: string }).text?.trim() || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Words the phrase list did not recognise: ask the language model, through our server, which of the
+ * expected meanings she meant. It can only return one of those meanings or nothing, and the caller
+ * plays the suggestion back for her to confirm.
+ */
+export async function matchOnline(text: string, lang: string, expect: string[]): Promise<string | undefined> {
+  if (!navigator.onLine || onlineChoice() !== 'yes' || !text.trim()) return undefined;
+  try {
+    const res = await fetch(`${SPEECH_URL}/match`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ text, lang, expect }),
+      signal: AbortSignal.timeout(12_000),
+    });
+    if (!res.ok) return undefined;
+    const { meaning } = (await res.json()) as { meaning?: string | null };
+    return meaning && expect.includes(meaning) ? meaning : undefined;
   } catch {
     return undefined;
   }
