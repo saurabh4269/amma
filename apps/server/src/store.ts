@@ -16,6 +16,8 @@ export interface User {
   aside?: Conversation;
   /** What she brought up before her language and stage were known. The meaning only, never her words. */
   pending?: string;
+  /** Details of it that were already in her words, as option ids. */
+  pendingDetails?: Record<string, string>;
 }
 
 export interface Store {

@@ -1,13 +1,15 @@
 import type { Level, Phase, PlanSlot, PlanValue, Profile, Sign } from '@amma/schema';
-import { nextAttribute, raisedSigns, summaryCards, type Attrs } from './clarifier.ts';
+import { knownDetails, nextAttribute, raisedSigns, summaryCards, type Attrs } from './clarifier.ts';
 import { meaning, parseMeaning, prompt, signsFor, type PackIndex } from './index-pack.ts';
 import { outcome, signFact, type Facts } from './rules.ts';
 import { dueSigns, gradeSign } from './scheduler.ts';
 
 /** What the matcher understood. It may accept, ask for confirmation, or abstain; it never decides an outcome. */
 export type Heard =
-  | { kind: 'accept'; meanings: string[] }
-  | { kind: 'confirm'; meaning: string }
+  // `attrs` are details of a complaint already present in her words ("back pain since yesterday"), so they are not asked again.
+  // They are shown back to her in the summary she confirms, like every answer she taps.
+  | { kind: 'accept'; meanings: string[]; attrs?: Attrs }
+  | { kind: 'confirm'; meaning: string; attrs?: Attrs }
   | { kind: 'abstain' };
 
 export type Event =
@@ -41,6 +43,7 @@ type Sub =
       node: 'open';
       turns: number;
       confirm?: string;
+      given?: Attrs;
       clar?: { complaint: string; attrs: Attrs; asking?: string };
       raised: string[];
     };
@@ -307,6 +310,7 @@ class Run {
     sub.turns += 1;
     sub.clar = undefined;
     sub.confirm = undefined;
+    sub.given = undefined;
     if (sub.turns >= this.ix.pack.limits.openTurns) return this.advance();
     this.say(this.p('open_more'));
     this.listenOpen();
@@ -323,6 +327,7 @@ class Run {
     const m = raw ? parseMeaning(raw) : undefined;
     const label = m && this.openLabel(m);
     if (!m || !raw || !label) return this.notSure(sub);
+    sub.given = r.attrs;
     if (r.kind === 'confirm') {
       sub.confirm = raw;
       this.say(this.p('did_you_say'), label);
@@ -342,7 +347,8 @@ class Run {
       this.say(q.answer);
       return this.continueOpen(sub);
     }
-    sub.clar = { complaint: m.id, attrs: {} };
+    sub.clar = { complaint: m.id, attrs: knownDetails(this.ix, m.id, sub.given) };
+    sub.given = undefined;
     this.askClarifier(sub);
   }
   private askClarifier(sub: Extract<Sub, { node: 'open' }>) {

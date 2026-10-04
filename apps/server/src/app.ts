@@ -1,10 +1,10 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import formbody from '@fastify/formbody';
 import { Profile, type LanguagePack } from '@amma/schema';
-import type { PackIndex } from '@amma/engine';
+import { attributesOf, type PackIndex } from '@amma/engine';
 import { askAside, asideMeanings, begin, beginAside, interpret, receive, receiveAside, REPEAT, type Turn } from '@amma/channel-text';
 import { matchText, normalise } from '@amma/matcher';
-import type { Candidate, Pick } from './llm.ts';
+import type { Candidate, Details, Pick } from './llm.ts';
 import type { Store, User } from './store.ts';
 import { twiml, validSignature, voiceTwiml } from './twilio.ts';
 
@@ -34,6 +34,8 @@ export interface Config {
    * does not recognise. Used on the bot, and by the web app when she has agreed. Leave out to switch it off.
    */
   pick?: Pick;
+  /** Reads the details of a complaint that are already in her words, so they are not asked again. */
+  details?: Details;
   speech?: {
     transcribe: (audio: Uint8Array, locale: string | undefined) => Promise<string>;
     /** Web origins allowed to call it. */
@@ -91,6 +93,8 @@ interface Part {
 interface Route {
   id: string;
   sure: boolean;
+  /** For a problem: what her words already said about it (where, since when), as option ids. */
+  details?: Record<string, string>;
 }
 interface Reply {
   parts: Part[];
@@ -223,6 +227,26 @@ export function buildApp(cfg: Config): FastifyInstance {
     }
   };
 
+  /** What her words already say about the problem she named. Any failure simply means nothing is pre-filled. */
+  const detailsOf = async (text: string, meaning: string, lang: LanguagePack | undefined, log: { warn: (o: object, m: string) => void }): Promise<Record<string, string> | undefined> => {
+    const named = cfg.ix.pack.complaints.find((c) => `complaint:${c.id}` === meaning);
+    if (!cfg.details || !named) return undefined;
+    const say = (card: string) => {
+      const ref = cfg.ix.card.get(card)?.ref ?? card;
+      const own = lang?.translations[card]?.text;
+      return own && own !== ref ? `${ref} / ${own}` : ref;
+    };
+    // The same problem may be a separate entry before and after the birth; the details of both are read.
+    const ids = new Set(cfg.ix.pack.complaints.filter((c) => c.label === named.label).flatMap((c) => attributesOf(cfg.ix, c.id)));
+    const list = cfg.ix.pack.attributes.filter((a) => ids.has(a.id)).map((a) => ({ id: a.id, question: say(a.ask), options: a.options.map((o) => ({ id: o.id, label: say(o.label) })) }));
+    try {
+      return await cfg.details(text, say(named.label), list, lang?.name ?? cfg.ix.pack.refLang);
+    } catch (e) {
+      log.warn({ err: String(e) }, 'reading details failed');
+      return undefined;
+    }
+  };
+
   /**
    * What did she mean? Wherever she is, her words may be an answer to what was asked, or something else entirely:
    * a problem she wants to describe, or a question. The phrase list is tried first; the model only when it does not know.
@@ -267,10 +291,10 @@ export function buildApp(cfg: Config): FastifyInstance {
     const meanings = [...new Set([...listen, ...tell])];
     if (lang) {
       const hit = matchText(t, lang.lexicon, meanings);
-      if (hit.kind === 'accept' && hit.meanings[0]) return { id: hit.meanings[0], sure: true };
+      if (hit.kind === 'accept' && hit.meanings[0]) return { id: hit.meanings[0], sure: true, details: await detailsOf(t, hit.meanings[0], lang, log) };
     }
     const id = await suggest(t, meanings, lang, log, extra, asked);
-    return id ? { id, sure: false } : undefined;
+    return id ? { id, sure: false, details: await detailsOf(t, id, lang, log) } : undefined;
   };
 
   // For the web app: which of these meanings did she mean? Same limits and same pages as /stt.
@@ -297,7 +321,9 @@ export function buildApp(cfg: Config): FastifyInstance {
     const lang = cfg.languages.find((l) => l.id === body.lang);
     const meaning = await suggest(body.text, body.expect.filter((m): m is string => typeof m === 'string'), lang, req.log);
     req.log.info({ match: true, found: Boolean(meaning) }, 'model asked'); // whether it found one, never the words
-    return { meaning: meaning ?? null };
+    // For a problem, what her words already said about it, so the app does not ask again.
+    const attrs = meaning ? await detailsOf(body.text, meaning, lang, req.log) : undefined;
+    return { meaning: meaning ?? null, attrs: attrs ?? {} };
   });
 
   // Telegram: typed text, button presses and voice notes in; text, buttons and the cards' audio out.
@@ -499,6 +525,7 @@ export function buildApp(cfg: Config): FastifyInstance {
       user.conversation = undefined;
       user.aside = undefined;
       user.pending = undefined;
+      user.pendingDetails = undefined;
       cfg.store.put(user);
     }
 
@@ -509,6 +536,7 @@ export function buildApp(cfg: Config): FastifyInstance {
         // She began by saying what is wrong. It is remembered (the meaning, not her words) and taken up once she has chosen.
         if (meant) {
           user.pending = meant.id;
+          user.pendingDetails = meant.details;
           cfg.store.put(user);
         }
         if (channel === 'voice') {
@@ -532,6 +560,7 @@ export function buildApp(cfg: Config): FastifyInstance {
       if (!phase) {
         if (!meant) return { parts: [{ text: phaseMenu(chosen), lang: chosen }], said: [], ended: false };
         user.pending = meant.id;
+        user.pendingDetails = meant.details;
         cfg.store.put(user);
         return { parts: [{ text: `${ui(chosen, 'first_this').replace('{topic}', topic(meant.id, chosen))}\n${phaseMenu(chosen)}`, lang: chosen }], said: [], ended: false };
       }
@@ -543,9 +572,11 @@ export function buildApp(cfg: Config): FastifyInstance {
         const was = cfg.ix.pack.complaints.find((c) => `complaint:${c.id}` === user.pending);
         const fits = was && was.phases.length && !was.phases.includes(phase) ? cfg.ix.pack.complaints.find((c) => c.label === was.label && (c.phases.length === 0 || c.phases.includes(phase))) : was;
         const m = was ? (fits ? `complaint:${fits.id}` : undefined) : user.pending;
+        const details = user.pendingDetails;
         user.pending = undefined;
+        user.pendingDetails = undefined;
         if (!m) return finishTurn(user, begin(cfg.ix, chosen, user.profile, cfg.today()));
-        return asideTurn(user, beginAside(cfg.ix, chosen, user.profile, cfg.today(), m, false));
+        return asideTurn(user, beginAside(cfg.ix, chosen, user.profile, cfg.today(), m, false, details));
       }
       return finishTurn(user, begin(cfg.ix, chosen, user.profile, cfg.today()));
     }
@@ -555,13 +586,13 @@ export function buildApp(cfg: Config): FastifyInstance {
       const i = route?.id.startsWith('option:') && awaiting.kind === 'choice' ? awaiting.options.findIndex((o) => `option:${o.id}` === route.id) : -1;
       return i >= 0 ? String(i + 1) : body;
     };
-    if (user.aside) return asideTurn(user, receiveAside(cfg.ix, chosen, user.aside, answerOf(user.aside.awaiting), meant?.id));
+    if (user.aside) return asideTurn(user, receiveAside(cfg.ix, chosen, user.aside, answerOf(user.aside.awaiting), meant?.id, meant?.details));
 
     const conv = user.conversation;
     const stepListens = conv?.awaiting.kind === 'choice' && Boolean(meant && conv.awaiting.listen?.includes(meant.id));
     // She described a problem instead of answering: deal with it now, then come back to where she was.
     if (meant && !meant.id.startsWith('question:') && !stepListens) {
-      return asideTurn(user, beginAside(cfg.ix, chosen, conv?.session.profile ?? user.profile!, cfg.today(), meant.id, meant.sure));
+      return asideTurn(user, beginAside(cfg.ix, chosen, conv?.session.profile ?? user.profile!, cfg.today(), meant.id, meant.sure, meant.details));
     }
     if (!conv) {
       // Between sessions she can still ask a question and get its card, without a new session starting.
@@ -571,7 +602,7 @@ export function buildApp(cfg: Config): FastifyInstance {
       if (aside) return { parts: [...aside.messages, ui(chosen, 'again')].map((text) => ({ text, lang: chosen })), said: aside.said, ended: false };
       return finishTurn(user, begin(cfg.ix, chosen, user.profile!, cfg.today()));
     }
-    return finishTurn(user, receive(cfg.ix, chosen, conv, answerOf(conv.awaiting), meant?.id));
+    return finishTurn(user, receive(cfg.ix, chosen, conv, answerOf(conv.awaiting), meant?.id, meant?.details));
   }
 
   /** The name of a question or problem from the pack, in her language. */

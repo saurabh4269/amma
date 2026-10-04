@@ -5,7 +5,7 @@ import type { PackIndex } from '@amma/engine';
 import type { Words } from './pack.ts';
 import { Session } from './session.tsx';
 import { Speaker } from './speaker.ts';
-import { onAskAbout } from './ask-bus.ts';
+import { onAskAbout, type About } from './ask-bus.ts';
 
 /** What the screen underneath tells the assistant: the pack, the wording, and whose record is open, if any. */
 export interface AssistantContext {
@@ -33,13 +33,13 @@ export function AssistantShell({ children }: { children: ComponentChildren }) {
   const [, redraw] = useState(0);
   const [asking, setAsking] = useState(false);
   // What she brought up on the screen underneath, if that is why the assistant opened.
-  const [about, setAbout] = useState<string>();
+  const [about, setAbout] = useState<About>();
   useEffect(() => {
     const l = () => redraw((n) => n + 1);
     listeners.add(l);
-    onAskAbout((meaning) => {
+    onAskAbout((a) => {
       Speaker.stopAll();
-      setAbout(meaning);
+      setAbout(a);
       setAsking(true);
     });
     return () => {

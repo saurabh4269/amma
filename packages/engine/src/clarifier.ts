@@ -26,6 +26,23 @@ export function raisedSigns(ix: PackIndex, complaint: string, attrs: Attrs): str
   return [...out];
 }
 
+/** The attributes that can be asked about this complaint: the ones its rows depend on and the ones kept for the clinic card. */
+export function attributesOf(ix: PackIndex, complaint: string): string[] {
+  const rows = ix.pack.clarifier.filter((r) => r.complaint === complaint);
+  const describe = ix.pack.complaints.find((c) => c.id === complaint)?.describe ?? [];
+  return [...new Set([...rows.flatMap((r) => Object.keys(r.when)), ...describe])];
+}
+
+/** Details taken from her own words, kept only where they are a real option of an attribute this complaint uses. */
+export function knownDetails(ix: PackIndex, complaint: string, given: Attrs | undefined): Attrs {
+  const out: Attrs = {};
+  for (const attr of attributesOf(ix, complaint)) {
+    const v = given?.[attr];
+    if (v !== undefined && ix.pack.attributes.find((a) => a.id === attr)?.options.some((o) => o.id === v)) out[attr] = v;
+  }
+  return out;
+}
+
 const key = (signs: string[]) => [...signs].sort().join(',');
 
 /**

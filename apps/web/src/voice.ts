@@ -214,20 +214,24 @@ export async function transcribeOnline(blob: Blob, locale: string): Promise<stri
  * expected meanings she meant. It can only return one of those meanings or nothing, and the caller
  * plays the suggestion back for her to confirm.
  */
-export async function matchOnline(text: string, lang: string, expect: string[]): Promise<string | undefined> {
+export interface Matched {
+  meaning: string;
+  /** For a problem: details her words already gave (where, since when), so they are not asked again. */
+  attrs?: Record<string, string>;
+}
+export async function matchOnline(text: string, lang: string, expect: string[]): Promise<Matched | undefined> {
   if (!navigator.onLine || onlineChoice() !== 'yes' || !text.trim()) return undefined;
   try {
     const res = await fetch(`${SPEECH_URL}/match`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ text, lang, expect }),
-      signal: AbortSignal.timeout(7_000),
+      signal: AbortSignal.timeout(9_000),
     });
     if (!res.ok) return undefined;
-    const { meaning } = (await res.json()) as { meaning?: string | null };
-    return meaning && expect.includes(meaning) ? meaning : undefined;
+    const { meaning, attrs } = (await res.json()) as { meaning?: string | null; attrs?: Record<string, string> };
+    return meaning && expect.includes(meaning) ? { meaning, attrs } : undefined;
   } catch {
     return undefined;
   }
 }
-

@@ -7,7 +7,7 @@ import type { Words } from './pack.ts';
 import { alertPhones, PlanView, renderAlert, renderSms, SendText } from './plan.tsx';
 import { NearMe } from './near-me.tsx';
 import { Speaker } from './speaker.ts';
-import { askAbout } from './ask-bus.ts';
+import { askAbout, type About } from './ask-bus.ts';
 import { addExample, embedAudio, loadExamples, matchOnline, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, warmVoice, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
 
 /** What one engine step asks the screen to show. */
@@ -50,7 +50,7 @@ interface Props {
    */
   mode?: 'weekly' | 'ask';
   /** In `ask` mode: a meaning she already brought up on the screen underneath. It is played back for her to confirm. */
-  about?: string;
+  about?: About;
 }
 
 /** Every question and problem the "anything to ask or tell?" step listens for. */
@@ -127,7 +127,7 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
   };
   useEffect(() => {
     dispatch({ type: 'start' });
-    if (about) dispatch({ type: 'heard', result: { kind: 'confirm', meaning: about } });
+    if (about) dispatch({ type: 'heard', result: { kind: 'confirm', ...about } });
     return () => speaker.stop();
   }, []);
 
@@ -272,10 +272,10 @@ function Listen({ ix, words, listen, elsewhere, onHeard, onSpoken, onMic, childr
    * she wants to say: a problem, or a question. The second kind is handed to the assistant rather than ignored.
    * Returns a meaning for this step to play back, or undefined; `true` means the assistant has taken it.
    */
-  const beyond = async (text: string): Promise<string | true | undefined> => {
+  const beyond = async (text: string): Promise<About | true | undefined> => {
     const known = other.length ? matchText(text, words.lang.lexicon, other) : undefined;
-    const meant = known?.kind === 'accept' ? known.meanings[0] : await matchOnline(text, words.lang.id, [...listen.expect, ...other]);
-    if (!meant || listen.expect.includes(meant)) return meant;
+    const meant = known?.kind === 'accept' && known.meanings[0] ? { meaning: known.meanings[0] } : await matchOnline(text, words.lang.id, [...listen.expect, ...other]);
+    if (!meant || listen.expect.includes(meant.meaning)) return meant;
     askAbout(meant);
     return true;
   };
@@ -320,7 +320,7 @@ function Listen({ ix, words, listen, elsewhere, onHeard, onSpoken, onMic, childr
         const suggested = await beyond(text);
         if (suggested) {
           setMic('ready');
-          return suggested === true ? undefined : onSpoken(later, { kind: 'confirm', meaning: suggested }, text);
+          return suggested === true ? undefined : onSpoken(later, { kind: 'confirm', ...suggested }, text);
         }
       }
       // No connection, no consent, or words the phrase list does not know: the model on the phone has a go.
@@ -412,7 +412,7 @@ function Listen({ ix, words, listen, elsewhere, onHeard, onSpoken, onMic, childr
               const byPhrase = matchText(typed, words.lang.lexicon, listen.expect);
               if (byPhrase.kind !== 'abstain') return onHeard(byPhrase, typed);
               // Typed words the phrase list does not know get the same help as spoken ones.
-              void beyond(typed).then((m) => m === true || onHeard(m ? { kind: 'confirm', meaning: m } : byPhrase, typed));
+              void beyond(typed).then((m) => m === true || onHeard(m ? { kind: 'confirm', ...m } : byPhrase, typed));
             }}
           >
             <input name="said" placeholder={words.ui('type_here')} autocomplete="off" autoFocus={typing} />

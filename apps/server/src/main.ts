@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { indexPack } from '@amma/engine';
 import { loadContentPack, loadLanguagePack, referenceLanguage } from '@amma/pack-tools';
 import { buildApp } from './app.ts';
-import { openAiPick } from './llm.ts';
+import { openAiDetails, openAiPick } from './llm.ts';
 import { SqliteStore } from './store.ts';
 
 const need = (name: string): string => {
@@ -73,6 +73,7 @@ const app = buildApp({
       }
     : undefined,
   pick: process.env.OPENAI_API_KEY ? openAiPick({ apiKey: process.env.OPENAI_API_KEY, model: process.env.OPENAI_MODEL ?? 'gpt-6-luna', reasoningEffort: process.env.OPENAI_REASONING_EFFORT }) : undefined,
+  details: process.env.OPENAI_API_KEY ? openAiDetails({ apiKey: process.env.OPENAI_API_KEY, model: process.env.OPENAI_MODEL ?? 'gpt-6-luna', reasoningEffort: process.env.OPENAI_REASONING_EFFORT }) : undefined,
   speech: process.env.ELEVENLABS_API_KEY
     ? {
         transcribe,

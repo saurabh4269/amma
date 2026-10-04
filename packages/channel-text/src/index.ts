@@ -156,7 +156,7 @@ export function candidates(ix: PackIndex, conversation: Conversation): string[] 
  * It is never acted on directly: a hinted sign or complaint is played back for her to confirm,
  * and a hinted question only brings up that question's fixed answer.
  */
-export function receive(ix: PackIndex, lang: LanguagePack, conversation: Conversation, body: string, hint?: string): Turn {
+export function receive(ix: PackIndex, lang: LanguagePack, conversation: Conversation, body: string, hint?: string, details?: Record<string, string>): Turn {
   const a = conversation.awaiting;
   const same = (messages: string[], said: string[] = []): Turn => ({ conversation, messages, said, ended: conversation.session.ended });
   if (body === REPEAT) {
@@ -180,6 +180,8 @@ export function receive(ix: PackIndex, lang: LanguagePack, conversation: Convers
   if (event?.type === 'heard' && event.result.kind === 'abstain' && hint && a.kind === 'choice' && a.listen?.includes(hint)) {
     event = { type: 'heard', result: { kind: 'confirm', meaning: hint } };
   }
+  // Details already in her words go with what was heard, so they are not asked for again.
+  if (details && event?.type === 'heard' && event.result.kind !== 'abstain') event = { type: 'heard', result: { ...event.result, attrs: details } };
   if (!event) {
     // Not an answer we offered: say so and repeat the question rather than guess.
     const again = askAgain(ix, lang, a);
@@ -227,16 +229,16 @@ function closeAside(ix: PackIndex, lang: LanguagePack, turn: Turn): Turn {
 }
 
 /** `sure` is true when her own words matched the phrase list; a model's suggestion is played back for her to confirm. */
-export function beginAside(ix: PackIndex, lang: LanguagePack, profile: Profile, date: string, meaning: string, sure: boolean): Turn {
+export function beginAside(ix: PackIndex, lang: LanguagePack, profile: Profile, date: string, meaning: string, sure: boolean, details?: Record<string, string>): Turn {
   const aix = asideIndex(ix);
   const started = step(aix, createSession(profile, date), { type: 'start' });
-  const r = step(aix, started.state, { type: 'heard', result: sure ? { kind: 'accept', meanings: [meaning] } : { kind: 'confirm', meaning } });
+  const r = step(aix, started.state, { type: 'heard', result: sure ? { kind: 'accept', meanings: [meaning], attrs: details } : { kind: 'confirm', meaning, attrs: details } });
   const out = render(aix, lang, r.effects, r.state.profile);
   return closeAside(ix, lang, { conversation: { session: r.state, awaiting: out.awaiting }, messages: out.messages, said: out.said, ended: out.ended });
 }
 
-export function receiveAside(ix: PackIndex, lang: LanguagePack, conversation: Conversation, body: string, hint?: string): Turn {
-  return closeAside(ix, lang, receive(asideIndex(ix), lang, conversation, body, hint));
+export function receiveAside(ix: PackIndex, lang: LanguagePack, conversation: Conversation, body: string, hint?: string, details?: Record<string, string>): Turn {
+  return closeAside(ix, lang, receive(asideIndex(ix), lang, conversation, body, hint, details));
 }
 
 export { CHOICE };

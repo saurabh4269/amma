@@ -393,12 +393,14 @@ describe('the language model only picks from the list', () => {
 });
 
 describe('model suggestions on the server', () => {
-  const make = (answer: string | undefined) => {
+  const make = (answer: string | undefined, given: Record<string, string> = {}) => {
+    const detailsAsked: string[][] = [];
     const asked: { text: string; ids: string[] }[] = [];
     const sent: string[] = [];
     const store = new SqliteStore(':memory:');
     const app = buildApp({
       ix: indexPack(fixture), languages: [referenceLanguage(fixture, 'English')], store, authToken: TOKEN, publicUrl: URL, today: () => '2026-10-04', ratePerMinute: 100,
+      details: async (_text, _topic, list) => { detailsAsked.push(list.map((d) => d.id)); return given; },
       pick: async (text, cands) => { asked.push({ text, ids: cands.map((c) => c.id) }); return text === 'hi' ? undefined : answer; },
       speech: { transcribe: async () => '', origins: ['https://app.example'], perHour: 50, perDay: 100 },
       telegram: { token: 'B', secret: 's', clip: () => undefined, fetch: (async (url: string, init?: RequestInit) => { if (String(url).endsWith('/sendMessage')) sent.push((JSON.parse(String(init?.body)) as { text: string }).text); return new Response('{"ok":true}'); }) as unknown as typeof fetch },
@@ -406,13 +408,13 @@ describe('model suggestions on the server', () => {
     app.log.level = 'silent';
     let n = 0;
     const type = (t: string) => app.inject({ method: 'POST', url: '/telegram/hook', headers: { 'x-telegram-bot-api-secret-token': 's' }, payload: { update_id: ++n, message: { chat: { id: 3 }, text: t } } });
-    return { app, asked, sent, store, type };
+    return { app, asked, sent, store, type, detailsAsked };
   };
 
   it('the web app gets a meaning only from the ones it asked about, and only meanings the pack has', async () => {
     const { app, asked } = make('sign:head');
     const res = await app.inject({ method: 'POST', url: '/match', headers: { origin: 'https://app.example', 'content-type': 'application/json' }, payload: { text: 'my head is pounding', lang: 'en', expect: ['sign:head', 'sign:made-up', 'question:food'] } });
-    expect(res.json()).toEqual({ meaning: 'sign:head' });
+    expect(res.json()).toEqual({ meaning: 'sign:head', attrs: {} });
     expect(asked[0]!.ids).toEqual(['sign:head', 'question:food']); // the invented one never reaches the model
     const other = await app.inject({ method: 'POST', url: '/match', headers: { origin: 'https://elsewhere.example', 'content-type': 'application/json' }, payload: { text: 'x', lang: 'en', expect: [] } });
     expect(other.statusCode).toBe(403);
@@ -445,6 +447,17 @@ describe('model suggestions on the server', () => {
     expect(store.get('telegram:3')!.aside).toBeDefined();
     expect(store.get('telegram:3')!.conversation).toBeUndefined(); // the weekly session has not been started over her
     expect(sent.at(-1)).toContain('p_did_you_say');
+  });
+
+  it('what her words already say about the problem is not asked again, and an invented detail is dropped', async () => {
+    const { type, store, detailsAsked } = make('complaint:pain', { site: 'lower', onset: 'made-up' });
+    for (const t of ['1', '1']) await type(t);
+    await type('the lower part of my belly hurts'); // between the menu and the session: taken up at once
+    expect(detailsAsked[0]).toContain('site');
+    await type('1'); // "Did you say: pain?" yes
+    const sub = (store.get('telegram:3')!.aside!.session as unknown as { sub: { clar: { attrs: Record<string, string>; asking?: string } } }).sub;
+    expect(sub.clar.attrs).toEqual({ site: 'lower' });
+    expect(sub.clar.asking).not.toBe('site');
   });
 
   it('her stage and her language can be said in words', async () => {
