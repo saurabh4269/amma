@@ -32,7 +32,7 @@ export function Teach({ ix, words, profile, onBack }: { ix: PackIndex; words: Wo
       setBusy({ sign: signId, state: 'recording' });
     } else if (busy.sign === signId && busy.state === 'recording' && recording.current) {
       setBusy({ sign: signId, state: 'thinking' });
-      const audio = await recording.current.stop();
+      const { audio } = await recording.current.stop();
       await addExample(words.lang.id, meaning.sign(signId), await embedAudio(audio), profile.id);
       await refresh();
       setBusy(undefined);

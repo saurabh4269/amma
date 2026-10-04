@@ -231,3 +231,8 @@ fieldset { border: 1.5px solid var(--line); border-radius: 16px; background: var
 .assistant:active { transform: scale(.96); }
 .page { padding-bottom: 96px; }
 @media print { .assistant { display: none; } }
+
+.heard { margin: 0; padding: 10px 14px; border-radius: 14px; background: #fff; font-style: italic; }
+.online-ask { display: flex; flex-direction: column; gap: 10px; }
+.online-ask p { margin: 0; }
+.link { border: 0; background: none; padding: 4px 0; font-size: .85rem; text-decoration: underline; color: inherit; text-align: left; box-shadow: none; min-height: 0; }

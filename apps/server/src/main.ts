@@ -67,6 +67,14 @@ const app = buildApp({
         },
       }
     : undefined,
+  speech: process.env.ELEVENLABS_API_KEY
+    ? {
+        transcribe,
+        origins: (process.env.WEB_ORIGINS ?? 'https://amma-mauve.vercel.app,https://amma.heisenbug.in,http://localhost:5173,http://localhost:4173').split(','),
+        perHour: Number(process.env.STT_PER_HOUR ?? 60),
+        perDay: Number(process.env.STT_PER_DAY ?? 1500),
+      }
+    : undefined,
   callback: process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_FROM_NUMBER
     ? { accountSid: process.env.TWILIO_ACCOUNT_SID, fromNumber: process.env.TWILIO_FROM_NUMBER, fetch, perHour: Number(process.env.CALLBACKS_PER_HOUR ?? 3) }
     : undefined,

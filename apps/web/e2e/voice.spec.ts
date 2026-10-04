@@ -61,3 +61,37 @@ test('"teach the phone my voice" stores an example per sign, which the session t
   await expect(page.getByText('Did you say:')).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('.said')).toContainText('Bleeding during pregnancy');
 });
+
+test('online listening: asked first, then free speech is understood, shown back, and remembered for offline', async ({ page }) => {
+  let calls = 0;
+  await page.route(/onrender\.com\/health/, (r) => r.fulfill({ json: { ok: true } }));
+  await page.route(/onrender\.com\/stt/, (r) => {
+    calls += 1;
+    return r.fulfill({ json: { text: 'since yesterday I have a high fever' }, headers: { 'access-control-allow-origin': '*' } });
+  });
+  await page.goto('/');
+  await page.locator('button.big.ghost').click();
+  await page.locator('input[name=label]').fill('online');
+  await page.locator('button.primary').click();
+  await page.getByText('Start this week’s session').click();
+  for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Skip' }).click();
+
+  // Nothing is sent until she has agreed.
+  await expect(page.locator('.online-ask')).toBeVisible();
+  await speak(page);
+  await expect(page.locator('.tile').first()).toBeVisible({ timeout: 30_000 }); // the phone alone could not tell
+  expect(calls).toBe(0);
+
+  await page.locator('.online-yes').click();
+  await speak(page);
+  await expect(page.locator('.heard')).toContainText('since yesterday I have a high fever', { timeout: 30_000 });
+  await expect(page.getByText('Is there another one?')).toBeVisible();
+  expect(calls).toBe(1);
+
+  // Turned off again: the next recording stays on the phone, which has now learnt this phrase from her.
+  await page.locator('.online-toggle').click();
+  await speak(page);
+  await expect(page.getByText('Did you say:')).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('.said')).toContainText('High fever');
+  expect(calls).toBe(1);
+});

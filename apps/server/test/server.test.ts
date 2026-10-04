@@ -328,3 +328,40 @@ describe('telegram', () => {
     expect((await app.inject({ method: 'GET', url: '/health' })).statusCode).toBe(200);
   });
 });
+
+describe('speech to text for the web app', () => {
+  const make = (perHour = 2) => {
+    const app = buildApp({
+      ix: indexPack(fixture), languages: [referenceLanguage(fixture, 'English')], store: new SqliteStore(':memory:'), authToken: TOKEN, publicUrl: URL, today: () => '2026-10-04', ratePerMinute: 100,
+      speech: { transcribe: async (_a, locale) => `heard in ${locale}`, origins: ['https://app.example'], perHour, perDay: 100 },
+    });
+    app.log.level = 'silent';
+    const post = (origin = 'https://app.example', body: Buffer = Buffer.from([1, 2, 3])) =>
+      app.inject({ method: 'POST', url: '/stt?lang=hi-IN', headers: { 'content-type': 'audio/webm', origin }, payload: body });
+    return { app, post };
+  };
+
+  it('returns the text for a page it knows, with the header a browser needs', async () => {
+    const res = await make().post();
+    expect(res.statusCode).toBe(200);
+    expect(res.json()).toEqual({ text: 'heard in hi-IN' });
+    expect(res.headers['access-control-allow-origin']).toBe('https://app.example');
+  });
+
+  it('refuses other sites, empty audio, and a caller who asks too often', async () => {
+    const { post } = make(2);
+    expect((await post('https://elsewhere.example')).statusCode).toBe(403);
+    expect((await post('https://app.example', Buffer.alloc(0))).statusCode).toBe(400);
+    expect((await post()).statusCode).toBe(200);
+    expect((await post()).statusCode).toBe(429); // the empty one counted too
+  });
+
+  it('answers the permission check a browser makes first, only for a page it knows', async () => {
+    const { app } = make();
+    const ok = await app.inject({ method: 'OPTIONS', url: '/stt', headers: { origin: 'https://app.example', 'access-control-request-method': 'POST' } });
+    expect(ok.statusCode).toBe(204);
+    const no = await app.inject({ method: 'OPTIONS', url: '/stt', headers: { origin: 'https://elsewhere.example' } });
+    expect(no.statusCode).toBe(403);
+  });
+});
+

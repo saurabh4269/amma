@@ -7,6 +7,7 @@ import { Session } from './session.tsx';
 import { Setup } from './setup.tsx';
 import { ShareAudio } from './share-audio.tsx';
 import { Teach } from './teach.tsx';
+import { wakeSpeechServer } from './voice.ts';
 import { deleteProfile, listProfiles, openProfile, requestPersistence, saveProfile, type ProfileMeta } from './store.ts';
 
 type Screen =
@@ -46,6 +47,7 @@ export function App() {
     }, (e: unknown) => setError(String(e)));
     void refresh();
     void requestPersistence();
+    wakeSpeechServer();
   }, []);
 
   const words = useMemo(() => {

@@ -6,7 +6,7 @@ import type { Words } from './pack.ts';
 import { alertPhones, PlanView, renderAlert, renderSms, SendText } from './plan.tsx';
 import { NearMe } from './near-me.tsx';
 import { Speaker } from './speaker.ts';
-import { addExample, loadExamples, startRecording, understand, voiceStatus, type Recording } from './voice.ts';
+import { addExample, embedAudio, loadExamples, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
 
 /** What one engine step asks the screen to show. */
 interface View {
@@ -139,6 +139,8 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
           onHeard={(result) => dispatch({ type: 'heard', result })}
           onSpoken={(vector, result) => {
             spoken.current = { vector, guess: result.kind === 'confirm' ? result.meaning : undefined };
+            // Understood outright (online listening): the meaning is already known, so her vector is stored with it now.
+            if (result.kind === 'accept' && result.meanings[0]) learn(result.meanings[0]);
             const r = step(ix, state.current, { type: 'heard', result });
             state.current = r.state;
             const v = toView(r.effects);
@@ -182,17 +184,40 @@ function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words
   useEffect(() => {
     void voiceStatus().then(setMic);
   }, []);
+  // Whether she has agreed to online listening, and what the service last made of her words.
+  const [online, setOnline] = useState<OnlineChoice>(onlineChoice());
+  const [heardText, setHeardText] = useState<string>();
+  const choose = (v: 'yes' | 'no') => {
+    setOnlineChoice(v);
+    setOnline(v);
+    if (v === 'yes') wakeSpeechServer();
+  };
   const toggleMic = async () => {
     try {
       if (mic === 'ready') {
+        setHeardText(undefined);
         recording.current = await startRecording();
         setMic('recording');
       } else if (mic === 'recording' && recording.current) {
         setMic('thinking');
-        const audio = await recording.current.stop();
+        const { audio, blob } = await recording.current.stop();
+        // Online first, when she has agreed and there is a connection: it understands free speech.
+        const text = online === 'yes' ? await transcribeOnline(blob, words.lang.locale ?? words.lang.id) : undefined;
+        if (text) {
+          setHeardText(text);
+          const heard = matchText(text, words.lang.lexicon, listen.expect);
+          if (heard.kind === 'accept') {
+            // Her own vector is kept with the meaning, so the phone gets better at hearing her offline too.
+            const vector = await embedAudio(audio).catch(() => undefined);
+            setMic('ready');
+            if (vector) return onSpoken(vector, heard);
+            return onHeard(heard);
+          }
+        }
+        // No connection, no consent, or words the phrase list does not know: the model on the phone has a go.
         const { vector, heard } = await understand(audio, await loadExamples(words.lang.id), listen.expect);
         setMic('ready');
-        // With no example to compare against yet, show the pictures: her tap teaches the phone what she just said.
+        // With nothing to compare against, show the pictures: her tap teaches the phone what she just said.
         if (heard.kind === 'abstain') setOpen(true);
         onSpoken(vector, heard);
       }
@@ -215,6 +240,21 @@ function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words
       {(mic === 'ready' || mic === 'recording' || mic === 'thinking') && (
         <button type="button" class={`big mic ${mic}`} disabled={mic === 'thinking'} onClick={() => void toggleMic()}>
           {mic === 'recording' ? '⏹' : mic === 'thinking' ? '…' : '🎤'} {words.ui(mic === 'recording' ? 'mic_stop' : 'mic_start')}
+        </button>
+      )}
+      {heardText && <p class="heard">🎤 {words.ui('heard')} “{heardText}”</p>}
+      {mic === 'ready' && navigator.onLine && online === undefined && (
+        <div class="note online-ask">
+          <p>{words.ui('online_ask')}</p>
+          <div class="row">
+            <button type="button" class="action online-yes" onClick={() => choose('yes')}>{words.ui('online_yes')}</button>
+            <button type="button" class="action online-no" onClick={() => choose('no')}>{words.ui('online_no')}</button>
+          </div>
+        </div>
+      )}
+      {mic === 'ready' && online !== undefined && (
+        <button type="button" class="link online-toggle" onClick={() => choose(online === 'yes' ? 'no' : 'yes')}>
+          {words.ui(online === 'yes' ? 'online_on' : 'online_off')}
         </button>
       )}
       {(mic === 'unsupported' || mic === 'no_model' || mic === 'blocked') && (

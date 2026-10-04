@@ -56,9 +56,14 @@ function loadEmbedder(): Promise<Embedder> {
   return embedder;
 }
 
+export interface Recorded {
+  /** Mono at 16 kHz, for the model on the phone. */
+  audio: Float32Array;
+  /** As recorded, for the online speech service when she has agreed to it. */
+  blob: Blob;
+}
 export interface Recording {
-  /** Stop and get the audio, mono at 16 kHz. */
-  stop(): Promise<Float32Array>;
+  stop(): Promise<Recorded>;
 }
 
 export async function startRecording(): Promise<Recording> {
@@ -76,9 +81,10 @@ export async function startRecording(): Promise<Recording> {
           stream.getTracks().forEach((t) => t.stop());
           try {
             const ctx = new AudioContext();
-            const buf = await ctx.decodeAudioData(await new Blob(chunks).arrayBuffer());
+            const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+            const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
             void ctx.close();
-            resolve((await speech()).resampleTo16k(buf.getChannelData(0), buf.sampleRate).slice(0, MAX_SECONDS * SAMPLE_RATE));
+            resolve({ blob, audio: (await speech()).resampleTo16k(buf.getChannelData(0), buf.sampleRate).slice(0, MAX_SECONDS * SAMPLE_RATE) });
           } catch (e) {
             reject(e instanceof Error ? e : new Error(String(e)));
           }
@@ -118,3 +124,41 @@ export async function understand(audio: Float32Array, examples: Example[], expec
   const top = (await speech()).scoreMeanings(vector, examples, expect)[0];
   return { vector, heard: top ? { kind: 'confirm', meaning: top.meaning } : { kind: 'abstain' } };
 }
+
+// ── Online listening ───────────────────────────────────────────────────────
+// With a connection, and only if she has agreed, her recording is sent to a speech service through our
+// server and comes back as text. It understands free speech far better than the small model on the phone.
+// Without a connection, or if she said no, everything stays on the phone as before.
+
+const SPEECH_URL = (import.meta.env.VITE_SPEECH_URL as string | undefined) ?? 'https://amma-server.onrender.com';
+const CONSENT_KEY = 'amma.onlineSpeech';
+export type OnlineChoice = 'yes' | 'no' | undefined;
+
+export const onlineChoice = (): OnlineChoice => {
+  const v = localStorage.getItem(CONSENT_KEY);
+  return v === 'yes' || v === 'no' ? v : undefined;
+};
+export const setOnlineChoice = (v: 'yes' | 'no') => localStorage.setItem(CONSENT_KEY, v);
+
+/** The free server sleeps when idle; a nudge when the app opens means her first words are not lost to a slow start. */
+export function wakeSpeechServer(): void {
+  if (onlineChoice() === 'yes' && navigator.onLine) void fetch(`${SPEECH_URL}/health`).catch(() => undefined);
+}
+
+/** Her words as text, or undefined when the service cannot be reached in time: the caller then falls back to the phone. */
+export async function transcribeOnline(blob: Blob, locale: string): Promise<string | undefined> {
+  if (!navigator.onLine) return undefined;
+  try {
+    const res = await fetch(`${SPEECH_URL}/stt?lang=${encodeURIComponent(locale)}`, {
+      method: 'POST',
+      headers: { 'content-type': blob.type.split(';')[0] || 'audio/webm' },
+      body: blob,
+      signal: AbortSignal.timeout(12_000),
+    });
+    if (!res.ok) return undefined;
+    return ((await res.json()) as { text?: string }).text?.trim() || undefined;
+  } catch {
+    return undefined;
+  }
+}
+

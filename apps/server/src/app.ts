@@ -23,6 +23,18 @@ export interface Config {
   callback?: { accountSid: string; fromNumber: string; fetch: typeof fetch; perHour: number };
   /** A Telegram bot as another text-and-voice channel. Leave out to switch it off. */
   telegram?: TelegramConfig;
+  /**
+   * Speech to text for the web app when it is online and she has agreed to it.
+   * The key for the speech service stays on the server; the browser never sees it.
+   */
+  speech?: {
+    transcribe: (audio: Uint8Array, locale: string | undefined) => Promise<string>;
+    /** Web origins allowed to call it. */
+    origins: string[];
+    /** Requests allowed per network address per hour, and in total per day, so the service cannot be run up. */
+    perHour: number;
+    perDay: number;
+  };
 }
 
 export interface TelegramConfig {
@@ -80,6 +92,8 @@ const STOP = /^\s*\/?(stop|unsubscribe|बंद|रोको|थांबा)\s
 export function buildApp(cfg: Config): FastifyInstance {
   const app = Fastify({ logger: { level: 'info', redact: ['req.body', 'req.headers["x-twilio-signature"]'] } });
   void app.register(formbody);
+  // Recorded speech arrives as raw bytes. Fifteen seconds of compressed speech is well under this limit.
+  app.addContentTypeParser(/^audio\/.+/, { parseAs: 'buffer', bodyLimit: 1_500_000 }, (_req, body, done) => done(null, body));
   const hits = new Map<string, { minute: number; count: number }>();
   const ui = (lang: LanguagePack | undefined, key: keyof typeof SERVER_UI) => lang?.ui[key] ?? SERVER_UI[key];
   const languageMenu = () => cfg.languages.map((l, i) => `${i + 1}. ${l.name}`).join('\n');
@@ -127,6 +141,42 @@ export function buildApp(cfg: Config): FastifyInstance {
       out.parts.map((p) => ({ text: p.text, locale: p.lang?.locale ?? lang?.locale ?? DEFAULT_LOCALE })),
       { action: url, listenLocale: lang?.locale ?? DEFAULT_LOCALE, hangup: out.ended },
     );
+  });
+
+  // Speech to text for the web app. Nothing is stored: the audio goes to the speech service and the text comes back.
+  const sttHits = new Map<string, { hour: number; count: number }>();
+  let sttDay = { day: 0, count: 0 };
+  const allowOrigin = (origin: string | undefined) => (origin && cfg.speech?.origins.includes(origin) ? origin : undefined);
+  app.options('/stt', async (req, reply) => {
+    const origin = allowOrigin(req.headers.origin);
+    if (!origin) return reply.code(403).send();
+    return reply.headers({ 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'origin' }).code(204).send();
+  });
+  app.post('/stt', async (req, reply) => {
+    const speech = cfg.speech;
+    if (!speech) return reply.code(404).send();
+    const origin = allowOrigin(req.headers.origin);
+    if (!origin) return reply.code(403).send({ error: 'origin not allowed' });
+    void reply.headers({ 'access-control-allow-origin': origin, vary: 'origin' });
+    const hour = Math.floor(Date.now() / 3_600_000);
+    const day = Math.floor(hour / 24);
+    if (sttDay.day !== day) sttDay = { day, count: 0 };
+    const seen = sttHits.get(req.ip);
+    const used = seen?.hour === hour ? seen.count : 0;
+    if (used >= speech.perHour || sttDay.count >= speech.perDay) return reply.code(429).send({ error: 'too many requests' });
+    sttHits.set(req.ip, { hour, count: used + 1 });
+    sttDay.count += 1;
+    const audio = req.body;
+    if (!Buffer.isBuffer(audio) || audio.length === 0) return reply.code(400).send({ error: 'no audio' });
+    try {
+      const locale = typeof (req.query as { lang?: string }).lang === 'string' ? (req.query as { lang: string }).lang : undefined;
+      const text = (await speech.transcribe(new Uint8Array(audio), locale)).trim();
+      req.log.info({ stt: true, chars: text.length }, 'speech transcribed'); // length only, never the words
+      return { text };
+    } catch (e) {
+      req.log.error({ err: String(e) }, 'speech service failed');
+      return reply.code(502).send({ error: 'speech service failed' });
+    }
   });
 
   // Telegram: typed text, button presses and voice notes in; text, buttons and the cards' audio out.
