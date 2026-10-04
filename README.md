@@ -15,7 +15,7 @@ Many women do reach the clinic during pregnancy, but the visit is short and they
 3. If she says yes, it plays back the plan her family made in advance and offers one tap to call them.
 4. It carries on after the birth, for the mother and the baby.
 
-Everything AMMA says comes from official health booklets. The AI's only job is to understand what she says. It never writes advice and never decides whether she is well.
+Everything AMMA says about danger signs comes from official health booklets, and the AI never decides whether she is well. Its main job is to understand what she says. There is one exception: when she asks about something the booklet does not cover, and she has agreed to online help, the AI writes a short general answer, shown apart and marked as written by an AI and not checked by a doctor.
 
 She is often a woman who cannot easily read, whose internet comes and goes, and who gets only a few rushed minutes at the clinic. The signs she comes home without are ordinary and serious: heavy bleeding, a bad headache with blurred vision, the baby not moving. Knowing them is not the whole problem. The family still has to have agreed, in a calm moment, who decides, who takes her, and where they will go.
 
@@ -145,7 +145,7 @@ Distances say "in a straight line, not by road", because that is all the data su
 |---|---|---|
 | Say it back | "Which signs mean you must go to the hospital straight away?" She answers by voice, by tapping a picture, or a helper types. AMMA replays only the signs she missed, and brings missed ones back sooner. | The model suggests, she confirms |
 | Check | One question per sign: "Since last time, have you had…?" Yes, No, Not sure. | Her answers and a fixed rule table |
-| Ask | She can ask a question or describe what is wrong. For a vague complaint AMMA asks a few follow-ups (where, since when, how strong) and says it back as one clear sentence for the clinic. | The model suggests, she confirms |
+| Ask | She can ask a question or describe what is wrong. For a vague complaint AMMA asks a few follow-ups (where, since when, how strong) and says it back as one clear sentence for the clinic. Details already in her words ("back pain since two days") are filled in, not asked again. If the booklet has no card for it, a short AI-written answer follows under a caution. | The model suggests, she confirms |
 | Outcome | One of four spoken results (below). | Fixed rule table only |
 | Carry over | A ready-written SMS to her basic phone: next visit, signs to watch, who to call. | |
 
@@ -166,11 +166,15 @@ Distances say "in a straight line, not by road", because that is all the data su
 
 **After the birth** the same session covers six signs for the mother and eight for the baby, on the home-visit days (1, 3, 7, 14, 21, 28, 42).
 
-**What the pack contains today:** 32 signs, 20 questions she can ask, 12 complaints she can describe, and 8 optional tracks (pregnancy care, first pregnancy, anaemia, diabetes in pregnancy, free entitlements, care after birth, family planning, immunisation). That is 254 cards, of which 167 carry health content, each tied to an exact quote and page in an official source.
+**What the pack contains today:** 32 signs, 20 questions she can ask, 12 complaints she can describe, and 8 optional tracks (pregnancy care, first pregnancy, anaemia, diabetes in pregnancy, free entitlements, care after birth, family planning, immunisation). That is 256 cards, of which 167 carry health content, each tied to an exact quote and page in an official source.
 
 ## Where the AI is, and why a simpler tool would not do
 
-**What the AI does:** it turns her speech into one of a fixed list of known meanings, or says it does not know. On the phone this is a 10 MB speech model that runs with no network.
+**What the AI does.** There are three uses, and only the first runs without a network.
+
+1. **Hearing her, on the phone.** A 10 MB speech model turns her speech into one of a fixed list of known meanings, or says it does not know. No network, nothing leaves the phone.
+2. **Understanding her, online.** With a connection and her consent (asked once in the app, stated in the bot's first message), her voice goes to a speech service (ElevenLabs) to become text. Words the phrase list does not know go to a language model (OpenAI) that picks which listed meaning she intends, or none. The same model reads details she already gave, so "strong back pain since two days" is not followed by "where is the pain?". It works at every step: she can name her language, say "my baby came last week", or describe a problem in the middle of the check and be returned to where she was.
+3. **Answering where the booklet is silent, online.** The national card has nothing on back pain, nausea or what to eat. For a problem she described that led to no danger sign, or a health question no card answers, the model writes up to four short sentences of general comfort and self-care. This is the only place a model writes words she reads. It is shown apart from the cards under a fixed caution: written by an AI, not from the official booklet, not checked by a doctor, ask your health worker before acting on it.
 
 **Why not a menu, SMS, a spreadsheet or a search:**
 
@@ -183,16 +187,22 @@ Distances say "in a straight line, not by road", because that is all the data su
 
 | The model may | The model may never |
 |---|---|
-| Suggest which sign or question she said, for her to confirm | Decide the outcome |
-| Choose the next clarifying question | Write or reword advice |
-| Add an explicit yes/no question for a sign | Say a symptom is harmless |
+| Suggest which sign, question or problem she meant, for her to confirm | Decide the outcome |
+| Fill in details already in her words, which she confirms in a summary | Write or reword anything about a danger sign |
+| Add an explicit yes/no question for a sign | Say a symptom is harmless, normal or nothing to worry about |
+| Read her words as "yes" to a danger sign | Count her words as "no" or "not sure" to a danger sign: that must be tapped |
+| Write a short general answer where no card exists, under a caution | Name a medicine or a dose, diagnose, or tell her she need not see anyone |
 | Say "Not sure. Ask a person." | Change a "yes" she gave |
 
-Three mechanisms enforce it:
+How each side is held:
 
-1. **A fixed list of answers.** Every sentence AMMA can say is a numbered card with a source. A property test feeds the engine random input and checks that it never says anything that is not a card.
-2. **Rules proven by exhaustion.** Before a content pack can be built, a validator tries every combination of yes / no / not sure and refuses the pack if any "yes" is not urgent, any "not sure" does not reach a person, or any health card lacks a source.
-3. **Voice always asks.** Our benchmark (below) showed the small model cannot tell when it is wrong, so a voice match is never accepted alone. AMMA plays its guess back ("Did you say: high fever?") and she answers.
+1. **A fixed list of answers.** Every sentence the session engine can say is a numbered card with a source. A property test feeds the engine random input and checks that it never says anything that is not a card. The AI-written answer is produced outside the engine, cannot change its state, and is never the outcome.
+2. **The picker can only pick.** The model's reply is limited by a schema to the ids it was offered or "none", and the server checks again that the id was on the list. A detail or option it invents is dropped.
+3. **The written answer is fenced by instruction, not by proof.** It is told: general comfort only, no medicine or dose, no diagnosis, never "you are fine", always send her to a health worker, and if her words sound like an emergency say only "go now". Nothing checks that text after it is written. That is why it carries a caution, why it is off without her consent and without a network, and why one server setting (`AI_ANSWERS=off`) returns the product to cards only. It has had no clinical review.
+
+4. **Names stay private.** Names and phone numbers given for the family plan are not sent to the model.
+5. **Rules proven by exhaustion.** Before a content pack can be built, a validator tries every combination of yes / no / not sure and refuses the pack if any "yes" is not urgent, any "not sure" does not reach a person, or any health card lacks a source.
+6. **Voice always asks.** Our benchmark (below) showed the small model cannot tell when it is wrong, so a voice match is never accepted alone. AMMA plays its guess back ("Did you say: high fever?") and she answers. A described problem is confirmed in the summary it reads back ("Pain, in the back, strong, for a few days. Is this right?").
 
 ## What we measured, including what did not work
 
@@ -307,7 +317,7 @@ Adding a language needs no code: a folder with the wording, example phrases and 
 | Channel | Status |
 |---|---|
 | **Offline web app** | Live. This is the core feature. |
-| **Telegram bot** | Live. Text, buttons, voice notes (transcribed by ElevenLabs, then matched to the same fixed phrases) and audio replies. |
+| **Telegram bot** | Live. Text, buttons, voice notes (transcribed by ElevenLabs, then matched to the same fixed phrases, with a language model for words the phrases do not know) and voice replies. It understands free words at every step, and gives the marked AI-written answer where no card exists. |
 | **WhatsApp and SMS** | Built and tested against simulated requests. Not live: the Twilio trial account cannot send free-text WhatsApp replies. |
 | **Phone calls, and missed call with call back** | Built and tested against simulated requests. Not live: needs a purchased number. |
 
@@ -317,9 +327,9 @@ All channels run the same engine and the same cards. The picture of that split i
 
 - **Fail-safe:** a weak match gives "Not sure. Ask a person", never a guess.
 - **Human in the loop:** she confirms every voice match; the outcome is her own answers; the family acts.
-- **No generated advice:** every spoken sentence is a sourced card.
+- **Generated text is the exception, and it is labelled:** everything about danger signs, the check and the outcome is a sourced card. Only where no card exists does a model write a short general answer, under a caution that it is from an AI, not from the booklet, and not checked by a doctor. Its limits are instructions to the model and are not verified afterwards.
 - **Privacy on the phone:** no account, no server, audio discarded after matching, optional encrypted PIN, nothing on the lock screen.
-- **Privacy on the bot:** voice notes go to a speech service; the consent message says so.
+- **Privacy online:** voice goes to a speech service and unrecognised words to a language model; the consent says so, in the app and in the bot's first message. Names and phone numbers for the plan are not sent to the model.
 - **Bias and language limits:** measured on Wolof banking speech only; nothing measured for Hindi or Marathi; six of seven voices are synthetic and unreviewed.
 - **Honest labels:** each card carries "from published source" or "clinician approved". Today every card is the former.
 
@@ -340,12 +350,29 @@ Full statement: `docs/submission/RESPONSIBLE_AI.md`.
 
 ## How it is built
 
-The phone and the server are two doors. Rules live in one function. Packs hold every sentence.
+The phone is the product. The server is another door. Both call one function, and the model never chooses the outcome.
 
 <p align="center">
   <img src="docs/images/architecture.png" alt="How a session runs. On the family's phone: a Preact and Vite PWA, the record kept on the device, and Whisper-tiny through ONNX. On the messaging server: Telegram, Twilio, and SQLite, behind Fastify and Node, shipped as Docker on Render. Both send events to one engine and draw the effects it returns. The engine reads the India content pack, seven language packs, place lists, and ElevenLabs audio. Before a pack ships, pack-tools, place-tools, and the research harness check it. The model may suggest a meaning. It does not choose the outcome.">
 </p>
 <p align="center"><sub>Drawn in Excalidraw. Source: <code>docs/architecture/amma.excalidraw</code></sub></p>
+
+**On the family's phone.** No account. After the first visit, no network. Three things stay on the device: the session (plan, recall, the check, a question, the clinic card), the app and the packs cached so it still opens offline, and Whisper-tiny, a 10 MB model that runs on the phone. It may suggest which sign she said. The app plays that guess back and she confirms it. The same phone can hand her basic phone an SMS, a call, and the danger-sign audio over Bluetooth. The app is hosted on Vercel.
+
+**Messaging server.** Fastify on Node, one SQLite file, and it sleeps when idle. Telegram is live: text, buttons, voice notes, and audio replies. WhatsApp, SMS, calls, and a missed call that rings back are built through Twilio and are not live. The database keeps her number and her answers. It keeps no message text and no audio. A voice note goes to ElevenLabs, then the text is matched to the same fixed phrases as typed words. The server ships as Docker on Render. The two arrows mean the same thing both ways: her action goes in, and the next thing to say or show comes out.
+
+**Shared core.** The phone and the server run the same code. `step(state, event)` returns the next state and the effects to play or show. The path is plan, then recall, then the check, then a question, then the outcome. `@amma/matcher` accepts a match, asks her to confirm, or abstains. `@amma/schema` is one definition of the packs and of her record, so the two doors cannot drift apart.
+
+**What that function reads (four cards).** A new language, or a new country's booklet, is a folder. None of this is invented during the session.
+
+- **Content:** 256 cards from India's mother-and-child booklet, plus WHO. Every health card has a source.
+- **Languages:** seven folders. Wolof has wording but no voice clips.
+- **Places:** clinics and hospitals for The Gambia, Senegal, and Maharashtra, kept separate.
+- **ElevenLabs:** one audio clip per card, made once and played back. No card audio is generated while she is talking.
+
+**Before a pack can ship.** None of this runs during a session. `pack-tools` refuses a card with no source, and refuses a pack if a "yes" on a danger sign is not urgent. `place-tools` builds the facility lists from official lists and OpenStreetMap (10,599 places in Maharashtra). The research harness runs WolBanking77 with the protocol written first, and the straight-line distance check for The Gambia.
+
+**The line the model may not cross.** It may suggest which sign she said. She confirms it. A fixed table chooses go now, go soon, ask a person, or none of the listed signs. It never says she is fine, and it never writes or rewords anything about a danger sign. A test checks that every sentence the engine says is a card. The one thing a model does write is the short general answer where no card exists, online, with her consent, and under a caution; it sits outside the engine and cannot change the outcome.
 
 ```
 packages/

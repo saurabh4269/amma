@@ -12,8 +12,9 @@ Every number here is in the README with its source. Do not round up or add claim
 4. Open the Telegram bot (t.me/worldbank42_bot) and send `/start` once so it is awake. Leave it on the language menu.
 5. On the home screen choose Hindi once, wait about ten seconds, then switch back to English. This downloads the Hindi audio so it plays in airplane mode.
 6. Delete any old records on the home screen so the demo starts clean.
-7. Have airplane mode one swipe away.
-8. If two people present: one speaks, one holds the phone.
+7. If you will show speaking: tap the microphone once and choose "Yes, use the internet", so the consent question does not appear mid-demo. Check the chip under the microphone says "Online help on".
+8. Have airplane mode one swipe away.
+9. If two people present: one speaks, one holds the phone.
 
 ## The script
 
@@ -75,15 +76,21 @@ Turn airplane mode off.
 
 > "On weekdays the smartphone is away. So the signs go to her basic phone as audio over Bluetooth, and the same session runs as a chat. This one is live on Telegram."
 
+**She speaks freely (25 seconds, optional, needs a connection).** Tap the microphone at the bottom right of her page. Say: "I have strong back pain since two days." Tap Yes on the summary.
+
+> "She can just say what is wrong. It understood pain, in the back, strong, for a few days, without asking her each one. It reads that back and she confirms. The national card has nothing on back pain, so this last part, in the dashed box, is written by an AI, and it says so: not from the booklet, not checked by a doctor, ask your health worker."
+
 ### 4. Where the AI is, and why not something simpler (3:15 to 4:00)
 
 Show: the "may / may never" table in the README.
 
-> "The AI has one job: to understand what she says. It is a ten megabyte speech model that runs on the phone with no network."
+> "The AI's main job is to understand what she says. Offline, that is a ten megabyte speech model on the phone. Online, and only if she agrees, a speech service and a language model understand free speech far better, in her own words, at any point in the session."
 
 > "Why not a menu or an SMS? Because a menu shows her the answers. What she needs is to have them in her head, and you cannot check that without understanding her. And she may not read."
 
-> "The rule is: the model can raise a flag, never clear one. Everything it can say is one of 254 numbered cards, each tied to a quote and page in an official health booklet. The result comes only from her own yes or no. And before any content can be built, a checker tries every combination of answers and refuses it if a single yes is not treated as urgent."
+> "The rule is: the model can raise a flag, never clear one. Everything about danger signs is one of 256 numbered cards, the health ones each tied to a quote and page in an official booklet. The result comes only from her own yes or no. And before any content can be built, a checker tries every combination of answers and refuses it if a single yes is not treated as urgent."
+
+> "There is one place the model writes words. When she asks about something the booklet does not cover, it gives a few sentences of general comfort, never a medicine, never 'you are fine', always 'tell your health worker'. It is shown apart, labelled as AI, and one setting turns it off. We chose that over leaving her with 'I do not know'."
 
 ### 5. What we measured, honestly (4:00 to 4:30)
 
@@ -122,10 +129,10 @@ Keep sections 1 and 2 (40 seconds), the plan, the check and the urgent screen fr
 ## Questions judges are likely to ask
 
 **"Is this safe? What if it tells her the wrong thing?"**
-The outcome never comes from the model. It comes from her own yes, no or not sure, through a rule table that is checked exhaustively before any pack can be built. The model can only add a question or say "not sure, ask a person". But the content itself has not had clinical review, and it must not be used with patients until it has.
+The outcome never comes from the model. It comes from her own yes, no or not sure, through a rule table that is checked exhaustively before any pack can be built. On danger signs the model can only add a question or say "not sure, ask a person", and a model reading her words as "no" does not count until she taps it. The one riskier part is the AI-written answer where the booklet has no card. Its limits are instructions to the model, not a proof, and nothing checks the text afterwards. So it is labelled, it needs her consent and a connection, it cannot change the outcome, and it can be switched off. Neither the cards nor those answers have had clinical review, and it must not be used with patients until they have.
 
 **"Why do you need AI at all?"**
-For two things a menu cannot do: checking that she can recall the signs unprompted, and turning "it hurts here" into a clear description. Today the model is weak, so both are confirmed by her. The session still works with pictures alone.
+For three things a menu cannot do: checking that she can recall the signs unprompted, turning "it hurts here" into a clear description without a string of questions, and saying something useful when the booklet has no answer. The first two are always confirmed by her. The session still works with pictures alone, offline.
 
 **"Your benchmark failed. Why should we believe in this?"**
 Because the product does not depend on it. The check, the plan and the outcome use no model. The benchmark told us how much to trust voice, and we built to that. It also showed the path: with the same phrases recorded by three to five other speakers, it was right about four times in five, so recording the real sign phrases is the next step. That last result is exploratory.
@@ -134,7 +141,7 @@ Because the product does not depend on it. The check, the plan and the outcome u
 A language is a folder: the wording, the audio, and a few recordings per phrase. No transcription model is needed. Wolof shows the limit honestly: we have draft text but no voice, because the voice service does not support it, so it needs people to record it.
 
 **"Where is her data? What if the phone is shared or lost?"**
-On the phone only. No account and no server. Audio is discarded after matching. An optional PIN encrypts the record. The app says aloud that anyone who can open the phone can see it. On the chat channels, answers are kept under the phone number, no message text is kept, and STOP deletes everything.
+Her record is on the phone only. No account. An optional PIN encrypts it. The app says aloud that anyone who can open the phone can see it. Offline, no audio leaves the phone. If she agrees to online help, her voice goes to a speech service and unrecognised words to a language model, and nothing is stored by us; names and phone numbers for the plan are not sent to the model. On the chat channels, answers are kept under the phone number, no message text is kept, and STOP deletes everything.
 
 **"How is this different from MomConnect or PROMPTS?"**
 Those send messages from a server and have a staffed helpdesk. They need a network and reading. AMMA runs offline, by voice, and adds the two things the PROMPTS trial suggests are missing: recall, and a plan the family has agreed.
@@ -147,6 +154,9 @@ The offline app costs nothing per woman after it is installed. The audio was gen
 
 **"Who would own this?"**
 A ministry or an NGO owns its content and language packs. The code is open under Apache 2.0.
+
+**"Why did you let the model write anything at all?"**
+Because the national card is silent on ordinary things like back pain, and "I do not know, ask a person" every time teaches her to stop asking. We kept it narrow: only where no card exists, never about a danger sign, never the outcome, always labelled. If a ministry prefers cards only, it is one setting.
 
 **"What would you do with more time?"**
 Clinical review first. Then a recall study: signs recalled before and after four weekly sessions, against the published baseline of two.

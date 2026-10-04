@@ -6,7 +6,7 @@ Short answers first. Details and evidence below. The last section lists what has
 |---|---|
 | Is there a fail-safe that sends her to a person? | Yes. A weak or missing match gives "I am not sure about that. Please ask a person: your ASHA, ANM or doctor." A "not sure" on any sign gives "Speak to your ASHA or ANM today." |
 | Does a person make the final call? | Yes. The outcome comes only from her own Yes, No or Not sure taps and a fixed table. The tool never calls, texts or travels for her. |
-| Can it hallucinate? | It cannot write text. Everything it says is one of 254 fixed cards. A model can pick a card or abstain. |
+| Can it hallucinate? | For danger signs, the check and the outcome it cannot write text: everything said is one of 256 fixed cards, and a model can only pick a card or abstain. Where no card exists, and only online with her consent, a model writes a short general answer. That text can be wrong. It is fenced by instructions (no medicine, no diagnosis, never "you are fine", always "tell your health worker"), is not checked afterwards, and is shown under a caution saying it is from an AI and not from the booklet. |
 | Where does the data sit? | Offline app: on the phone only. Server channels: in one database file on the server, keyed by phone number. |
 | Who can read it? | Offline app: anyone who can open the phone, unless she sets a PIN. Server: whoever runs the server. |
 | Has a clinician reviewed it? | No. |
