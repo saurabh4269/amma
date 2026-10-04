@@ -1,0 +1,33 @@
+# Start from nothing and let in only what Dockerfile.server copies.
+*
+
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!tsconfig.base.json
+
+!apps/
+apps/*
+!apps/server/
+apps/server/*
+!apps/server/package.json
+!apps/server/src/
+
+!packages/
+packages/*/*
+!packages/*/package.json
+!packages/*/src/
+
+!packs/
+packs/*
+!packs/content/
+!packs/lang/
+
+# Never, wherever they sit.
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+**/*.sqlite
+**/*.sqlite-*
+**/*.tsbuildinfo

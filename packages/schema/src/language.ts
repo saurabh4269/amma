@@ -11,7 +11,8 @@ export const AudioClip = z.strictObject({
   file: z.string(),
   voice: z.strictObject({ kind: z.enum(['human', 'synthetic']), by: z.string() }),
   approvedBy: z.string().optional(),
-  sha256: z.string().optional(),
+  /** Hash of the wording this clip speaks. If the wording changes, the clip is stale and the pack will not build. */
+  of: z.string(),
 });
 
 export const Example = z.strictObject({

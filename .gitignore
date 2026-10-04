@@ -14,3 +14,4 @@ apps/web/public/packs/*.json
 content-sources/txt/
 data/
 apps/web/public/models/
+apps/web/public/packs/*/

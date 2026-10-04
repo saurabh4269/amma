@@ -1,0 +1,8 @@
+# Typed phrases for the questions in more.yaml. Drafts.
+lexicon:
+  "question:birth_vaccines": ["जन्म के समय टीका", "जन्म पर टीका", "पहला टीका", "pehla tika", "janm ka tika"]
+  "question:next_vaccines": ["अगला टीका", "अगले टीके", "टीका कब", "agla tika", "tika kab"]
+  "question:spacing": ["अगला बच्चा", "बच्चों में अंतर", "कितना अंतर", "agla bachcha", "antar"]
+  "question:fp_methods": ["परिवार नियोजन", "गर्भनिरोध", "कॉपर टी", "कंडोम", "parivar niyojan", "copper t"]
+  "question:solid_food": ["ऊपर का खाना", "ऊपरी आहार", "खाना कब शुरू", "upar ka khana"]
+  "question:hand_wash": ["हाथ धो", "हाथ कब", "haath dho", "hath dho"]

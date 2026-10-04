@@ -12,6 +12,14 @@ export class Speaker {
     return cards.some((c) => !words.lang.audio[c]);
   }
 
+  /** True when a clip she is about to hear was computer-made and nobody has approved it. */
+  usesUnapprovedVoice(words: Words, cards: string[]): boolean {
+    return cards.some((c) => {
+      const clip = words.lang.audio[c];
+      return clip?.voice.kind === 'synthetic' && !clip.approvedBy;
+    });
+  }
+
   stop() {
     this.token += 1;
     this.audio?.pause();

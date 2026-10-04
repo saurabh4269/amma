@@ -1,0 +1,128 @@
+# Family planning, immunisation and a few more questions.
+# Every card rests on the MCP card 2018 or its guidebook. Quotes that sit in a table or a picture caption
+# on the card (page 9, 11, 26, 36) are the printed words read across the column, not a running sentence.
+tracks:
+  - id: family_planning
+    label: t_family_planning
+    phases: [after_birth]
+    cards: [tfp_spacing, tfp_fertility, tfp_methods, tfp_iucd, tfp_complete, tfp_free]
+  - id: immunisation
+    label: t_immunisation
+    phases: [after_birth]
+    cards: [tim_birth, tim_visits, tim_m1, tim_m2, tim_m3, tim_states, tim_keep]
+
+questions:
+  - { id: birth_vaccines, label: q_birth_vaccines_l, answer: q_birth_vaccines_a }
+  - { id: next_vaccines, label: q_next_vaccines_l, answer: q_next_vaccines_a }
+  - { id: spacing, label: q_spacing_l, answer: q_spacing_a }
+  - { id: fp_methods, label: q_fp_methods_l, answer: q_fp_methods_a }
+  - { id: solid_food, label: q_solid_food_l, answer: q_solid_food_a }
+  - { id: hand_wash, label: q_hand_wash_l, answer: q_hand_wash_a }
+
+cards:
+  - { id: t_family_planning, kind: label, status: interface, ref: "Spacing the next child" }
+  - { id: t_immunisation, kind: label, status: interface, ref: "Vaccines for the baby" }
+
+  - id: tfp_spacing
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "26", quote: "Maintaining spacing of 3 years between two children has a healthy impact on both the mother and baby’s health." }
+    ref: "Keeping a gap of 3 years between two children is good for the health of both the mother and the baby."
+  - id: tfp_fertility
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "59", quote: "Remember: Fertility can return before return of menses in post-partum and post abortion period" }
+    ref: "After a birth, you can become pregnant again before your periods come back."
+  - id: tfp_methods
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "26", quote: "You can avail any spacing method from the wide basket of choices offered under the Family Planning Programme such as:" }
+    ref: "You can choose any spacing method offered under the Family Planning Programme, such as an IUCD, an injection, pills or condoms."
+  - id: tfp_iucd
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "26", quote: "Post partum IUCD: within 48 hours of delivery" }
+    ref: "An IUCD can be put in within 48 hours of delivery, or after 6 weeks of delivery."
+  - id: tfp_complete
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "26", quote: "If your family is complete, you/your spouse can opt for a permanent method of contraception" }
+    ref: "If your family is complete, you or your husband can choose a permanent method of contraception."
+  - id: tfp_free
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "61", quote: "Inform that all contraceptive services are available free of cost at all public health institutions" }
+    ref: "All contraceptive services are free of cost at all public health institutions."
+
+  - id: tim_birth
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "70", quote: "At birth, the child is given BCG, OPV and Hepatitis B vaccine. Hepatitis B vaccine should be given within 24 hours of birth." }
+    ref: "At birth, the child is given BCG, OPV and Hepatitis B vaccine. Hepatitis B vaccine should be given within 24 hours of birth."
+  - id: tim_visits
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "70", quote: "A child should be taken to the nearest immunization session at village/sub-centre/AWC or to the nearest health facility at 1½, 2½, 3½ and 9 months of age for all due doses of vaccines as per immunization schedule." }
+    ref: "Take the child to the nearest immunisation session or health facility at one and a half, two and a half, three and a half, and 9 months of age, for all the vaccines that are due."
+  - id: tim_m1
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "36", quote: "Penta-1" }
+    ref: "At one and a half months, the card lists OPV-1, Penta-1, Rota-1, PCV-1 and IPV-1."
+  - id: tim_m2
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "36", quote: "Penta-2" }
+    ref: "At two and a half months, the card lists OPV-2, Penta-2 and Rota-2."
+  - id: tim_m3
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "36", quote: "Penta-3" }
+    ref: "At three and a half months, the card lists OPV-3, Penta-3, Rota-3, PCV-2 and IPV-2."
+  - id: tim_states
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "69", quote: "The 3 vaccines that are available in select states/districts are: JE, PCV and Rotavirus." }
+    ref: "Three vaccines are available only in some states and districts: JE, PCV and Rotavirus."
+  - id: tim_keep
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "36", quote: "To keep the immunization card safe and bring it along for the next visit" }
+    ref: "Keep the immunisation card safe and bring it along for the next visit."
+
+  - { id: q_birth_vaccines_l, kind: label, status: interface, ref: "Which vaccines does the baby get at birth?" }
+  - id: q_birth_vaccines_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp-guide, page: "70", quote: "At birth, the child is given BCG, OPV and Hepatitis B vaccine. Hepatitis B vaccine should be given within 24 hours of birth." }
+    ref: "At birth, the child is given BCG, OPV and Hepatitis B vaccine. Hepatitis B vaccine should be given within 24 hours of birth."
+  - { id: q_next_vaccines_l, kind: label, status: interface, ref: "When are the baby's next vaccines?" }
+  - id: q_next_vaccines_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp-guide, page: "70", quote: "A child should be taken to the nearest immunization session at village/sub-centre/AWC or to the nearest health facility at 1½, 2½, 3½ and 9 months of age for all due doses of vaccines as per immunization schedule." }
+    ref: "Take the child to the nearest immunisation session or health facility at one and a half, two and a half, three and a half, and 9 months of age. Keep the immunisation card safe and bring it along."
+  - { id: q_spacing_l, kind: label, status: interface, ref: "How long should I wait before the next child?" }
+  - id: q_spacing_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "26", quote: "Maintaining spacing of 3 years between two children has a healthy impact on both the mother and baby’s health." }
+    ref: "Keeping a gap of 3 years between two children is good for the health of both the mother and the baby."
+  - { id: q_fp_methods_l, kind: label, status: interface, ref: "How can I delay the next pregnancy?" }
+  - id: q_fp_methods_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "26", quote: "You can avail any spacing method from the wide basket of choices offered under the Family Planning Programme such as:" }
+    ref: "You can choose any spacing method offered under the Family Planning Programme, such as an IUCD, an injection, pills or condoms. If your family is complete, you or your husband can choose a permanent method."
+  - { id: q_solid_food_l, kind: label, status: interface, ref: "When do I start other food for the baby?" }
+  - id: q_solid_food_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "11", quote: "On completion of 6 months, start feeding baby with 2–3 table spoons of soft, well-mashed foods 2–3 times a day" }
+    ref: "Continue breastfeeding. On completion of 6 months, start feeding the baby 2 to 3 tablespoons of soft, well-mashed food, 2 to 3 times a day."
+  - { id: q_hand_wash_l, kind: label, status: interface, ref: "When should I wash my hands?" }
+  - id: q_hand_wash_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "9", quote: "Wash both hands with soap before preparing food, feeding the child, after defecation and after cleaning child’s excreta" }
+    ref: "Wash both hands with soap before preparing food, before feeding the child, after defecation and after cleaning the child's stool."

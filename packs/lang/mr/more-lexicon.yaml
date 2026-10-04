@@ -1,0 +1,8 @@
+# Typed phrases for the questions in more.yaml. Drafts.
+lexicon:
+  "question:birth_vaccines": ["जन्माच्या वेळी लस", "पहिली लस", "pahili las"]
+  "question:next_vaccines": ["पुढची लस", "पुढच्या लसी", "लस कधी", "pudhchi las", "las kadhi"]
+  "question:spacing": ["पुढचे बाळ", "मुलांमध्ये अंतर", "किती अंतर", "antar"]
+  "question:fp_methods": ["कुटुंब नियोजन", "गर्भनिरोध", "तांबी", "निरोध", "kutumb niyojan", "tambi"]
+  "question:solid_food": ["वरचे अन्न", "पूरक आहार", "अन्न कधी सुरू", "varche anna"]
+  "question:hand_wash": ["हात धुवा", "हात कधी", "हात धुणे", "haat dhuva"]

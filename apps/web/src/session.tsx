@@ -93,6 +93,7 @@ export function Session({ ix, words, places, profile, onDone, onQuit }: Props) {
         ))}
       </section>
       {speaker.usesDeviceVoice(words, view.say) && view.say.length > 0 && <p class="muted small">{words.ui('device_voice')}</p>}
+      {speaker.usesUnapprovedVoice(words, view.say) && <p class="muted small">{words.ui('synthetic_voice')}</p>}
 
       {(view.showPlan || urgent) && <PlanView ix={ix} words={words} profile={st.profile} />}
       {view.calls?.map((c) => <a class="big call" href={`tel:${c.phone}`}>📞 {words.ui('call')} {c.name}</a>)}

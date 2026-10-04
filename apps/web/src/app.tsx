@@ -4,6 +4,7 @@ import { ClinicCard } from './clinic-card.tsx';
 import { loadBundle, Words, type Loaded } from './pack.ts';
 import { Session } from './session.tsx';
 import { Setup } from './setup.tsx';
+import { ShareAudio } from './share-audio.tsx';
 import { Teach } from './teach.tsx';
 import { deleteProfile, listProfiles, openProfile, requestPersistence, saveProfile, type ProfileMeta } from './store.ts';
 
@@ -133,6 +134,7 @@ export function App() {
             <button class="big primary" onClick={() => setScreen({ at: 'session', profile, pin })}>▶ {words.ui('start')}</button>
             <button class="big" onClick={() => setScreen({ at: 'card', profile, pin })}>📋 {words.ui('clinic_card')}</button>
             <button class="big" onClick={() => setScreen({ at: 'teach', profile, pin })}>🎤 {words.ui('teach_voice')}</button>
+            <ShareAudio ix={ix} words={words} profile={profile} />
           </div>
           <DeleteButton
             words={words}

@@ -1,4 +1,5 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse } from 'yaml';
 import { ContentPack, LanguagePack } from '@amma/schema';
@@ -88,7 +89,20 @@ export function loadLanguagePack(dir: string, content: ContentPack): Loaded<Lang
     if (!tr) problems.push({ where: `templates.${t.id}`, message: 'missing' });
     else for (const s of t.slots) if (!tr.text.includes(`{${s}}`)) problems.push({ where: `templates.${t.id}`, message: `slot {${s}} not used` });
   }
+  checkAudio(dir, lp, problems);
   return { pack: lp, problems };
+}
+
+export const wordingHash = (text: string) => createHash('sha256').update(text, 'utf8').digest('hex').slice(0, 16);
+
+/** Clips must exist and must speak the current wording. */
+function checkAudio(dir: string, lp: LanguagePack, problems: Problem[]) {
+  for (const [id, clip] of Object.entries(lp.audio)) {
+    const text = lp.translations[id]?.text;
+    if (text === undefined) problems.push({ where: `audio.${id}`, message: 'no such card' });
+    else if (clip.of !== wordingHash(text)) problems.push({ where: `audio.${id}`, message: 'the wording changed after this clip was made; generate it again' });
+    if (!existsSync(join(dir, clip.file))) problems.push({ where: `audio.${id}`, message: `file ${clip.file} is missing` });
+  }
 }
 
 /** What a reader needs to know before trusting a language pack. */
@@ -100,6 +114,7 @@ export function languageReport(lp: LanguagePack, content: ContentPack) {
     translated: Object.keys(lp.translations).length,
     byStatus,
     audioClips: Object.keys(lp.audio).length,
+    audioApproved: Object.values(lp.audio).filter((a) => a.approvedBy).length,
     examples: lp.examples.length,
     speakers: new Set(lp.examples.map((e) => e.speaker)).size,
   };
