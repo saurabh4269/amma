@@ -257,22 +257,7 @@ Adding a language needs no code: a folder with the wording, example phrases and 
 | **WhatsApp and SMS** | Built and tested against simulated requests. Not live: the Twilio trial account cannot send free-text WhatsApp replies. |
 | **Phone calls, and missed call with call back** | Built and tested against simulated requests. Not live: needs a purchased number. |
 
-```mermaid
-flowchart TB
-  subgraph Phone["On her family's phone (offline)"]
-    W[Web app] --> E1[Engine] --> P1[(Content and language packs)]
-    W --> S[10 MB speech model]
-  end
-  subgraph Server["Messaging server"]
-    T[Telegram] --> E2[Same engine]
-    WA[WhatsApp / SMS / calls] --> E2
-    E2 --> P2[(Same packs)]
-  end
-  W -. "SMS, call, Bluetooth audio" .-> B[Her basic phone]
-  WA -.-> B
-```
-
-All channels run the same engine and the same cards. Server channels keep answers under the phone number, keep no message text or audio, begin with a consent message, and delete everything on "STOP".
+All channels run the same engine and the same cards. The picture of that split is in [How it is built](#how-it-is-built). Server channels keep answers under the phone number, keep no message text or audio, begin with a consent message, and delete everything on "STOP".
 
 ## Responsible AI
 
@@ -300,6 +285,13 @@ Full statement: `docs/submission/RESPONSIBLE_AI.md`.
 - **Setup and the plan need typing**, so a helper who can read is needed once.
 
 ## How it is built
+
+The phone and the server are two doors. Rules live in one function. Packs hold every sentence.
+
+<p align="center">
+  <img src="docs/images/architecture.png" alt="How a session runs. On the family's phone: a Preact and Vite PWA, the record kept on the device, and Whisper-tiny through ONNX. On the messaging server: Telegram, Twilio, and SQLite, behind Fastify and Node, shipped as Docker on Render. Both send events to one engine and draw the effects it returns. The engine reads the India content pack, seven language packs, place lists, and ElevenLabs audio. Before a pack ships, pack-tools, place-tools, and the research harness check it. The model may suggest a meaning. It does not choose the outcome.">
+</p>
+<p align="center"><sub>Drawn in Excalidraw. Source: <code>docs/architecture/amma.excalidraw</code></sub></p>
 
 ```
 packages/
