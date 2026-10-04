@@ -269,4 +269,18 @@ describe('telegram', () => {
     expect(edit).toMatchObject({ message_id: 7, reply_markup: { inline_keyboard: [] } });
   });
 
+
+  it('keeps running when Telegram cannot be reached', async () => {
+    const store = new SqliteStore(':memory:');
+    let calls = 0;
+    const app = buildApp({
+      ix: indexPack(fixture), languages: [referenceLanguage(fixture, 'English')], store, authToken: TOKEN, publicUrl: URL, today: () => '2026-10-04', ratePerMinute: 100,
+      telegram: { token: 'BOT', secret: 's', fetch: (async () => { calls += 1; throw new TypeError('fetch failed'); }) as unknown as typeof fetch, clip: () => undefined },
+    });
+    app.log.level = 'silent';
+    const res = await app.inject({ method: 'POST', url: '/telegram/hook', headers: { 'x-telegram-bot-api-secret-token': 's' }, payload: { update_id: 1, callback_query: { id: 'c', data: '1', message: { message_id: 1, chat: { id: 5 } } } } });
+    expect(res.statusCode).toBe(200);
+    expect(calls).toBeGreaterThanOrEqual(3); // it retried
+    expect((await app.inject({ method: 'GET', url: '/health' })).statusCode).toBe(200);
+  });
 });

@@ -137,8 +137,18 @@ export function buildApp(cfg: Config): FastifyInstance {
     const chat = update.message?.chat.id ?? update.callback_query?.message?.chat.id;
     if (chat === undefined) return { ok: true };
     const address = `telegram:${chat}`;
-    const api = (method: string, body: string | FormData, headers?: Record<string, string>) =>
-      tg.fetch(`https://api.telegram.org/bot${tg.token}/${method}`, { method: 'POST', body, headers });
+    // Telegram is sometimes unreachable for a few seconds. A send is tried three times with a short timeout,
+    // and a failure is logged, never thrown: one lost reply must not take the server down.
+    const api = async (method: string, body: string | FormData, headers?: Record<string, string>): Promise<Response | undefined> => {
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          return await tg.fetch(`https://api.telegram.org/bot${tg.token}/${method}`, { method: 'POST', body, headers, signal: AbortSignal.timeout(8000) });
+        } catch (e) {
+          req.log.warn({ method, attempt, err: String(e) }, 'telegram call failed');
+        }
+      }
+      return undefined;
+    };
     const json = (method: string, payload: object) => api(method, JSON.stringify(payload), { 'content-type': 'application/json' });
 
     let body = update.callback_query?.data ?? update.message?.text ?? '';
@@ -151,8 +161,10 @@ export function buildApp(cfg: Config): FastifyInstance {
     const voice = update.message?.voice;
     if (voice && tg.transcribe) {
       try {
-        const file = (await (await json('getFile', { file_id: voice.file_id })).json()) as { result?: { file_path?: string } };
-        const audio = await (await tg.fetch(`https://api.telegram.org/file/bot${tg.token}/${file.result?.file_path}`)).arrayBuffer();
+        const got = await json('getFile', { file_id: voice.file_id });
+        if (!got) throw new Error('telegram unreachable');
+        const file = (await got.json()) as { result?: { file_path?: string } };
+        const audio = await (await tg.fetch(`https://api.telegram.org/file/bot${tg.token}/${file.result?.file_path}`, { signal: AbortSignal.timeout(15000) })).arrayBuffer();
         const lang = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
         body = await tg.transcribe(new Uint8Array(audio), lang?.locale);
       } catch (e) {

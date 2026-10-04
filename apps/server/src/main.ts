@@ -26,6 +26,9 @@ for (const dir of (process.env.LANGUAGE_PACKS ?? '').split(',').filter(Boolean))
 // The reference language is always offered; its own folder, when given, replaces the generated one.
 if (!languages.some((l) => l.id === pack.refLang)) languages.unshift(referenceLanguage(pack, 'English'));
 
+// A failed call to an outside service must never stop the server for everyone else.
+process.on('unhandledRejection', (reason) => console.error(JSON.stringify({ level: 50, msg: 'unhandled rejection', reason: String(reason) })));
+
 const store = new SqliteStore(process.env.DATABASE_FILE ?? 'amma.sqlite');
 const retentionDays = Number(process.env.RETENTION_DAYS ?? 400);
 setInterval(() => store.expire(new Date(Date.now() - retentionDays * 86_400_000).toISOString()), 3_600_000).unref();
