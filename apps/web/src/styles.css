@@ -232,7 +232,63 @@ fieldset { border: 1.5px solid var(--line); border-radius: 16px; background: var
 .page { padding-bottom: 96px; }
 @media print { .assistant { display: none; } }
 
-.heard { margin: 0; padding: 10px 14px; border-radius: 14px; background: #fff; font-style: italic; }
-.online-ask { display: flex; flex-direction: column; gap: 10px; }
-.online-ask p { margin: 0; }
-.link { border: 0; background: none; padding: 4px 0; font-size: .85rem; text-decoration: underline; color: inherit; text-align: left; box-shadow: none; min-height: 0; }
+/* Her own words, shown back like her side of a conversation. */
+.heard {
+  margin: 0 0 0 auto; max-width: 88%; padding: 10px 14px; border-radius: 18px 18px 4px 18px;
+  background: rgba(47, 111, 86, 0.12); border: 1px solid rgba(47, 111, 86, 0.25);
+  display: flex; flex-direction: column; gap: 2px; font-weight: 600; overflow-wrap: anywhere;
+}
+.top-title { color: var(--ink); font-size: 1rem; }
+
+/* The bar at the bottom of a question she answers in her own words: microphone, typing, pictures. */
+.listen { flex: 1; }
+.dock {
+  position: sticky; bottom: 0; z-index: 10; margin: auto -20px 0; 
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 10px; align-items: stretch;
+  background: linear-gradient(to bottom, rgba(246, 237, 228, 0), var(--bg) 18px);
+}
+.dock-main { display: flex; align-items: center; gap: 10px; }
+.dock .mic { flex: 1; gap: 10px; min-height: 68px; padding: 10px 18px; --level: 0; }
+.dock .side {
+  flex: 0 0 52px; width: 52px; height: 52px; padding: 0; border-radius: 50%;
+  font-size: 1.35rem; line-height: 1; display: grid; place-items: center;
+}
+.dock .side.on { border-color: var(--accent); background: rgba(196, 81, 58, 0.12); }
+.dock .side:disabled { opacity: 0.4; }
+.mic.recording {
+  box-shadow: 0 0 0 calc(4px + var(--level) * 14px) rgba(155, 35, 49, 0.22), 0 8px 20px rgba(155, 35, 49, 0.25);
+}
+.mic.thinking { background: var(--muted); box-shadow: none; opacity: 1; }
+.mic-text { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2; text-align: left; }
+.mic-state { font-variant-numeric: tabular-nums; }
+.mic-hint { font-size: 0.8rem; font-weight: 600; opacity: 0.9; }
+.mic-dot { width: 14px; height: 14px; border-radius: 50%; background: #fff; flex: 0 0 auto; }
+.spinner { width: 20px; height: 20px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.35); border-top-color: #fff; flex: 0 0 auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .mic-dot { animation: blink 1s ease-in-out infinite; }
+  .spinner { animation: spin 0.8s linear infinite; }
+  .mic.recording { transition: box-shadow 80ms linear; }
+}
+@keyframes blink { 50% { opacity: 0.25; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.dock-options .big { min-height: 52px; border-radius: 999px; }
+.dock .online-toggle { align-self: center; cursor: pointer; }
+.dock form { margin: 0; }
+
+/* Asked once, the first time she taps the microphone with a connection. */
+.sheet-back { position: fixed; inset: 0; z-index: 30; background: rgba(58, 36, 24, 0.45); display: flex; align-items: flex-end; justify-content: center; }
+.sheet-ask {
+  width: 100%; max-width: 28rem; max-height: 90dvh; overflow: auto; background: var(--bg);
+  border-radius: 24px 24px 0 0; padding: 22px 20px calc(20px + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 12px;
+}
+.sheet-ask p { margin: 0; font-size: 0.95rem; }
+
+/* A screen with its own microphone does not also need the floating one. */
+body:has(.dock) .assistant { display: none; }
+.page:has(.dock) { padding-bottom: 0; }
+.dock .online-toggle, .dock .online-toggle.on {
+  background: transparent; box-shadow: none; color: var(--muted); border-color: var(--line); font-weight: 600;
+}
+.dock .online-toggle.on { color: var(--no); border-color: rgba(47, 111, 86, 0.4); }

@@ -1,3 +1,4 @@
+import type { ComponentChildren } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { PlacePack, PlanSlot, PlanValue, Profile } from '@amma/schema';
 import { createSession, outcome, parseMeaning, signFact, signsFor, step, type Effect, type Event, type Heard, type Option, type PackIndex, type SessionState } from '@amma/engine';
@@ -54,6 +55,20 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
   const state = useRef<SessionState>(createSession(profile, new Date().toISOString().slice(0, 10)));
   const [view, setView] = useState<View>({ say: [], showPlan: false, ended: false });
   const [speaking, setSpeaking] = useState(-1);
+  // Her last words, as heard or typed, shown back above AMMA's reply.
+  const [said, setSaid] = useState<string>();
+  const page = useRef<HTMLElement>(null);
+  // Each reply starts at the top; then the screen follows the line being spoken, down to the buttons.
+  const show = (v: View, her?: string) => {
+    setView(v);
+    setSaid(her);
+    window.scrollTo({ top: 0 });
+    void speaker.play(words, v.say, (i) => {
+      setSpeaking(i);
+      const lines = page.current?.querySelectorAll('.line');
+      (i >= 0 ? lines?.[i] : undefined)?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
+    });
+  };
 
   // The last thing she said that has not yet been tied to a meaning, kept only until she confirms or corrects it.
   const spoken = useRef<{ vector: Float32Array; guess?: string }>();
@@ -62,7 +77,7 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
     spoken.current = undefined;
   };
 
-  const dispatch = (event: Event) => {
+  const dispatch = (event: Event, her?: string) => {
     // Her "yes" to a played-back guess, or her tap on a picture after speaking, is what labels the recording.
     if (event.type === 'chose' && spoken.current?.guess) {
       if (event.option === 'yes') learn(spoken.current.guess);
@@ -90,8 +105,12 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
         }
       }
     }
-    setView(v);
-    void speaker.play(words, v.say, setSpeaking);
+    // Nothing more to say to her: the assistant closes by itself instead of asking for one more tap.
+    if (mode === 'ask' && r.state.ended && v.say.length === 0 && !v.calls?.length) {
+      speaker.stop();
+      return onDone(r.state.profile);
+    }
+    show(v, her);
   };
   useEffect(() => {
     dispatch({ type: 'start' });
@@ -101,11 +120,14 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
   const st = state.current;
   const urgent = view.ended && st.level === 'urgent';
   return (
-    <main class={urgent ? 'page urgent' : 'page'}>
+    <main ref={page} class={urgent ? 'page urgent' : 'page'}>
       <header class="top">
         <button class="ghost" onClick={() => { speaker.stop(); onQuit(); }}>‹ {words.ui('back')}</button>
-        <button class="ghost" aria-label="replay" onClick={() => void speaker.play(words, view.say, setSpeaking)}>{words.ui('replay')}</button>
+        {mode === 'ask' && <h3 class="top-title">🎤 {words.ui('assistant')}</h3>}
+        <button class="ghost" aria-label="replay" onClick={() => void speaker.play(words, view.say, setSpeaking)}>🔊 {words.ui('replay')}</button>
       </header>
+
+      {said && <p class="heard"><span class="muted small">{words.ui('heard')}</span>“{said}”</p>}
 
       <section class="said" aria-live="polite">
         {view.say.map((id, i) => (
@@ -136,21 +158,31 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
           ix={ix}
           words={words}
           listen={view.listen}
-          onHeard={(result) => dispatch({ type: 'heard', result })}
-          onSpoken={(vector, result) => {
+          onMic={() => { speaker.stop(); setSpeaking(-1); }}
+          onHeard={(result, her) => dispatch({ type: 'heard', result }, her)}
+          onSpoken={(vector, result, her) => {
             spoken.current = { vector, guess: result.kind === 'confirm' ? result.meaning : undefined };
             // Understood outright (online listening): the meaning is already known, so her vector is stored with it now.
             if (result.kind === 'accept' && result.meanings[0]) learn(result.meanings[0]);
             const r = step(ix, state.current, { type: 'heard', result });
             state.current = r.state;
-            const v = toView(r.effects);
-            setView(v);
-            void speaker.play(words, v.say, setSpeaking);
+            show(toView(r.effects), her);
           }}
-        />
+        >
+          {view.options && (
+            <div class="row dock-options">
+              {view.options.map((o) => (
+                <button class={`big opt-${o.id}`} onClick={() => dispatch({ type: 'chose', option: o.id })}>
+                  {o.picture && <span class="pic">{o.picture}</span>}
+                  {words.card(o.card)}
+                </button>
+              ))}
+            </div>
+          )}
+        </Listen>
       )}
       {view.input && <SlotInput key={view.input.slot} words={words} places={places} kind={view.input.kind} onFilled={(value) => dispatch({ type: 'filled', value })} />}
-      {view.options && (
+      {view.options && !view.listen && (
         <div class={view.options.length <= 3 ? 'row answers' : 'grid'}>
           {view.options.map((o) => (
             <button class={`big opt-${o.id}`} onClick={() => dispatch({ type: 'chose', option: o.id })}>
@@ -172,71 +204,113 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
 }
 
 /**
- * Until the on-device speech model is installed, she answers by tapping a picture
- * or a helper types what she said. In the recall step the pictures stay hidden
- * until asked for, because seeing them turns recall into recognition.
+ * How she answers a question in her own words: by speaking, by tapping a picture, or a helper types.
+ * The microphone sits in a bar at the bottom of the screen so it is always under her thumb.
+ * In the recall step the pictures stay hidden until asked for, because seeing them turns recall into recognition.
  */
-function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words: Words; listen: Extract<Effect, { type: 'listen' }>; onHeard: (r: Heard) => void; onSpoken: (vector: Float32Array, r: Heard) => void }) {
+function Listen({ ix, words, listen, onHeard, onSpoken, onMic, children }: {
+  ix: PackIndex;
+  words: Words;
+  listen: Extract<Effect, { type: 'listen' }>;
+  onHeard: (r: Heard, said?: string) => void;
+  onSpoken: (vector: Float32Array, r: Heard, said?: string) => void;
+  /** She has started to speak: whatever AMMA was saying must stop, or the phone records itself. */
+  onMic: () => void;
+  children?: ComponentChildren;
+}) {
   // Whether the pictures are showing. The component is re-created when the step changes (see its key), so this starts fresh per step.
   const [open, setOpen] = useState(listen.mode === 'open');
   const [mic, setMic] = useState<'checking' | 'ready' | 'recording' | 'thinking' | 'unsupported' | 'no_model' | 'blocked'>('checking');
   const recording = useRef<Recording>();
+  const button = useRef<HTMLButtonElement>(null);
+  const [seconds, setSeconds] = useState(0);
+  const [retry, setRetry] = useState(false);
   useEffect(() => {
     void voiceStatus().then(setMic);
+    return () => void recording.current?.stop().catch(() => undefined);
   }, []);
-  // Whether she has agreed to online listening, and what the service last made of her words.
+  useEffect(() => {
+    if (mic !== 'recording') return;
+    setSeconds(0);
+    const t = setInterval(() => setSeconds((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, [mic]);
+  const usable = mic === 'ready' || mic === 'recording' || mic === 'thinking';
+  // Typing is tucked away while the microphone works, and open when it is the only way to use words.
+  const [typing, setTyping] = useState(false);
+  const showType = typing || mic === 'unsupported' || mic === 'no_model' || mic === 'blocked';
+
+  // Whether she has agreed to online listening. She is asked once, the first time she taps the microphone with a connection.
   const [online, setOnline] = useState<OnlineChoice>(onlineChoice());
-  const [heardText, setHeardText] = useState<string>();
+  const [asking, setAsking] = useState(false);
   const choose = (v: 'yes' | 'no') => {
     setOnlineChoice(v);
     setOnline(v);
     if (v === 'yes') wakeSpeechServer();
   };
-  const toggleMic = async () => {
+
+  const start = async () => {
+    onMic();
+    setRetry(false);
     try {
-      if (mic === 'ready') {
-        setHeardText(undefined);
-        recording.current = await startRecording();
-        setMic('recording');
-      } else if (mic === 'recording' && recording.current) {
-        setMic('thinking');
-        const { audio, blob } = await recording.current.stop();
-        // Online first, when she has agreed and there is a connection: it understands free speech.
-        const text = online === 'yes' ? await transcribeOnline(blob, words.lang.locale ?? words.lang.id) : undefined;
-        if (text) {
-          setHeardText(text);
-          const heard = matchText(text, words.lang.lexicon, listen.expect);
-          if (heard.kind === 'accept') {
-            // Her own vector is kept with the meaning, so the phone gets better at hearing her offline too.
-            const vector = await embedAudio(audio).catch(() => undefined);
-            setMic('ready');
-            if (vector) return onSpoken(vector, heard);
-            return onHeard(heard);
-          }
-          // The phrase list did not know her words. The language model may suggest which meaning she meant;
-          // the suggestion is played back and only counts if she says yes.
-          const suggested = await matchOnline(text, words.lang.id, listen.expect);
-          if (suggested) {
-            const vector = await embedAudio(audio).catch(() => undefined);
-            setMic('ready');
-            const guess = { kind: 'confirm', meaning: suggested } as const;
-            if (vector) return onSpoken(vector, guess);
-            return onHeard(guess);
-          }
-        }
-        // No connection, no consent, or words the phrase list does not know: the model on the phone has a go.
-        const { vector, heard } = await understand(audio, await loadExamples(words.lang.id), listen.expect);
-        setMic('ready');
-        // With nothing to compare against, show the pictures: her tap teaches the phone what she just said.
-        if (heard.kind === 'abstain') setOpen(true);
-        onSpoken(vector, heard);
-      }
+      recording.current = await startRecording({
+        onLevel: (v) => button.current?.style.setProperty('--level', v.toFixed(2)),
+        onQuiet: () => void finish(),
+      });
+      setMic('recording');
     } catch {
-      // Permission refused, or the model could not load. Say so, and fall back to pictures and typing.
+      // Permission refused. Say so, and fall back to pictures and typing.
       setMic('blocked');
       setOpen(true);
     }
   };
+  const finish = async () => {
+    const rec = recording.current;
+    if (!rec) return;
+    recording.current = undefined;
+    setMic('thinking');
+    try {
+      const { audio, blob } = await rec.stop();
+      // Online first, when she has agreed and there is a connection: it understands free speech.
+      const text = onlineChoice() === 'yes' ? await transcribeOnline(blob, words.lang.locale ?? words.lang.id) : undefined;
+      if (text) {
+        const heard = matchText(text, words.lang.lexicon, listen.expect);
+        if (heard.kind === 'accept') {
+          // Her own vector is kept with the meaning, so the phone gets better at hearing her offline too.
+          const vector = await embedAudio(audio).catch(() => undefined);
+          setMic('ready');
+          return vector ? onSpoken(vector, heard, text) : onHeard(heard, text);
+        }
+        // The phrase list did not know her words. The language model may suggest which meaning she meant;
+        // the suggestion is played back and only counts if she says yes.
+        const suggested = await matchOnline(text, words.lang.id, listen.expect);
+        if (suggested) {
+          const vector = await embedAudio(audio).catch(() => undefined);
+          setMic('ready');
+          const guess = { kind: 'confirm', meaning: suggested } as const;
+          return vector ? onSpoken(vector, guess, text) : onHeard(guess, text);
+        }
+      }
+      // No connection, no consent, or words the phrase list does not know: the model on the phone has a go.
+      const { vector, heard } = await understand(audio, await loadExamples(words.lang.id), listen.expect);
+      setMic('ready');
+      // With nothing to compare against, show the pictures: her tap teaches the phone what she just said.
+      if (heard.kind === 'abstain') setOpen(true);
+      onSpoken(vector, heard, text);
+    } catch {
+      // The recording could not be read or the model could not run. The microphone itself is fine: she can try again.
+      setMic('ready');
+      setRetry(true);
+      setOpen(true);
+    }
+  };
+  const tapMic = () => {
+    if (mic === 'recording') return void finish();
+    if (mic !== 'ready') return;
+    if (online === undefined && navigator.onLine) return setAsking(true);
+    void start();
+  };
+
   const label = (m: string): { text: string; pic?: string } => {
     const p = parseMeaning(m);
     const id =
@@ -247,46 +321,11 @@ function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words
   };
   return (
     <section class="listen">
-      {(mic === 'ready' || mic === 'recording' || mic === 'thinking') && (
-        <button type="button" class={`big mic ${mic}`} disabled={mic === 'thinking'} onClick={() => void toggleMic()}>
-          {mic === 'recording' ? '⏹' : mic === 'thinking' ? '…' : '🎤'} {words.ui(mic === 'recording' ? 'mic_stop' : 'mic_start')}
-        </button>
-      )}
-      {heardText && <p class="heard">🎤 {words.ui('heard')} “{heardText}”</p>}
-      {mic === 'ready' && navigator.onLine && online === undefined && (
-        <div class="note online-ask">
-          <p>{words.ui('online_ask')}</p>
-          <div class="row">
-            <button type="button" class="action online-yes" onClick={() => choose('yes')}>{words.ui('online_yes')}</button>
-            <button type="button" class="action online-no" onClick={() => choose('no')}>{words.ui('online_no')}</button>
-          </div>
-        </div>
-      )}
-      {mic === 'ready' && online !== undefined && (
-        <button type="button" class="link online-toggle" onClick={() => choose(online === 'yes' ? 'no' : 'yes')}>
-          {words.ui(online === 'yes' ? 'online_on' : 'online_off')}
-        </button>
-      )}
+      {retry && <p class="note mic-retry">{words.ui('mic_retry')}</p>}
       {(mic === 'unsupported' || mic === 'no_model' || mic === 'blocked') && (
         <p class="note mic-off">🎤 {words.ui(mic === 'unsupported' ? 'mic_unsupported' : mic === 'blocked' ? 'mic_blocked' : 'no_voice')}</p>
       )}
-      <form
-        class="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const input = e.currentTarget.elements.namedItem('said') as HTMLInputElement;
-          const typed = input.value;
-          input.value = '';
-          const byPhrase = matchText(typed, words.lang.lexicon, listen.expect);
-          if (byPhrase.kind !== 'abstain' || online !== 'yes') return onHeard(byPhrase);
-          // Typed words the phrase list does not know get the same help as spoken ones.
-          void matchOnline(typed, words.lang.id, listen.expect).then((m) => onHeard(m ? { kind: 'confirm', meaning: m } : byPhrase));
-        }}
-      >
-        <input name="said" placeholder={words.ui('type_here')} autocomplete="off" />
-        <button>{words.ui('send')}</button>
-      </form>
-      {open ? (
+      {open && (
         <div class="grid">
           {listen.expect.map((m) => {
             const l = label(m);
@@ -298,8 +337,76 @@ function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words
             );
           })}
         </div>
-      ) : (
-        <button class="ghost" onClick={() => setOpen(true)}>🖼 {words.ui('show_pictures')}</button>
+      )}
+
+      <div class="dock">
+        {usable && (
+          <div class="dock-main">
+            <button type="button" class={`side ${typing ? 'on' : ''}`} aria-label={words.ui('type_here')} title={words.ui('type_here')} aria-pressed={typing} disabled={mic !== 'ready'} onClick={() => setTyping(!typing)}>⌨️</button>
+            <button ref={button} type="button" class={`big mic ${mic}`} disabled={mic === 'thinking'} onClick={tapMic}>
+              {mic === 'recording' ? (
+                <>
+                  <span class="mic-dot" aria-hidden="true" />
+                  <span class="mic-text">
+                    <span class="mic-state">{words.ui('mic_listening')} 0:{String(seconds).padStart(2, '0')}</span>
+                    <span class="mic-hint">{words.ui('mic_stop')}</span>
+                  </span>
+                </>
+              ) : mic === 'thinking' ? (
+                <>
+                  <span class="spinner" aria-hidden="true" />
+                  <span>{words.ui('mic_thinking')}</span>
+                </>
+              ) : (
+                <>
+                  <span aria-hidden="true">🎤</span>
+                  <span>{words.ui('mic_start')}</span>
+                </>
+              )}
+            </button>
+            <button type="button" class={`side ${open ? 'on' : ''}`} aria-label={words.ui(open ? 'hide_pictures' : 'show_pictures')} title={words.ui(open ? 'hide_pictures' : 'show_pictures')} aria-pressed={open} disabled={mic !== 'ready'} onClick={() => setOpen(!open)}>🖼️</button>
+          </div>
+        )}
+        {showType && (
+          <form
+            class="row"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const input = e.currentTarget.elements.namedItem('said') as HTMLInputElement;
+              const typed = input.value.trim();
+              if (!typed) return;
+              input.value = '';
+              onMic();
+              const byPhrase = matchText(typed, words.lang.lexicon, listen.expect);
+              if (byPhrase.kind !== 'abstain' || online !== 'yes') return onHeard(byPhrase, typed);
+              // Typed words the phrase list does not know get the same help as spoken ones.
+              void matchOnline(typed, words.lang.id, listen.expect).then((m) => onHeard(m ? { kind: 'confirm', meaning: m } : byPhrase, typed));
+            }}
+          >
+            <input name="said" placeholder={words.ui('type_here')} autocomplete="off" autoFocus={typing} />
+            <button>{words.ui('send')}</button>
+          </form>
+        )}
+        {!usable && mic !== 'checking' && !open && (
+          <button class="ghost" onClick={() => setOpen(true)}>🖼 {words.ui('show_pictures')}</button>
+        )}
+        {children}
+        {mic === 'ready' && online !== undefined && navigator.onLine && (
+          <button type="button" class={`chip online-toggle ${online === 'yes' ? 'on' : ''}`} title={words.ui(online === 'yes' ? 'online_on' : 'online_off')} onClick={() => choose(online === 'yes' ? 'no' : 'yes')}>
+            {online === 'yes' ? '🌐' : '📱'} {words.ui(online === 'yes' ? 'chip_online' : 'chip_phone')}
+          </button>
+        )}
+      </div>
+
+      {asking && (
+        <div class="sheet-back">
+          <div class="sheet-ask online-ask" role="dialog" aria-modal="true">
+            <h2>{words.ui('online_title')}</h2>
+            <p>{words.ui('online_ask')}</p>
+            <button type="button" class="big primary online-yes" onClick={() => { choose('yes'); setAsking(false); void start(); }}>🌐 {words.ui('online_yes')}</button>
+            <button type="button" class="big online-no" onClick={() => { choose('no'); setAsking(false); void start(); }}>📱 {words.ui('online_no')}</button>
+          </div>
+        </div>
       )}
     </section>
   );

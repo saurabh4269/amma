@@ -23,6 +23,9 @@ test('a full session in Hindi: plan, recall, a "yes", the urgent outcome, and th
   // Recall: pictures stay hidden until asked for. A helper types what she said.
   await expect(page.getByText('किन लक्षणों का मतलब है')).toBeVisible();
   await expect(page.locator('.tile')).toHaveCount(0);
+  // Typing is behind the keyboard button when the microphone works, and already open when it does not.
+  await page.locator('.dock .side, input[name=said]').first().waitFor();
+  if (!(await page.locator('input[name=said]').isVisible())) await page.locator('.dock .side').first().click();
   await page.locator('input[name=said]').fill('खून आना');
   await page.getByRole('button', { name: 'भेजें' }).click();
   await expect(page.getByText('क्या कोई और है?')).toBeVisible();

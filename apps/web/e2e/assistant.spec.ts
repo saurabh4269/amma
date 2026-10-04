@@ -4,6 +4,9 @@ test('the microphone is on the home screen and answers a question without any re
   await page.goto('/');
   await page.getByRole('button', { name: 'Ask AMMA' }).click();
   await expect(page.getByText('Is there anything you want to ask')).toBeVisible();
+  // Typing is behind the keyboard button when the microphone works, and already open when it does not.
+  await page.locator('.dock .side, input[name=said]').first().waitFor();
+  if (!(await page.locator('input[name=said]').isVisible())) await page.locator('.dock .side').first().click();
   await page.locator('input[name=said]').fill('how do I take the iron tablets');
   await page.getByRole('button', { name: 'Send' }).click();
   await expect(page.locator('.said')).toContainText('Take one tablet of iron folic acid a day');

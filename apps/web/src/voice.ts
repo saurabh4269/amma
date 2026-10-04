@@ -66,16 +66,63 @@ export interface Recording {
   stop(): Promise<Recorded>;
 }
 
-export async function startRecording(): Promise<Recording> {
+export interface RecordingOptions {
+  /** How loud she is right now, 0 to 1, about sixty times a second. For the moving ring around the microphone. */
+  onLevel?: (level: number) => void;
+  /** She has stopped talking, said nothing at all, or the time is up: the caller should stop the recording. */
+  onQuiet?: () => void;
+}
+
+const SPEECH_LEVEL = 0.04;
+const QUIET_AFTER_SPEECH_MS = 1600;
+const QUIET_WITHOUT_SPEECH_MS = 7000;
+
+export async function startRecording(opts: RecordingOptions = {}): Promise<Recording> {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true } });
   const recorder = new MediaRecorder(stream);
   const chunks: Blob[] = [];
   recorder.ondataavailable = (e) => chunks.push(e.data);
   recorder.start();
-  const limit = setTimeout(() => recorder.state === 'recording' && recorder.stop(), MAX_SECONDS * 1000);
+  const limit = setTimeout(() => {
+    if (opts.onQuiet) opts.onQuiet();
+    else if (recorder.state === 'recording') recorder.stop();
+  }, MAX_SECONDS * 1000);
+
+  // Listening for loudness is a convenience. If the browser cannot do it, she stops the recording by tapping.
+  let meter: AudioContext | undefined;
+  let frame = 0;
+  if (opts.onLevel || opts.onQuiet) {
+    try {
+      meter = new AudioContext();
+      const analyser = meter.createAnalyser();
+      analyser.fftSize = 1024;
+      meter.createMediaStreamSource(stream).connect(analyser);
+      const buf = new Float32Array(analyser.fftSize);
+      const began = performance.now();
+      let lastLoud = 0;
+      const tick = () => {
+        analyser.getFloatTimeDomainData(buf);
+        let sum = 0;
+        for (const x of buf) sum += x * x;
+        const rms = Math.sqrt(sum / buf.length);
+        opts.onLevel?.(Math.min(1, rms * 6));
+        const now = performance.now();
+        if (rms > SPEECH_LEVEL) lastLoud = now;
+        const quiet = lastLoud ? now - lastLoud > QUIET_AFTER_SPEECH_MS : now - began > QUIET_WITHOUT_SPEECH_MS;
+        if (quiet && opts.onQuiet) return opts.onQuiet();
+        frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+    } catch {
+      meter = undefined;
+    }
+  }
+
   return {
     stop: () =>
       new Promise((resolve, reject) => {
+        cancelAnimationFrame(frame);
+        void meter?.close().catch(() => undefined);
         recorder.onstop = async () => {
           clearTimeout(limit);
           stream.getTracks().forEach((t) => t.stop());

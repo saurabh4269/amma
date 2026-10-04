@@ -12,10 +12,14 @@ test.use({
   permissions: ['microphone'],
 });
 
-async function speak(page: import('@playwright/test').Page) {
+/** Tap the microphone, answer the one-time question about online help if it comes up, and let the clip play. */
+async function speak(page: import('@playwright/test').Page, consent?: 'yes' | 'no') {
   await page.getByRole('button', { name: /Tap and speak/ }).click();
+  if (consent) await page.locator(`.online-${consent}`).click();
+  await expect(page.locator('.mic.recording')).toContainText('Listening');
   await page.waitForTimeout(2500);
-  await page.getByRole('button', { name: /Tap when you have finished/ }).click();
+  // It stops by itself when she goes quiet; if the clip is still talking, she taps.
+  await page.locator('.mic.recording').click({ timeout: 2000 }).catch(() => undefined);
 }
 
 test('the phone learns her words from her own correction, and after that asks before believing itself', async ({ page }) => {
@@ -28,7 +32,7 @@ test('the phone learns her words from her own correction, and after that asks be
   await expect(page.getByText('Which signs mean you must go to the hospital straight away?')).toBeVisible();
 
   // First time: nothing to compare with, so it does not guess. The pictures open and her tap labels what she said.
-  await speak(page);
+  await speak(page, 'no');
   await expect(page.locator('.tile').first()).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText('Did you say:')).toHaveCount(0);
   await page.locator('.tile', { hasText: 'High fever' }).click();
@@ -57,7 +61,7 @@ test('"teach the phone my voice" stores an example per sign, which the session t
   await page.getByRole('button', { name: /Back/ }).click();
   await page.getByText('Start this week’s session').click();
   for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Skip' }).click();
-  await speak(page);
+  await speak(page, 'no');
   await expect(page.getByText('Did you say:')).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('.said')).toContainText('Bleeding during pregnancy');
 });
@@ -76,13 +80,13 @@ test('online listening: asked first, then free speech is understood, shown back,
   await page.getByText('Start this week’s session').click();
   for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Skip' }).click();
 
-  // Nothing is sent until she has agreed.
-  await expect(page.locator('.online-ask')).toBeVisible();
-  await speak(page);
+  // She is asked once, on her first tap of the microphone. Nothing is sent until she has agreed.
+  await expect(page.locator('.online-ask')).toHaveCount(0);
+  await speak(page, 'no');
   await expect(page.locator('.tile').first()).toBeVisible({ timeout: 30_000 }); // the phone alone could not tell
   expect(calls).toBe(0);
 
-  await page.locator('.online-yes').click();
+  await page.locator('.online-toggle').click();
   await speak(page);
   await expect(page.locator('.heard')).toContainText('since yesterday I have a high fever', { timeout: 30_000 });
   await expect(page.getByText('Is there another one?')).toBeVisible();
@@ -112,11 +116,12 @@ test('words the phrase list does not know: the model suggests, and it only count
   for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Skip' }).click();
 
   // The consent names both services before anything is sent.
+  await page.getByRole('button', { name: /Tap and speak/ }).click();
   await expect(page.locator('.online-ask')).toContainText('OpenAI');
   await expect(page.locator('.online-ask')).toContainText('ElevenLabs');
   await page.locator('.online-yes').click();
-
-  await speak(page);
+  await page.waitForTimeout(2500);
+  await page.locator('.mic.recording').click({ timeout: 2000 }).catch(() => undefined);
   await expect(page.locator('.heard')).toContainText('my skull has been throbbing', { timeout: 30_000 });
   await expect(page.getByText('Did you say:')).toBeVisible();
   await expect(page.locator('.said')).toContainText('Headache and blurring of vision');
