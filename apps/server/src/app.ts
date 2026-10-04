@@ -69,7 +69,7 @@ const SERVER_UI = {
   tap_to_confirm: 'Please tap your answer, so a mishearing cannot hide a danger sign.',
   not_heard: 'I could not make out that voice note. Please say it again, or type it.',
   voice_note: 'You can also send a voice note. It goes to a speech service to be turned into text and is not kept.',
-  first_this: 'I will come to that. First tell me:',
+  first_this: 'I understood: {topic}. I will help with that now. So that I ask the right questions, tell me one thing first:',
   ai_note: 'When your words are not recognised, they are sent to an AI model (OpenAI) only to work out which listed topic you mean. It does not write the answers. Send STOP if you do not agree.',
 } as const;
 
@@ -533,14 +533,18 @@ export function buildApp(cfg: Config): FastifyInstance {
         if (!meant) return { parts: [{ text: phaseMenu(chosen), lang: chosen }], said: [], ended: false };
         user.pending = meant.id;
         cfg.store.put(user);
-        return { parts: [{ text: `${ui(chosen, 'first_this')}\n${phaseMenu(chosen)}`, lang: chosen }], said: [], ended: false };
+        return { parts: [{ text: `${ui(chosen, 'first_this').replace('{topic}', topic(meant.id, chosen))}\n${phaseMenu(chosen)}`, lang: chosen }], said: [], ended: false };
       }
       user.phaseChosen = true;
       user.profile = Profile.parse({ ...(user.profile ?? { id: address, label: '' }), lang: chosen.id, phase });
       // What she said before she was asked anything comes first; the weekly session can wait.
       if (user.pending) {
-        const m = user.pending;
+        // The same problem can be a different entry before and after the birth; the one for her stage is used.
+        const was = cfg.ix.pack.complaints.find((c) => `complaint:${c.id}` === user.pending);
+        const fits = was && was.phases.length && !was.phases.includes(phase) ? cfg.ix.pack.complaints.find((c) => c.label === was.label && (c.phases.length === 0 || c.phases.includes(phase))) : was;
+        const m = was ? (fits ? `complaint:${fits.id}` : undefined) : user.pending;
         user.pending = undefined;
+        if (!m) return finishTurn(user, begin(cfg.ix, chosen, user.profile, cfg.today()));
         return asideTurn(user, beginAside(cfg.ix, chosen, user.profile, cfg.today(), m, false));
       }
       return finishTurn(user, begin(cfg.ix, chosen, user.profile, cfg.today()));
@@ -568,6 +572,15 @@ export function buildApp(cfg: Config): FastifyInstance {
       return finishTurn(user, begin(cfg.ix, chosen, user.profile!, cfg.today()));
     }
     return finishTurn(user, receive(cfg.ix, chosen, conv, answerOf(conv.awaiting), meant?.id));
+  }
+
+  /** The name of a question or problem from the pack, in her language. */
+  function topic(meaning: string, l: LanguagePack): string {
+    const id = meaning.slice(meaning.indexOf(':') + 1);
+    const card = meaning.startsWith('sign:') ? cfg.ix.sign.get(id)?.label
+      : meaning.startsWith('question:') ? cfg.ix.pack.questions.find((q) => q.id === id)?.label
+      : cfg.ix.pack.complaints.find((c) => c.id === id)?.label;
+    return card ? (l.translations[card]?.text ?? cfg.ix.card.get(card)?.ref ?? card) : meaning;
   }
 
   /** One turn of something she brought up out of turn. When it is finished she is taken back to where she was. */
