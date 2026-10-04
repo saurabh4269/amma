@@ -13,12 +13,14 @@ const contentDir = need('CONTENT_PACK');
 const { pack, problems } = loadContentPack(contentDir);
 if (!pack || problems.length) throw new Error(`content pack is not valid: ${JSON.stringify(problems.slice(0, 5))}`);
 
-const languages = [referenceLanguage(pack, 'English')];
+const languages = [];
 for (const dir of (process.env.LANGUAGE_PACKS ?? '').split(',').filter(Boolean)) {
   const lp = loadLanguagePack(dir, pack);
   if (!lp.pack || lp.problems.length) throw new Error(`${dir} is not valid: ${JSON.stringify(lp.problems.slice(0, 5))}`);
   languages.push(lp.pack);
 }
+// The reference language is always offered; its own folder, when given, replaces the generated one.
+if (!languages.some((l) => l.id === pack.refLang)) languages.unshift(referenceLanguage(pack, 'English'));
 
 const store = new SqliteStore(process.env.DATABASE_FILE ?? 'amma.sqlite');
 const retentionDays = Number(process.env.RETENTION_DAYS ?? 400);
