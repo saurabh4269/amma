@@ -1,0 +1,51 @@
+{
+  "population_2020": 2434677,
+  "populated_cells": 1265600,
+  "facilities": {
+    "any facility (official list or public map)": {
+      "count": 119,
+      "within_2_km": 0.4402,
+      "within_5_km": 0.8087,
+      "within_10_km": 0.9622,
+      "within_25_km": 1.0,
+      "within_50_km": 1.0,
+      "median_km": 2.3,
+      "p90_km": 7.18
+    },
+    "any facility on the official list": {
+      "count": 101,
+      "within_2_km": 0.3743,
+      "within_5_km": 0.7937,
+      "within_10_km": 0.9559,
+      "within_25_km": 1.0,
+      "within_50_km": 1.0,
+      "median_km": 2.59,
+      "p90_km": 7.42
+    },
+    "hospital on the official list": {
+      "count": 6,
+      "within_2_km": 0.092,
+      "within_5_km": 0.2783,
+      "within_10_km": 0.4433,
+      "within_25_km": 0.7191,
+      "within_50_km": 0.914,
+      "median_km": 13.22,
+      "p90_km": 46.97
+    }
+  },
+  "towers": {
+    "all radios": {
+      "count": 5,
+      "within_2_km": 0.0,
+      "within_5_km": 0.0001,
+      "within_10_km": 0.0057,
+      "median_km": 42.52,
+      "p90_km": 227.73
+    },
+    "count_by_radio": {
+      "GSM": 2,
+      "LTE": 2,
+      "UMTS": 1
+    }
+  }
+}

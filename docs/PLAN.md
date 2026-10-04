@@ -381,6 +381,31 @@ Limits found while sourcing this:
 - Family planning, immunisation dates and birth registration are not yet in the pack.
 - Sources disagree on the visit schedule (card: days 1, 3, 7 and week 6; ASHA home visits: 3, 7, 14, 21, 28, 42; WHO: 24 hours, 48 to 72 hours, 7 to 14 days, week six). The pack states the Indian ones.
 
+## 27. What the data handover gave us
+
+The handover (4 October 2026) was verified against its checksums and unpacked to `data/health-transfer/`, which is not committed. Licenses are quoted from its manifest; where the manifest says "unknown", so do we.
+
+**Built from it:** facility lists ("place packs") for The Gambia (119 facilities) and Senegal (2,050), from the Maina list (license: unknown in the manifest) and healthsites.io (ODbL). The app's "find places near me" uses them offline.
+
+**Computed from it** (`research/access/gambia_access.py`, WorldPop 2020 grid, 2.43 million people):
+
+| Straight-line distance to… | Within 5 km | Within 10 km | Median | 90% of people within |
+|---|---|---|---|---|
+| Any listed facility | 81% | 96% | 2.3 km | 7.2 km |
+| A hospital on the official list (6 with coordinates) | 28% | 44% | 13.2 km | 47 km |
+
+This is the number the brief said it did not have, with a limit: these are straight lines. The river, roads and seasons are ignored, so real journeys are longer.
+
+What it means for the product: a clinic is near for most Gambians; a hospital is not. For bleeding or fits, "the nearest facility" and "the nearest hospital" are different answers, which is why the plan step shows both.
+
+**What the handover could not give:**
+
+- **Cell coverage.** The cell-tower file has five rows for The Gambia. That is a gap in the crowd-sourced data, not evidence of no signal, so no coverage claim is made.
+- **India.** No Indian facility list, map extract or cell-tower rows. The clinic finder says so when she is in India and asks her to type the name.
+- **Travel time.** No travel-time grid was included. Road routing from the OpenStreetMap extracts is possible and not yet done.
+- **Half the public-map points for The Gambia** (39 of 73) have no coordinates and are left out.
+- **Financial inclusion surveys** for the brief's countries: only six unrelated countries were present.
+
 ## Sources opened today
 
 - Gambia danger-sign survey: https://pmc.ncbi.nlm.nih.gov/articles/PMC11122691

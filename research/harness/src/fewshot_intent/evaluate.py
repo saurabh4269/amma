@@ -42,7 +42,7 @@ def make_episodes(meta: pd.DataFrame, n_episodes: int = N_EPISODES) -> tuple[lis
         for k in KS:
             support[k] = np.concatenate(
                 [rng.choice(pool[y[pool] == c], size=k, replace=False) for c in range(len(intents))])
-        episodes.append({"seed": seed, "support": support, "cal": cal, "test": test,
+        episodes.append({"seed": seed, "support": support, "pool": pool, "cal": cal, "test": test,
                          "support_speakers": [int(s) for s in sup_s],
                          "cal_speakers": [int(s) for s in cal_s],
                          "test_speakers": [int(s) for s in test_s]})
@@ -109,9 +109,17 @@ def _stats(v) -> dict:
             "p2.5": float(np.percentile(a, 2.5)), "p97.5": float(np.percentile(a, 97.5)), "n": int(len(a))}
 
 
+def _l2(x):
+    return x / np.maximum(np.linalg.norm(x, axis=-1, keepdims=True), 1e-12)
+
+
 def evaluate(e_sup: np.ndarray, e_qry: np.ndarray, meta: pd.DataFrame, episodes: list[dict],
-             clf: str) -> dict:
-    """e_sup / e_qry: (N, D) L2-normalised vectors used for support and for cal/test queries."""
+             clf: str, center: bool = False) -> dict:
+    """e_sup / e_qry: (N, D) L2-normalised vectors used for support and for cal/test queries.
+
+    center=True is a POST-HOC exploratory variant (not in the protocol): subtract the mean vector of
+    the episode's support-pool speakers (unlabelled, no query data) and re-normalise.
+    """
     intents = sorted(meta.intent.unique())
     n_cls = len(intents)
     y = meta.intent.map({c: i for i, c in enumerate(intents)}).to_numpy()
@@ -129,10 +137,13 @@ def evaluate(e_sup: np.ndarray, e_qry: np.ndarray, meta: pd.DataFrame, episodes:
         for ep in episodes:
             si = ep["support"][k]
             sup_texts = set(text[si])
+            mu = e_sup[ep["pool"]].mean(0) if center else None
+            e_s = _l2(e_sup[si] - mu) if center else e_sup[si]
             parts = {}
             for name in ("cal", "test"):
                 qi = ep[name]
-                sc = class_scores(e_sup[si], y[si], e_qry[qi], n_cls, clf)
+                e_q = _l2(e_qry[qi] - mu) if center else e_qry[qi]
+                sc = class_scores(e_s, y[si], e_q, n_cls, clf)
                 pred = sc.argmax(1)
                 srt = np.sort(sc, axis=1)
                 conf = {"maxsim": srt[:, -1], "margin": srt[:, -1] - srt[:, -2]}

@@ -102,13 +102,62 @@ def stage_onnx(res, clips):
     res["onnx"] = info
 
 
+def stage_diagnostics(res, clips):
+    """POST-HOC, exploratory, not part of the pre-registered protocol. Added after the grid results
+    were seen, to tell 'too few shots' apart from 'the vectors do not encode intent'."""
+    from .embed import embed
+    from .evaluate import KS, _acc, _l2, _stats, evaluate, make_episodes
+    m = clips.meta
+    intents = sorted(m.intent.unique())
+    y = m.intent.map({c: i for i, c in enumerate(intents)}).to_numpy()
+    text, spk = m.text.to_numpy(), m.user_id.to_numpy()
+    episodes, _ = make_episodes(m)
+    diag = {}
+    for key in res["selection"]["best_per_encoder"].values():
+        enc, layer, clf = key.split("|")
+        z = embed(clips, enc, "clean")
+        e = z["emb"][:, z["layers"].index(layer)]
+        d = {}
+        # (a) what is the nearest other clip? (all 3,204 clips, self excluded)
+        sims = e @ e.T
+        np.fill_diagonal(sims, -np.inf)
+        nn = sims.argmax(1)
+        off = sims[np.triu_indices(len(e), 1)]
+        d["nearest_other_clip"] = {"same_speaker": float((spk[nn] == spk).mean()),
+                                   "same_sentence": float((text[nn] == text).mean()),
+                                   "same_intent": float((y[nn] == y).mean())}
+        d["pairwise_cosine"] = {"mean": float(off.mean()), "p01": float(np.percentile(off, 1)),
+                                "p99": float(np.percentile(off, 99))}
+        # (b) ceiling: support = EVERY clip of the 6 support speakers (about 1,200 clips), 1-NN
+        for center in (False, True):
+            mic, mac, sent = [], [], []
+            for ep in episodes:
+                mu = e[ep["pool"]].mean(0) if center else 0.0
+                s_, q_ = _l2(e[ep["pool"]] - mu), _l2(e[ep["test"]] - mu)
+                j = (q_ @ s_.T).argmax(1)
+                pred = y[ep["pool"]][j]
+                a, b, _n = _acc(pred, y[ep["test"]], len(intents))
+                mic.append(a), mac.append(b)
+                sent.append(float((text[ep["pool"]][j] == text[ep["test"]]).mean()))
+            d["full_pool_nn" + ("_centered" if center else "")] = {
+                "test_micro": _stats(mic), "test_macro": _stats(mac), "same_sentence_retrieved": _stats(sent),
+                "support_clips_mean": float(np.mean([len(ep["pool"]) for ep in episodes]))}
+        # (c) the pre-registered few-shot task with support-pool mean-centering
+        d["fewshot_centered"] = {c: evaluate(e, e, m, episodes, c, center=True) for c in CLFS}
+        diag[key] = d
+        print(key, d["nearest_other_clip"], d["full_pool_nn"]["test_macro"]["mean"],
+              d["full_pool_nn_centered"]["test_macro"]["mean"],
+              {c: [round(d["fewshot_centered"][c][str(k)]["A"]["test_macro"]["mean"], 3) for k in KS] for c in CLFS})
+    res["diagnostics_posthoc"] = diag
+
+
 def stage_report(res, clips):
     from .report import write_report
     write_report(res)
 
 
 STAGES = {"dataset": stage_dataset, "grid": stage_grid, "robustness": stage_robustness,
-          "onnx": stage_onnx, "report": stage_report}
+          "onnx": stage_onnx, "diagnostics": stage_diagnostics, "report": stage_report}
 
 
 def main() -> None:
