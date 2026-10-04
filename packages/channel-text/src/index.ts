@@ -1,6 +1,6 @@
 import type { LanguagePack, PlanSlot, PlanValue } from '@amma/schema';
 import { CHOICE, createSession, step, type Effect, type Event, type Option, type PackIndex, type SessionState } from '@amma/engine';
-import { matchText } from '@amma/matcher';
+import { matchText, normalise } from '@amma/matcher';
 import type { Profile } from '@amma/schema';
 
 /**
@@ -101,6 +101,14 @@ export function interpret(body: string, awaiting: Awaiting, lang: LanguagePack):
     const n = /^\d+$/.test(trimmed) ? Number(trimmed) : NaN;
     const picked = awaiting.options[n - 1];
     if (picked) return { type: 'chose', option: picked.id };
+    // Her own word for an option ("हाँ", "no", "not sure") counts too. The longest label that fits wins,
+    // so "not sure" is not read as "no".
+    const said = ` ${normalise(trimmed)} `;
+    const byWords = awaiting.options
+      .map((o) => ({ o, label: normalise(lang.translations[o.card]?.text ?? '') }))
+      .filter((x) => x.label && said.includes(` ${x.label} `))
+      .sort((a, b) => b.label.length - a.label.length)[0];
+    if (byWords) return { type: 'chose', option: byWords.o.id };
     if (awaiting.listen) return { type: 'heard', result: matchText(trimmed, lang.lexicon, awaiting.listen) };
     return undefined;
   }

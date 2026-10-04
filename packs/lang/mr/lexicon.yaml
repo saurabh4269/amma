@@ -3,7 +3,7 @@ lexicon:
   "sign:bleeding": ["रक्तस्राव", "रक्त", "अंगावरून जाणे", "rakta", "bleeding"]
   "sign:breathless": ["दम लागणे", "दम", "रक्त कमी", "dam"]
   "sign:fever": ["ताप", "taap", "tap"]
-  "sign:headache": ["डोकेदुखी", "डोके दुखणे", "डोके दुखते", "अंधुक", "doke"]
+  "sign:headache": ["डोकेदुखी", "डोकं दुखतं", "डोके दुखत", "डोकं दुखत", "डोके दुखणे", "डोके दुखते", "अंधुक", "doke"]
   "sign:fits": ["झटका", "झटके", "फिट", "jhatka", "fit"]
   "sign:swelling": ["सूज", "sooj", "suj"]
   "sign:early_pains": ["वेळेआधी कळा", "कळा", "kala"]

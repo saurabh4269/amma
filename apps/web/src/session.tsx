@@ -6,7 +6,7 @@ import type { Words } from './pack.ts';
 import { alertPhones, PlanView, renderAlert, renderSms, SendText } from './plan.tsx';
 import { NearMe } from './near-me.tsx';
 import { Speaker } from './speaker.ts';
-import { addExample, loadExamples, startRecording, understand, voiceAvailable, type Recording } from './voice.ts';
+import { addExample, loadExamples, startRecording, understand, voiceStatus, type Recording } from './voice.ts';
 
 /** What one engine step asks the screen to show. */
 interface View {
@@ -155,10 +155,10 @@ export function Session({ ix, words, places, profile, onDone, onQuit }: Props) {
 function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words: Words; listen: Extract<Effect, { type: 'listen' }>; onHeard: (r: Heard) => void; onSpoken: (vector: Float32Array, r: Heard) => void }) {
   // Whether the pictures are showing. The component is re-created when the step changes (see its key), so this starts fresh per step.
   const [open, setOpen] = useState(listen.mode === 'open');
-  const [mic, setMic] = useState<'hidden' | 'ready' | 'recording' | 'thinking'>('hidden');
+  const [mic, setMic] = useState<'checking' | 'ready' | 'recording' | 'thinking' | 'unsupported' | 'no_model' | 'blocked'>('checking');
   const recording = useRef<Recording>();
   useEffect(() => {
-    void voiceAvailable().then((ok) => ok && setMic('ready'));
+    void voiceStatus().then(setMic);
   }, []);
   const toggleMic = async () => {
     try {
@@ -175,7 +175,8 @@ function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words
         onSpoken(vector, heard);
       }
     } catch {
-      setMic('hidden'); // no microphone permission, or the model could not load: fall back to pictures and typing
+      // Permission refused, or the model could not load. Say so, and fall back to pictures and typing.
+      setMic('blocked');
       setOpen(true);
     }
   };
@@ -189,10 +190,13 @@ function Listen({ ix, words, listen, onHeard, onSpoken }: { ix: PackIndex; words
   };
   return (
     <section class="listen">
-      {mic !== 'hidden' && (
+      {(mic === 'ready' || mic === 'recording' || mic === 'thinking') && (
         <button type="button" class={`big mic ${mic}`} disabled={mic === 'thinking'} onClick={() => void toggleMic()}>
           {mic === 'recording' ? '⏹' : mic === 'thinking' ? '…' : '🎤'} {words.ui(mic === 'recording' ? 'mic_stop' : 'mic_start')}
         </button>
+      )}
+      {(mic === 'unsupported' || mic === 'no_model' || mic === 'blocked') && (
+        <p class="note mic-off">🎤 {words.ui(mic === 'unsupported' ? 'mic_unsupported' : mic === 'blocked' ? 'mic_blocked' : 'no_voice')}</p>
       )}
       <form
         class="row"

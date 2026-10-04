@@ -74,6 +74,8 @@ ui:
   unconfirmed: "kutoka ramani ya umma, si orodha rasmi"
   not_installed: "Kifurushi cha maudhui hakijawekwa."
   consent: "Huduma hii inatoa taarifa za ujauzito na mtoto mchanga kutoka vijitabu rasmi vya afya. Haichukui nafasi ya mhudumu wa afya. Inahifadhi majibu yako chini ya namba hii ya simu, na haihifadhi maandishi ya ujumbe. Tuma STOP wakati wowote ili kufuta kila kitu."
+  heard: "Nimesikia:"
+  not_heard: "Sikuelewa ujumbe huo wa sauti. Tafadhali sema tena, au uandike."
   stopped: "Kila kitu kilichohifadhiwa kwa namba hii kimefutwa."
   again: "Tuma ujumbe wowote ili kuanza kikao kipya. Tuma START ili kuchagua lugha tena."
   voice_note: "Unaweza pia kutuma ujumbe wa sauti. Unapelekwa kwenye huduma ya kutambua sauti ili ugeuzwe kuwa maandishi, na hauhifadhiwi."

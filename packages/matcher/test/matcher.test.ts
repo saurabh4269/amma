@@ -15,6 +15,10 @@ describe('matchText', () => {
   it('matches Devanagari phrases', () => {
     expect(matchText('मुझे सिर दर्द है', lexicon, expect3)).toEqual({ kind: 'accept', meanings: ['sign:head'] });
   });
+  it('treats spelling variants of the same Devanagari word as one', () => {
+    expect(matchText('तेज़ सिर दर्द', lexicon, expect3)).toEqual({ kind: 'accept', meanings: ['sign:head'] });
+    expect(normalise('हाँ')).toBe(normalise('हां'));
+  });
   it('matches whole words only', () => {
     expect(matchText('nosebleedingly', lexicon, expect3)).toEqual({ kind: 'abstain' });
   });

@@ -27,15 +27,23 @@ const storeKey = (lang: string) => `voice-examples:${lang}`;
 let embedder: Promise<Embedder> | undefined;
 
 /** True when the model files are installed with the app. Without them the mic button is not shown. */
-export async function voiceAvailable(): Promise<boolean> {
-  if (!navigator.mediaDevices?.getUserMedia) return false;
+export type VoiceStatus = 'ready' | 'unsupported' | 'no_model';
+
+/** Whether the microphone can be used here, and if not, why, so the app can say so instead of hiding the button. */
+export async function voiceStatus(): Promise<VoiceStatus> {
+  // In-app browsers (opened from a chat app) and pages not served over HTTPS do not get a microphone.
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') return 'unsupported';
   try {
-    // Offline, the model is in the service worker's store; a network check would wrongly hide the microphone.
-    if (typeof caches !== 'undefined' && (await caches.match(MODEL_DIR + MODEL_FILE, { ignoreSearch: true }))) return true;
-    return (await fetch(MODEL_DIR + MODEL_FILE, { method: 'HEAD' })).ok;
+    // Offline, the model is in the service worker's store; a network check would wrongly report it missing.
+    if (typeof caches !== 'undefined' && (await caches.match(MODEL_DIR + MODEL_FILE, { ignoreSearch: true }))) return 'ready';
+    return (await fetch(MODEL_DIR + MODEL_FILE, { method: 'HEAD' })).ok ? 'ready' : 'no_model';
   } catch {
-    return false;
+    return 'no_model';
   }
+}
+
+export async function voiceAvailable(): Promise<boolean> {
+  return (await voiceStatus()) === 'ready';
 }
 
 function loadEmbedder(): Promise<Embedder> {

@@ -46,6 +46,8 @@ const SERVER_UI = {
   pregnant: 'Pregnant',
   after_birth: 'Baby is born',
   skip: 'Skip',
+  heard: 'I heard:',
+  not_heard: 'I could not make out that voice note. Please say it again, or type it.',
   voice_note: 'You can also send a voice note. It goes to a speech service to be turned into text and is not kept.',
 } as const;
 
@@ -159,6 +161,7 @@ export function buildApp(cfg: Config): FastifyInstance {
       if (answered !== undefined) void json('editMessageReplyMarkup', { chat_id: chat, message_id: answered, reply_markup: { inline_keyboard: [] } });
     }
     const voice = update.message?.voice;
+    let heard: string | undefined;
     if (voice && tg.transcribe) {
       try {
         const got = await json('getFile', { file_id: voice.file_id });
@@ -166,11 +169,22 @@ export function buildApp(cfg: Config): FastifyInstance {
         const file = (await got.json()) as { result?: { file_path?: string } };
         const audio = await (await tg.fetch(`https://api.telegram.org/file/bot${tg.token}/${file.result?.file_path}`, { signal: AbortSignal.timeout(15000) })).arrayBuffer();
         const lang = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
-        body = await tg.transcribe(new Uint8Array(audio), lang?.locale);
+        heard = (await tg.transcribe(new Uint8Array(audio), lang?.locale)).trim();
       } catch (e) {
         req.log.error({ err: String(e) }, 'voice note could not be transcribed');
-        body = '';
+        heard = '';
       }
+      // How long the transcript was, never what it said.
+      req.log.info({ voiceNote: true, chars: heard.length }, 'voice note handled');
+      const known = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
+      if (!heard) {
+        // Nothing usable was heard: say so and leave the session where it was, rather than treat silence as an answer.
+        await json('sendMessage', { chat_id: chat, text: ui(known, 'not_heard') });
+        return { ok: true };
+      }
+      // She sees exactly what the service made of her words before the bot acts on them.
+      await json('sendMessage', { chat_id: chat, text: `🎤 ${ui(known, 'heard')} "${heard}"` });
+      body = heard;
     }
 
     const firstContact = !cfg.store.get(address)?.consented;

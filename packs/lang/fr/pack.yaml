@@ -74,6 +74,8 @@ ui:
   unconfirmed: "d'après une carte publique, pas une liste officielle"
   not_installed: "Le contenu n'est pas installé."
   consent: "Ce service donne des informations sur la grossesse et le nouveau-né, tirées des livrets de santé officiels. Il ne remplace pas un agent de santé. Il garde vos réponses sous ce numéro de téléphone et ne garde aucun texte de message. Envoyez STOP à tout moment pour tout supprimer."
+  heard: "J'ai entendu :"
+  not_heard: "Je n'ai pas compris ce message vocal. Répétez, ou écrivez-le."
   stopped: "Tout ce qui était gardé pour ce numéro a été supprimé."
   again: "Envoyez n'importe quel message pour commencer une nouvelle séance. Envoyez START pour choisir de nouveau la langue."
   voice_note: "Vous pouvez aussi envoyer un message vocal. Il est envoyé à un service qui le transforme en texte et il n'est pas gardé."

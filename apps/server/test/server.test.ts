@@ -238,6 +238,16 @@ describe('telegram', () => {
     expect(store.get('telegram:42')?.conversation?.session.profile.plan.decider).toEqual({ kind: 'contact', contact: { name: 'Asha Tai', phone: '9820000000' } });
   });
 
+  it('shows her what it heard from a voice note', async () => {
+    const { telegram, tg } = server();
+    await telegram(text('hi'));
+    await telegram(text('1'));
+    await telegram(text('1'));
+    await telegram({ message: { chat: { id: 42 }, voice: { file_id: 'F1' } } });
+    const texts = tg.filter((c) => c.method === 'sendMessage').map((c) => (c.body as { text: string }).text);
+    expect(texts).toContain('🎤 I heard: "Asha Tai 9820000000"');
+  });
+
   it('START in the middle of a session goes back to the language choice and keeps her plan', async () => {
     const { telegram, tg, store } = server();
     for (const t of ['hi', '1', '1', 'Asha Tai 9820000000']) await telegram(text(t));

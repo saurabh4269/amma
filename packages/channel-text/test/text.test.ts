@@ -9,7 +9,7 @@ const lang = LanguagePack.parse({
   id: 'en',
   name: 'English',
   content: { id: 'fixture', version: '0.0.1' },
-  translations: {},
+  translations: { p_yes: { text: 'Yes', status: 'team_draft' }, p_no: { text: 'No', status: 'team_draft' }, p_unsure: { text: 'Not sure', status: 'team_draft' } },
   lexicon: { 'sign:bleed': ['bleeding'], 'sign:head': ['headache'], 'question:food': ['what to eat'] },
 });
 const profile = Profile.parse({ id: 'p', label: 'x', lang: 'en', phase: 'pregnant' });
@@ -40,7 +40,7 @@ describe('text channel', () => {
 
   it('numbers the choices it offers', () => {
     const turns = talk(['0', '0', '1']);
-    expect(turns.at(-1)!.messages[0]).toMatch(/1\. p_yes\n2\. p_no\n3\. p_unsure/);
+    expect(turns.at(-1)!.messages[0]).toMatch(/1\. Yes\n2\. No\n3\. Not sure/);
   });
 
   it('repeats the choices when the reply is not one of them, and changes nothing', () => {
@@ -54,6 +54,12 @@ describe('text channel', () => {
   it('words that match nothing during recall count as not understood, never as a sign', () => {
     const turns = talk(['0', '0', 'the weather is fine']);
     expect(turns.at(-1)!.conversation.session.recalled).toEqual([]);
+  });
+
+  it('takes her own word for an answer, and does not hear "not sure" as "no"', () => {
+    const turns = talk(['0', '0', '1', 'yes', 'No.', 'I am not sure']);
+    const facts = turns.at(-1)!.conversation.session.facts;
+    expect([facts['sign:bleed'], facts['sign:head'], facts['sign:fever']]).toEqual(['yes', 'no', 'unsure']);
   });
 
   it('splits a name from a phone number', () => {

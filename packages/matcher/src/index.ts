@@ -6,6 +6,9 @@ export function normalise(text: string): string {
     .normalize('NFKD')
     .replace(/\p{M}+/gu, (m) => (/[ऀ-ॿ]/.test(m) ? m : '')) // keep Devanagari vowel signs, drop Latin accents
     .normalize('NFC')
+    // Speech services and typists differ on these marks: "तेज़" and "तेज", "हाँ" and "हां" are the same word.
+    .replace(/\u093C/g, '')
+    .replace(/\u0901/g, '\u0902')
     .toLowerCase()
     .replace(/[^\p{L}\p{N}\p{M}]+/gu, ' ')
     .trim();
