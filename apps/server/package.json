@@ -1,0 +1,17 @@
+{
+  "name": "@yaay/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts"
+  },
+  "dependencies": {
+    "@fastify/formbody": "^8.0.0",
+    "@yaay/channel-text": "workspace:*",
+    "@yaay/engine": "workspace:*",
+    "@yaay/pack-tools": "workspace:*",
+    "@yaay/schema": "workspace:*",
+    "fastify": "^5.0.0"
+  }
+}

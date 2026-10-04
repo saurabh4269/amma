@@ -1,0 +1,57 @@
+# Hindi. Every line here is a draft written by a language model, not yet read by a Hindi speaker or a clinician.
+# Where the official Hindi MCP card (2018) has the wording, the draft follows it; that card was transcribed
+# from page images and also needs proofreading. Change defaultStatus only after a speaker has reviewed the file.
+id: hi
+name: हिन्दी
+content: { id: in-mch, version: 0.1.0 }
+defaultStatus: machine_draft
+
+templates:
+  carry_over: "अगली जाँच: {next_visit}। खतरे के इन लक्षणों पर ध्यान रखें: {signs}। कोई लक्षण दिखे तो {contact} को फ़ोन करें और अस्पताल जाएँ।"
+
+ui:
+  add_person: "नया रिकॉर्ड जोड़ें"
+  start: "इस हफ़्ते की बातचीत शुरू करें"
+  clinic_card: "अस्पताल के लिए कार्ड"
+  language: "भाषा"
+  label: "इस रिकॉर्ड के लिए कोई नाम या शब्द"
+  pregnant: "गर्भवती"
+  after_birth: "बच्चा हो गया है"
+  due_date: "प्रसव की अनुमानित तारीख"
+  birth_date: "बच्चे के जन्म की तारीख"
+  next_visit: "अगली जाँच की तारीख"
+  her_phone: "उनका अपना फ़ोन नंबर (हफ़्ते के SMS के लिए)"
+  tracks: "नर्स ने क्या बताया है"
+  pin: "रिकॉर्ड पर ताला लगाने के लिए पिन (ज़रूरी नहीं)"
+  pin_enter: "पिन डालें"
+  wrong_pin: "इस पिन से रिकॉर्ड नहीं खुला।"
+  save: "सहेजें"
+  skip: "छोड़ें"
+  back: "वापस"
+  next: "आगे"
+  finish: "पूरा हुआ"
+  name: "नाम"
+  phone: "फ़ोन"
+  place: "जगह का नाम"
+  call: "फ़ोन करें"
+  send_sms: "SMS भेजें"
+  show_pictures: "चित्र दिखाएँ"
+  type_here: "या यहाँ लिखें"
+  send: "भेजें"
+  draft: "यह शब्दावली अभी मसौदा है। किसी हिन्दी जानकार या डॉक्टर ने इसे अभी जाँचा नहीं है।"
+  device_voice: "फ़ोन की अपनी आवाज़ इस्तेमाल हो रही है। इस भाषा की रिकॉर्ड की हुई आवाज़ अभी नहीं डाली गई है।"
+  shared_phone: "जो भी यह फ़ोन खोल सकता है वह यह रिकॉर्ड देख सकता है, जब तक आप पिन न लगाएँ।"
+  last_session: "पिछली बातचीत"
+  none_yet: "अभी तक कोई नहीं"
+  weeks: "हफ़्ते"
+  signs_yes: "जिन लक्षणों पर उन्होंने हाँ कहा"
+  signs_unsure: "जिन लक्षणों पर वे पक्का नहीं थीं"
+  complaints: "उन्होंने क्या तकलीफ़ बताई"
+  unanswered: "जिन सवालों का जवाब यह नहीं दे सका"
+  recalled: "बिना मदद के याद किए गए लक्षण"
+  plan: "उनकी योजना"
+  delete: "यह रिकॉर्ड मिटाएँ"
+  delete_confirm: "हमेशा के लिए मिटाने को दोबारा दबाएँ"
+  consent: "यह सेवा सरकारी स्वास्थ्य पुस्तिकाओं से गर्भावस्था और नवजात शिशु की जानकारी देती है। यह स्वास्थ्य कार्यकर्ता की जगह नहीं लेती। यह इस फ़ोन नंबर के साथ आपके जवाब रखती है, संदेश नहीं। सब कुछ मिटाने के लिए कभी भी STOP भेजें।"
+  stopped: "इस नंबर की सारी जानकारी मिटा दी गई है।"
+  again: "नई बातचीत शुरू करने के लिए कोई भी संदेश भेजें।"

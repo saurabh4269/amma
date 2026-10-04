@@ -1,0 +1,91 @@
+# Signs for the mother after the birth, and for the newborn.
+# The MCP card gives the mother only two after-birth signs (bleeding, fever). The others rest on the WHO 2015 guide,
+# whose woman-facing sheet M4 lists what needs care "immediately, day or night".
+x-src:
+  bleed: &pbleed { doc: mcp2018, page: "6", quote: "Bleeding during pregnancy • Excessive bleeding during delivery or after delivery" }
+  fever: &pfever { doc: mcp2018, page: "6", quote: "High fever during pregnancy or within one month of delivery" }
+  m4fits: &m4fits { doc: who-pcpnc, page: "M4", quote: "Fits." }
+  m4breath: &m4breath { doc: who-pcpnc, page: "M4", quote: "Fast or difficult breathing." }
+  m4head: &m4head { doc: who-pcpnc, page: "M4", quote: "Severe headaches with blurred vision." }
+  m4calf: &m4calf { doc: who-pcpnc, page: "M4", quote: "Calf pain, redness or swelling; shortness of breath or chest pain." }
+  nfeed: &nfeed { doc: mcp2018, page: "8", quote: "Not able to feed" }
+  nconv: &nconv { doc: mcp2018, page: "8", quote: "Convulsion" }
+  nfast: &nfast { doc: mcp2018, page: "8", quote: "Fast breathing more than 60 breaths per minute" }
+  nchest: &nchest { doc: mcp2018, page: "8", quote: "Severe chest indrawing" }
+  nhot: &nhot { doc: mcp2018, page: "8", quote: "Axillary temperature 37.5º C or above (feels hot to touch)" }
+  ncold: &ncold { doc: mcp2018, page: "8", quote: "Axillary temperature less than 35.5º C (feels cold to touch)" }
+  nmove: &nmove { doc: mcp2018, page: "8", quote: "Movement only when stimulation or no movement at all" }
+  nyellow: &nyellow { doc: who-pnc22, page: "99", quote: "any jaundice in first 24 hours after birth, or yellow palms and soles at any age." }
+
+signs:
+  - { id: pp_bleeding, group: mother_after_birth, label: pp_bleeding_l, teach: pp_bleeding_t, ask: pp_bleeding_a }
+  - { id: pp_fever, group: mother_after_birth, label: pp_fever_l, teach: pp_fever_t, ask: pp_fever_a }
+  - { id: pp_fits, group: mother_after_birth, label: pp_fits_l, teach: pp_fits_t, ask: pp_fits_a }
+  - { id: pp_headache, group: mother_after_birth, label: pp_headache_l, teach: pp_headache_t, ask: pp_headache_a }
+  - { id: pp_breathing, group: mother_after_birth, label: pp_breathing_l, teach: pp_breathing_t, ask: pp_breathing_a }
+  - { id: pp_calf, group: mother_after_birth, label: pp_calf_l, teach: pp_calf_t, ask: pp_calf_a }
+  - { id: nb_feed, group: newborn, label: nb_feed_l, teach: nb_feed_t, ask: nb_feed_a }
+  - { id: nb_fits, group: newborn, label: nb_fits_l, teach: nb_fits_t, ask: nb_fits_a }
+  - { id: nb_breathing, group: newborn, label: nb_breathing_l, teach: nb_breathing_t, ask: nb_breathing_a }
+  - { id: nb_chest, group: newborn, label: nb_chest_l, teach: nb_chest_t, ask: nb_chest_a }
+  - { id: nb_hot, group: newborn, label: nb_hot_l, teach: nb_hot_t, ask: nb_hot_a }
+  - { id: nb_cold, group: newborn, label: nb_cold_l, teach: nb_cold_t, ask: nb_cold_a }
+  - { id: nb_movement, group: newborn, label: nb_movement_l, teach: nb_movement_t, ask: nb_movement_a }
+  - { id: nb_yellow, group: newborn, label: nb_yellow_l, teach: nb_yellow_t, ask: nb_yellow_a }
+
+cards:
+  - { id: pp_bleeding_l, kind: sign_label, status: from_source, source: *pbleed, picture: "🩸", ref: "Excessive bleeding after delivery" }
+  - { id: pp_bleeding_t, kind: sign_teach, status: from_source, source: *pbleed, picture: "🩸", ref: "Excessive bleeding after delivery is a danger sign for the mother. Go to the hospital immediately." }
+  - { id: pp_bleeding_a, kind: sign_ask, status: from_source, source: *pbleed, picture: "🩸", ref: "Mother: since last time, have you had excessive bleeding?" }
+
+  - { id: pp_fever_l, kind: sign_label, status: from_source, source: *pfever, picture: "🌡️", ref: "High fever within one month of delivery" }
+  - { id: pp_fever_t, kind: sign_teach, status: from_source, source: *pfever, picture: "🌡️", ref: "High fever within one month of delivery is a danger sign for the mother. Go to the hospital immediately." }
+  - { id: pp_fever_a, kind: sign_ask, status: from_source, source: *pfever, picture: "🌡️", ref: "Mother: since last time, have you had a high fever?" }
+
+  - { id: pp_fits_l, kind: sign_label, status: from_source, source: *m4fits, picture: "⚡", ref: "Fits" }
+  - { id: pp_fits_t, kind: sign_teach, status: from_source, source: *m4fits, picture: "⚡", ref: "Fits are a danger sign for the mother. Go to the hospital immediately." }
+  - { id: pp_fits_a, kind: sign_ask, status: from_source, source: *m4fits, picture: "⚡", ref: "Mother: since last time, have you had a fit?" }
+
+  - { id: pp_headache_l, kind: sign_label, status: from_source, source: *m4head, picture: "🤕", ref: "Severe headache with blurred vision" }
+  - { id: pp_headache_t, kind: sign_teach, status: from_source, source: *m4head, picture: "🤕", ref: "Severe headache with blurred vision is a danger sign for the mother. Go to the hospital immediately." }
+  - { id: pp_headache_a, kind: sign_ask, status: from_source, source: *m4head, picture: "🤕", ref: "Mother: since last time, have you had a severe headache with blurred vision?" }
+
+  - { id: pp_breathing_l, kind: sign_label, status: from_source, source: *m4breath, picture: "😮‍💨", ref: "Fast or difficult breathing" }
+  - { id: pp_breathing_t, kind: sign_teach, status: from_source, source: *m4breath, picture: "😮‍💨", ref: "Fast or difficult breathing is a danger sign for the mother. Go to the hospital immediately." }
+  - { id: pp_breathing_a, kind: sign_ask, status: from_source, source: *m4breath, picture: "😮‍💨", ref: "Mother: since last time, has your breathing been fast or difficult?" }
+
+  - { id: pp_calf_l, kind: sign_label, status: from_source, source: *m4calf, picture: "🦵", ref: "Pain, redness or swelling in the calf, or chest pain" }
+  - { id: pp_calf_t, kind: sign_teach, status: from_source, source: *m4calf, picture: "🦵", ref: "Pain, redness or swelling in the calf, or chest pain, is a danger sign for the mother. Go to the hospital immediately." }
+  - { id: pp_calf_a, kind: sign_ask, status: from_source, source: *m4calf, picture: "🦵", ref: "Mother: since last time, have you had pain, redness or swelling in the calf, or chest pain?" }
+
+  - { id: nb_feed_l, kind: sign_label, status: from_source, source: *nfeed, picture: "🍼", ref: "Baby is not able to feed" }
+  - { id: nb_feed_t, kind: sign_teach, status: from_source, source: *nfeed, picture: "🍼", ref: "A baby who is not able to feed is in danger. Contact your health worker immediately." }
+  - { id: nb_feed_a, kind: sign_ask, status: from_source, source: *nfeed, picture: "🍼", ref: "Baby: is the baby not able to feed?" }
+
+  - { id: nb_fits_l, kind: sign_label, status: from_source, source: *nconv, picture: "⚡", ref: "Baby has convulsions" }
+  - { id: nb_fits_t, kind: sign_teach, status: from_source, source: *nconv, picture: "⚡", ref: "Convulsions in the baby are a danger sign. Contact your health worker immediately." }
+  - { id: nb_fits_a, kind: sign_ask, status: from_source, source: *nconv, picture: "⚡", ref: "Baby: has the baby had a convulsion?" }
+
+  - { id: nb_breathing_l, kind: sign_label, status: from_source, source: *nfast, picture: "💨", ref: "Baby breathes fast" }
+  - { id: nb_breathing_t, kind: sign_teach, status: from_source, source: *nfast, picture: "💨", ref: "Fast breathing in the baby, more than 60 breaths per minute, is a danger sign. Contact your health worker immediately." }
+  - { id: nb_breathing_a, kind: sign_ask, status: from_source, source: *nfast, picture: "💨", ref: "Baby: is the baby breathing fast?" }
+
+  - { id: nb_chest_l, kind: sign_label, status: from_source, source: *nchest, picture: "🫁", ref: "Baby's chest pulls in when breathing" }
+  - { id: nb_chest_t, kind: sign_teach, status: from_source, source: *nchest, picture: "🫁", ref: "Severe chest indrawing, when the baby's chest pulls in with each breath, is a danger sign. Contact your health worker immediately." }
+  - { id: nb_chest_a, kind: sign_ask, status: from_source, source: *nchest, picture: "🫁", ref: "Baby: does the baby's chest pull in strongly with each breath?" }
+
+  - { id: nb_hot_l, kind: sign_label, status: from_source, source: *nhot, picture: "🥵", ref: "Baby feels hot to touch" }
+  - { id: nb_hot_t, kind: sign_teach, status: from_source, source: *nhot, picture: "🥵", ref: "A baby who feels hot to touch is in danger. Contact your health worker immediately." }
+  - { id: nb_hot_a, kind: sign_ask, status: from_source, source: *nhot, picture: "🥵", ref: "Baby: does the baby feel hot to touch?" }
+
+  - { id: nb_cold_l, kind: sign_label, status: from_source, source: *ncold, picture: "🥶", ref: "Baby feels cold to touch" }
+  - { id: nb_cold_t, kind: sign_teach, status: from_source, source: *ncold, picture: "🥶", ref: "A baby who feels cold to touch is in danger. Contact your health worker immediately." }
+  - { id: nb_cold_a, kind: sign_ask, status: from_source, source: *ncold, picture: "🥶", ref: "Baby: does the baby feel cold to touch?" }
+
+  - { id: nb_movement_l, kind: sign_label, status: from_source, source: *nmove, picture: "🛌", ref: "Baby moves only when touched, or not at all" }
+  - { id: nb_movement_t, kind: sign_teach, status: from_source, source: *nmove, picture: "🛌", ref: "A baby who moves only when stimulated, or does not move at all, is in danger. Contact your health worker immediately." }
+  - { id: nb_movement_a, kind: sign_ask, status: from_source, source: *nmove, picture: "🛌", ref: "Baby: does the baby move only when touched, or not move at all?" }
+
+  - { id: nb_yellow_l, kind: sign_label, status: from_source, source: *nyellow, picture: "🟡", ref: "Baby's palms and soles are yellow" }
+  - { id: nb_yellow_t, kind: sign_teach, status: from_source, source: *nyellow, picture: "🟡", ref: "Yellow skin on the first day, or yellow palms and soles at any age, is a danger sign in the baby. Contact your health worker immediately." }
+  - { id: nb_yellow_a, kind: sign_ask, status: from_source, source: *nyellow, picture: "🟡", ref: "Baby: are the baby's palms or soles yellow, or was the skin yellow on the first day?" }

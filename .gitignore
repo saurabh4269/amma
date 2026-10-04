@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+.env.*
+content-sources/files/
+research/data/
+research/**/.venv/
+research/**/__pycache__/
+test-results/
+playwright-report/
+apps/web/public/packs/bundle.json
+*.sqlite
+content-sources/txt/

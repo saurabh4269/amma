@@ -1,0 +1,24 @@
+{
+  "name": "@yaay/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "packs": "tsx ../../packages/pack-tools/src/cli.ts build ../../packs/content/in-mch public/packs/bundle.json ../../packs/lang/en ../../packs/lang/hi ../../packs/lang/mr",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@yaay/engine": "workspace:*",
+    "@yaay/matcher": "workspace:*",
+    "@yaay/schema": "workspace:*",
+    "idb-keyval": "^6.2.1",
+    "preact": "^10.26.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.0",
+    "vite": "^7.0.0",
+    "vite-plugin-pwa": "^1.0.0"
+  }
+}

@@ -1,0 +1,196 @@
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import type { PlanSlot, PlanValue, Profile } from '@yaay/schema';
+import { createSession, parseMeaning, step, type Effect, type Event, type Heard, type Option, type PackIndex, type SessionState } from '@yaay/engine';
+import { matchText } from '@yaay/matcher';
+import type { Words } from './pack.ts';
+import { PlanView, renderSms } from './plan.tsx';
+import { Speaker } from './speaker.ts';
+
+/** What one engine step asks the screen to show. */
+interface View {
+  say: string[];
+  listen?: Extract<Effect, { type: 'listen' }>;
+  options?: Option[];
+  input?: Extract<Effect, { type: 'input' }>;
+  showPlan: boolean;
+  calls?: Extract<Effect, { type: 'offer_call' }>['contacts'];
+  sms?: Extract<Effect, { type: 'compose_sms' }>;
+  ended: boolean;
+}
+
+function toView(effects: Effect[]): View {
+  const v: View = { say: [], showPlan: false, ended: false };
+  for (const e of effects) {
+    if (e.type === 'say') v.say.push(...e.cards);
+    else if (e.type === 'listen') v.listen = e;
+    else if (e.type === 'choice') v.options = e.options;
+    else if (e.type === 'input') v.input = e;
+    else if (e.type === 'show_plan') v.showPlan = true;
+    else if (e.type === 'offer_call') v.calls = e.contacts;
+    else if (e.type === 'compose_sms') v.sms = e;
+    else v.ended = true;
+  }
+  return v;
+}
+
+interface Props {
+  ix: PackIndex;
+  words: Words;
+  profile: Profile;
+  onDone: (updated: Profile) => void;
+  onQuit: () => void;
+}
+
+export function Session({ ix, words, profile, onDone, onQuit }: Props) {
+  const speaker = useMemo(() => new Speaker(), []);
+  const state = useRef<SessionState>(createSession(profile, new Date().toISOString().slice(0, 10)));
+  const [view, setView] = useState<View>({ say: [], showPlan: false, ended: false });
+  const [speaking, setSpeaking] = useState(-1);
+
+  const dispatch = (event: Event) => {
+    const r = step(ix, state.current, event);
+    state.current = r.state;
+    const v = toView(r.effects);
+    setView(v);
+    void speaker.play(words, v.say, setSpeaking);
+  };
+  useEffect(() => {
+    dispatch({ type: 'start' });
+    return () => speaker.stop();
+  }, []);
+
+  const st = state.current;
+  const urgent = view.ended && st.level === 'urgent';
+  return (
+    <main class={urgent ? 'page urgent' : 'page'}>
+      <header class="top">
+        <button class="ghost" onClick={() => { speaker.stop(); onQuit(); }}>✕</button>
+        <button class="ghost" aria-label="replay" onClick={() => void speaker.play(words, view.say, setSpeaking)}>🔊</button>
+      </header>
+
+      <section class="said" aria-live="polite">
+        {view.say.map((id, i) => (
+          <p class={i === speaking ? 'line now' : 'line'}>
+            {words.picture(id) && <span class="pic">{words.picture(id)}</span>}
+            {words.card(id)}
+          </p>
+        ))}
+      </section>
+      {speaker.usesDeviceVoice(words, view.say) && view.say.length > 0 && <p class="muted small">{words.ui('device_voice')}</p>}
+
+      {(view.showPlan || urgent) && <PlanView ix={ix} words={words} profile={st.profile} />}
+      {view.calls?.map((c) => <a class="big call" href={`tel:${c.phone}`}>📞 {words.ui('call')} {c.name}</a>)}
+
+      {view.listen && <Listen ix={ix} words={words} listen={view.listen} onHeard={(result) => dispatch({ type: 'heard', result })} />}
+      {view.input && <SlotInput key={view.input.slot} words={words} kind={view.input.kind} onFilled={(value) => dispatch({ type: 'filled', value })} />}
+      {view.options && (
+        <div class={view.options.length <= 3 ? 'row answers' : 'grid'}>
+          {view.options.map((o) => (
+            <button class={`big opt-${o.id}`} onClick={() => dispatch({ type: 'chose', option: o.id })}>
+              {o.picture && <span class="pic">{o.picture}</span>}
+              {words.card(o.card)}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {view.ended && (
+        <div class="list">
+          {view.sms && <SmsButton ix={ix} words={words} profile={st.profile} sms={view.sms} />}
+          <button class="big primary" onClick={() => { speaker.stop(); onDone(st.profile); }}>✓ {words.ui('finish')}</button>
+        </div>
+      )}
+    </main>
+  );
+}
+
+/**
+ * Until the on-device speech model is installed, she answers by tapping a picture
+ * or a helper types what she said. In the recall step the pictures stay hidden
+ * until asked for, because seeing them turns recall into recognition.
+ */
+function Listen({ ix, words, listen, onHeard }: { ix: PackIndex; words: Words; listen: Extract<Effect, { type: 'listen' }>; onHeard: (r: Heard) => void }) {
+  const [open, setOpen] = useState(listen.mode === 'open');
+  useEffect(() => setOpen(listen.mode === 'open'), [listen]);
+  const label = (m: string): { text: string; pic?: string } => {
+    const p = parseMeaning(m);
+    const id =
+      p?.kind === 'sign' ? ix.sign.get(p.id)?.label
+      : p?.kind === 'question' ? ix.pack.questions.find((q) => q.id === p.id)?.label
+      : ix.pack.complaints.find((c) => c.id === p?.id)?.label;
+    return id ? { text: words.card(id), pic: words.picture(id) } : { text: m };
+  };
+  return (
+    <section class="listen">
+      <form
+        class="row"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const input = e.currentTarget.elements.namedItem('said') as HTMLInputElement;
+          onHeard(matchText(input.value, words.lang.lexicon, listen.expect));
+          input.value = '';
+        }}
+      >
+        <input name="said" placeholder={words.ui('type_here')} autocomplete="off" />
+        <button>{words.ui('send')}</button>
+      </form>
+      {open ? (
+        <div class="grid">
+          {listen.expect.map((m) => {
+            const l = label(m);
+            return (
+              <button class="tile" onClick={() => onHeard({ kind: 'accept', meanings: [m] })}>
+                {l.pic && <span class="pic">{l.pic}</span>}
+                {l.text}
+              </button>
+            );
+          })}
+        </div>
+      ) : (
+        <button class="ghost" onClick={() => setOpen(true)}>🖼 {words.ui('show_pictures')}</button>
+      )}
+    </section>
+  );
+}
+
+function SlotInput({ words, kind, onFilled }: { words: Words; kind: PlanSlot['kind']; onFilled: (v: PlanValue | null) => void }) {
+  if (kind === 'yesno') {
+    return (
+      <div class="row answers">
+        <button class="big opt-yes" onClick={() => onFilled({ kind: 'yesno', value: true })}>✓</button>
+        <button class="big opt-no" onClick={() => onFilled({ kind: 'yesno', value: false })}>✕</button>
+        <button class="ghost" onClick={() => onFilled(null)}>{words.ui('skip')}</button>
+      </div>
+    );
+  }
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const f = new FormData(e.currentTarget);
+        const name = f.get('name')?.toString().trim() ?? '';
+        const phone = f.get('phone')?.toString().trim() ?? '';
+        if (!name) return onFilled(null);
+        if (kind === 'facility') onFilled({ kind, name, phone: phone || undefined });
+        else onFilled({ kind, contact: { name, phone } });
+      }}
+    >
+      <label>{words.ui(kind === 'facility' ? 'place' : 'name')}<input name="name" autoFocus /></label>
+      <label>{words.ui('phone')}<input name="phone" type="tel" inputMode="tel" /></label>
+      <div class="row">
+        <button type="button" class="ghost" onClick={() => onFilled(null)}>{words.ui('skip')}</button>
+        <button class="primary">{words.ui('next')}</button>
+      </div>
+    </form>
+  );
+}
+
+function SmsButton({ ix, words, profile, sms }: { ix: PackIndex; words: Words; profile: Profile; sms: Extract<Effect, { type: 'compose_sms' }> }) {
+  const body = renderSms(ix, words, profile, sms);
+  return (
+    <>
+      <p class="sms">{body}</p>
+      <a class="big" href={`sms:${profile.phone ?? ''}?body=${encodeURIComponent(body)}`}>✉ {words.ui('send_sms')}</a>
+    </>
+  );
+}

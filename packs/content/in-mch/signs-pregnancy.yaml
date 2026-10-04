@@ -1,0 +1,68 @@
+# Pregnancy and labour danger signs. Each rests on one of the six captions on page 6 of the MCP card.
+# The card prints several signs under one picture; they are split here so each can be asked as one yes/no question.
+# That split is a judgment a clinician should confirm.
+x-src:
+  bleed: &bleed { doc: mcp2018, page: "6", quote: "Bleeding during pregnancy • Excessive bleeding during delivery or after delivery" }
+  anaemia: &anaemia { doc: mcp2018, page: "6", quote: "Severe Anemia with or without breathlessness" }
+  fever: &fever { doc: mcp2018, page: "6", quote: "High fever during pregnancy or within one month of delivery" }
+  head: &head { doc: mcp2018, page: "6", quote: "Headache, blurring of vision, fits and swelling all over the body" }
+  labour: &labour { doc: mcp2018, page: "6", quote: "Labour pain before term/ Labour pain for more than 12 hours/Reduced fetal movment" }
+  water: &water { doc: mcp2018, page: "6", quote: "Bursting of water bag without labour pains/Preterm labour pains (<37 weeks)" }
+
+signs:
+  - { id: bleeding, group: pregnancy, label: bleeding_l, teach: bleeding_t, ask: bleeding_a }
+  - { id: breathless, group: pregnancy, label: breathless_l, teach: breathless_t, ask: breathless_a }
+  - { id: fever, group: pregnancy, label: fever_l, teach: fever_t, ask: fever_a }
+  - { id: headache, group: pregnancy, label: headache_l, teach: headache_t, ask: headache_a }
+  - { id: fits, group: pregnancy, label: fits_l, teach: fits_t, ask: fits_a }
+  - { id: swelling, group: pregnancy, label: swelling_l, teach: swelling_t, ask: swelling_a }
+  - { id: early_pains, group: pregnancy, label: early_pains_l, teach: early_pains_t, ask: early_pains_a }
+  - { id: movement, group: pregnancy, label: movement_l, teach: movement_t, ask: movement_a }
+  - { id: waters, group: pregnancy, label: waters_l, teach: waters_t, ask: waters_a }
+  - { id: long_labour, group: labour, label: long_labour_l, teach: long_labour_t, ask: long_labour_a }
+  - { id: birth_bleeding, group: labour, label: birth_bleeding_l, teach: birth_bleeding_t, ask: birth_bleeding_a }
+
+cards:
+  - { id: bleeding_l, kind: sign_label, status: from_source, source: *bleed, picture: "🩸", ref: "Bleeding during pregnancy" }
+  - { id: bleeding_t, kind: sign_teach, status: from_source, source: *bleed, picture: "🩸", ref: "Bleeding during pregnancy is a danger sign. Go to the hospital immediately." }
+  - { id: bleeding_a, kind: sign_ask, status: from_source, source: *bleed, picture: "🩸", ref: "Since last time, have you had any bleeding?" }
+
+  - { id: breathless_l, kind: sign_label, status: from_source, source: *anaemia, picture: "😮‍💨", ref: "Severe anaemia, with or without breathlessness" }
+  - { id: breathless_t, kind: sign_teach, status: from_source, source: *anaemia, picture: "😮‍💨", ref: "Severe anaemia, which means very little blood, with or without breathlessness, is a danger sign. Go to the hospital immediately." }
+  - { id: breathless_a, kind: sign_ask, status: from_source, source: *anaemia, picture: "😮‍💨", ref: "Since last time, have you been breathless, or has a health worker told you your blood is very low?" }
+
+  - { id: fever_l, kind: sign_label, status: from_source, source: *fever, picture: "🌡️", ref: "High fever" }
+  - { id: fever_t, kind: sign_teach, status: from_source, source: *fever, picture: "🌡️", ref: "High fever during pregnancy is a danger sign. Go to the hospital immediately." }
+  - { id: fever_a, kind: sign_ask, status: from_source, source: *fever, picture: "🌡️", ref: "Since last time, have you had a high fever?" }
+
+  - { id: headache_l, kind: sign_label, status: from_source, source: *head, picture: "🤕", ref: "Headache and blurring of vision" }
+  - { id: headache_t, kind: sign_teach, status: from_source, source: *head, picture: "🤕", ref: "Headache and blurring of vision are danger signs. Go to the hospital immediately." }
+  - { id: headache_a, kind: sign_ask, status: from_source, source: *head, picture: "🤕", ref: "Since last time, have you had a headache, or has your vision been blurred?" }
+
+  - { id: fits_l, kind: sign_label, status: from_source, source: *head, picture: "⚡", ref: "Fits" }
+  - { id: fits_t, kind: sign_teach, status: from_source, source: *head, picture: "⚡", ref: "Fits are a danger sign. Go to the hospital immediately." }
+  - { id: fits_a, kind: sign_ask, status: from_source, source: *head, picture: "⚡", ref: "Since last time, have you had a fit?" }
+
+  - { id: swelling_l, kind: sign_label, status: from_source, source: *head, picture: "🫸", ref: "Swelling all over the body" }
+  - { id: swelling_t, kind: sign_teach, status: from_source, source: *head, picture: "🫸", ref: "Swelling all over the body is a danger sign. Go to the hospital immediately." }
+  - { id: swelling_a, kind: sign_ask, status: from_source, source: *head, picture: "🫸", ref: "Since last time, has your body been swollen all over?" }
+
+  - { id: early_pains_l, kind: sign_label, status: from_source, source: *labour, picture: "⏰", ref: "Labour pain before term" }
+  - { id: early_pains_t, kind: sign_teach, status: from_source, source: *labour, picture: "⏰", ref: "Labour pain before term, before 37 weeks, is a danger sign. Go to the hospital immediately." }
+  - { id: early_pains_a, kind: sign_ask, status: from_source, source: *labour, picture: "⏰", ref: "Since last time, have you had labour pains although it is not yet time for the birth?" }
+
+  - { id: movement_l, kind: sign_label, status: from_source, source: *labour, picture: "👶", ref: "The baby moves less" }
+  - { id: movement_t, kind: sign_teach, status: from_source, source: *labour, picture: "👶", ref: "The baby moving less than before is a danger sign. Go to the hospital immediately." }
+  - { id: movement_a, kind: sign_ask, status: from_source, source: *labour, picture: "👶", ref: "Since last time, has the baby been moving less than before?" }
+
+  - { id: waters_l, kind: sign_label, status: from_source, source: *water, picture: "💧", ref: "The water bag bursts without labour pains" }
+  - { id: waters_t, kind: sign_teach, status: from_source, source: *water, picture: "💧", ref: "Bursting of the water bag without labour pains is a danger sign. Go to the hospital immediately." }
+  - { id: waters_a, kind: sign_ask, status: from_source, source: *water, picture: "💧", ref: "Since last time, has your water bag burst, or has water leaked, without labour pains?" }
+
+  - { id: long_labour_l, kind: sign_label, status: from_source, source: *labour, picture: "🕛", ref: "Labour pain for more than 12 hours" }
+  - { id: long_labour_t, kind: sign_teach, status: from_source, source: *labour, picture: "🕛", ref: "When the birth comes: labour pain for more than 12 hours is a danger sign. Go to the hospital immediately." }
+  - { id: long_labour_a, kind: sign_ask, status: from_source, source: *labour, picture: "🕛", ref: "Has the labour pain gone on for more than 12 hours?" }
+
+  - { id: birth_bleeding_l, kind: sign_label, status: from_source, source: *bleed, picture: "🩸", ref: "Excessive bleeding during delivery" }
+  - { id: birth_bleeding_t, kind: sign_teach, status: from_source, source: *bleed, picture: "🩸", ref: "When the birth comes: excessive bleeding during or after delivery is a danger sign. Go to the hospital immediately." }
+  - { id: birth_bleeding_a, kind: sign_ask, status: from_source, source: *bleed, picture: "🩸", ref: "Is there excessive bleeding during the delivery?" }

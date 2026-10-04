@@ -1,0 +1,46 @@
+# Interface wording. None of these cards carries health advice.
+prompts:
+  recall_ask: p_recall_ask
+  recall_more: p_recall_more
+  recall_missed: p_recall_missed
+  recall_all: p_recall_all
+  check_intro: p_check_intro
+  open_ask: p_open_ask
+  open_more: p_open_more
+  did_you_say: p_did_you_say
+  not_sure: p_not_sure
+  yes: p_yes
+  no: p_no
+  unsure: p_unsure
+  done: p_done
+  plan_intro: p_plan_intro
+  plan_playback: p_plan_playback
+  clarify_summary: p_clarify_summary
+  track_intro: p_track_intro
+
+cards:
+  - { id: p_recall_ask, kind: prompt, status: interface, ref: "Which signs mean you must go to the hospital straight away? Tell me one." }
+  - { id: p_recall_more, kind: prompt, status: interface, ref: "Is there another one?" }
+  - { id: p_recall_missed, kind: prompt, status: interface, ref: "Here are the danger signs you did not say this time." }
+  - { id: p_recall_all, kind: prompt, status: interface, ref: "You remembered all of them." }
+  - { id: p_check_intro, kind: prompt, status: interface, ref: "Now I will ask about each sign. Answer yes, no, or not sure." }
+  - { id: p_open_ask, kind: prompt, status: interface, ref: "Is there anything you want to ask, or anything that does not feel right?" }
+  - { id: p_open_more, kind: prompt, status: interface, ref: "Anything else?" }
+  - { id: p_did_you_say, kind: prompt, status: interface, ref: "Did you say:" }
+  - { id: p_not_sure, kind: prompt, status: interface, ref: "I am not sure about that. Please ask a person: your ASHA, ANM or doctor." }
+  - { id: p_yes, kind: prompt, status: interface, ref: "Yes", picture: "✔️" }
+  - { id: p_no, kind: prompt, status: interface, ref: "No", picture: "✖️" }
+  - { id: p_unsure, kind: prompt, status: interface, ref: "Not sure", picture: "❔" }
+  - { id: p_done, kind: prompt, status: interface, ref: "That is all" }
+  - { id: p_plan_intro, kind: prompt, status: interface, ref: "First, let us make your plan for an emergency. Do this with your family." }
+  - { id: p_plan_playback, kind: prompt, status: interface, ref: "This is your plan. If you have a danger sign, call these people and go to this place." }
+  - { id: p_clarify_summary, kind: prompt, status: interface, ref: "Let me say it back. Is this right?" }
+  - { id: p_track_intro, kind: prompt, status: interface, ref: "Something to know this week." }
+
+plan:
+  - { id: decider, ask: s_decider_ask, label: s_decider, kind: contact, callOnUrgent: true }
+  - { id: escort, ask: s_escort_ask, label: s_escort, kind: contact, callOnUrgent: true }
+  - { id: worker, ask: s_worker_ask, label: s_worker, kind: contact, callOnUrgent: true }
+  - { id: facility, ask: s_facility_ask, label: s_facility, kind: facility }
+  - { id: transport, ask: s_transport_ask, label: s_transport, kind: transport, callOnUrgent: true }
+  - { id: money, ask: s_money_ask, label: s_money, kind: yesno }

@@ -1,0 +1,80 @@
+# Helping her describe what is wrong. Complaints and options are labels, not advice.
+# A row only ever adds the explicit yes/no question for a sign; it never decides anything.
+attributes:
+  - id: onset
+    ask: a_onset
+    options: [{ id: today, label: o_today }, { id: few_days, label: o_few_days }, { id: longer, label: o_longer }]
+  - id: strength
+    ask: a_strength
+    options: [{ id: mild, label: o_mild, picture: "🙂" }, { id: strong, label: o_strong, picture: "😣" }]
+  - id: pain_site
+    ask: a_pain_site
+    options: [{ id: head, label: o_head, picture: "🤕" }, { id: belly, label: o_belly, picture: "🤰" }, { id: leg, label: o_leg, picture: "🦵" }, { id: chest, label: o_chest, picture: "🫁" }, { id: elsewhere, label: o_elsewhere }]
+  - id: pain_pattern
+    ask: a_pain_pattern
+    options: [{ id: comes_goes, label: o_comes_goes }, { id: constant, label: o_constant }]
+  - id: swelling_site
+    ask: a_swelling_site
+    options: [{ id: feet, label: o_feet, picture: "🦶" }, { id: all_over, label: o_all_over, picture: "🫸" }]
+
+complaints:
+  - { id: pain, label: c_pain, describe: [strength, onset], phases: [pregnant] }
+  - { id: swelling, label: c_swelling, describe: [onset], phases: [pregnant] }
+  - { id: bleeding, label: c_bleeding, describe: [onset] }
+  - { id: fever, label: c_fever, describe: [strength, onset] }
+  - { id: breathless, label: c_breathless, describe: [onset] }
+  - { id: fit, label: c_fit, describe: [onset] }
+  - { id: water, label: c_water, describe: [onset], phases: [pregnant] }
+  - { id: baby_quiet, label: c_baby_quiet, describe: [onset], phases: [pregnant] }
+  - { id: after_pain, label: c_pain, describe: [strength, onset], phases: [after_birth] }
+  - { id: baby_feeding, label: c_baby_feeding, describe: [onset], phases: [after_birth] }
+  - { id: baby_breathing, label: c_baby_breathing, describe: [onset], phases: [after_birth] }
+  - { id: baby_temp, label: c_baby_temp, describe: [onset], phases: [after_birth] }
+
+clarifier:
+  - { id: pain_head, complaint: pain, when: { pain_site: [head] }, raises: [headache] }
+  - { id: pain_belly_waves, complaint: pain, when: { pain_site: [belly], pain_pattern: [comes_goes] }, raises: [early_pains] }
+  - { id: swelling_all, complaint: swelling, when: { swelling_site: [all_over] }, raises: [swelling] }
+  - { id: bleeding_any, complaint: bleeding, raises: [bleeding, pp_bleeding] }
+  - { id: fever_strong, complaint: fever, when: { strength: [strong] }, raises: [fever, pp_fever] }
+  - { id: breathless_any, complaint: breathless, raises: [breathless, pp_breathing] }
+  - { id: fit_any, complaint: fit, raises: [fits, pp_fits] }
+  - { id: water_any, complaint: water, raises: [waters] }
+  - { id: baby_quiet_any, complaint: baby_quiet, raises: [movement] }
+  - { id: after_pain_head, complaint: after_pain, when: { pain_site: [head] }, raises: [pp_headache] }
+  - { id: after_pain_leg, complaint: after_pain, when: { pain_site: [leg, chest] }, raises: [pp_calf] }
+  - { id: baby_feeding_any, complaint: baby_feeding, raises: [nb_feed] }
+  - { id: baby_breathing_any, complaint: baby_breathing, raises: [nb_breathing, nb_chest] }
+  - { id: baby_temp_any, complaint: baby_temp, raises: [nb_hot, nb_cold] }
+
+cards:
+  - { id: a_onset, kind: prompt, status: interface, ref: "Since when?" }
+  - { id: o_today, kind: label, status: interface, ref: "since today" }
+  - { id: o_few_days, kind: label, status: interface, ref: "for a few days" }
+  - { id: o_longer, kind: label, status: interface, ref: "for a week or more" }
+  - { id: a_strength, kind: prompt, status: interface, ref: "How strong is it?" }
+  - { id: o_mild, kind: label, status: interface, ref: "mild" }
+  - { id: o_strong, kind: label, status: interface, ref: "strong" }
+  - { id: a_pain_site, kind: prompt, status: interface, ref: "Where is the pain?" }
+  - { id: o_head, kind: label, status: interface, ref: "in the head" }
+  - { id: o_belly, kind: label, status: interface, ref: "in the belly" }
+  - { id: o_leg, kind: label, status: interface, ref: "in the leg" }
+  - { id: o_chest, kind: label, status: interface, ref: "in the chest" }
+  - { id: o_elsewhere, kind: label, status: interface, ref: "somewhere else" }
+  - { id: a_pain_pattern, kind: prompt, status: interface, ref: "Does the pain come and go, or is it there all the time?" }
+  - { id: o_comes_goes, kind: label, status: interface, ref: "it comes and goes" }
+  - { id: o_constant, kind: label, status: interface, ref: "it is there all the time" }
+  - { id: a_swelling_site, kind: prompt, status: interface, ref: "Where is the swelling?" }
+  - { id: o_feet, kind: label, status: interface, ref: "only in the feet" }
+  - { id: o_all_over, kind: label, status: interface, ref: "all over, with face and hands" }
+  - { id: c_pain, kind: label, status: interface, picture: "😣", ref: "Pain" }
+  - { id: c_swelling, kind: label, status: interface, picture: "🫸", ref: "Swelling" }
+  - { id: c_bleeding, kind: label, status: interface, picture: "🩸", ref: "Bleeding" }
+  - { id: c_fever, kind: label, status: interface, picture: "🌡️", ref: "Fever" }
+  - { id: c_breathless, kind: label, status: interface, picture: "😮‍💨", ref: "Hard to breathe" }
+  - { id: c_fit, kind: label, status: interface, picture: "⚡", ref: "A fit" }
+  - { id: c_water, kind: label, status: interface, picture: "💧", ref: "Water is leaking" }
+  - { id: c_baby_quiet, kind: label, status: interface, picture: "👶", ref: "The baby inside is moving less" }
+  - { id: c_baby_feeding, kind: label, status: interface, picture: "🍼", ref: "The baby is not feeding well" }
+  - { id: c_baby_breathing, kind: label, status: interface, picture: "💨", ref: "The baby's breathing looks wrong" }
+  - { id: c_baby_temp, kind: label, status: interface, picture: "🌡️", ref: "The baby feels hot or cold" }

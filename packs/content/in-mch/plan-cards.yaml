@@ -1,0 +1,13 @@
+cards:
+  - { id: s_decider_ask, kind: prompt, status: interface, ref: "Who in the family decides with you when you need to go to the hospital? Give the name and phone number." }
+  - { id: s_decider, kind: label, status: interface, ref: "Decides with me" }
+  - { id: s_escort_ask, kind: prompt, status: interface, ref: "Who will go with you to the hospital?" }
+  - { id: s_escort, kind: label, status: interface, ref: "Goes with me" }
+  - { id: s_worker_ask, kind: prompt, status: interface, ref: "Who is your ASHA or ANM? Give the name and phone number." }
+  - { id: s_worker, kind: label, status: interface, ref: "My ASHA or ANM" }
+  - { id: s_facility_ask, kind: prompt, status: interface, ref: "Which hospital will you go to? Choose it now, with your family." }
+  - { id: s_facility, kind: label, status: interface, ref: "Hospital" }
+  - { id: s_transport_ask, kind: prompt, status: interface, ref: "How will you get there? Give the name and number of the driver or the ambulance." }
+  - { id: s_transport, kind: label, status: interface, ref: "Transport" }
+  - { id: s_money_ask, kind: prompt, status: interface, ref: "Has the family set some money aside for an emergency?" }
+  - { id: s_money, kind: label, status: interface, ref: "Money set aside" }

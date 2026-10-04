@@ -1,0 +1,192 @@
+{
+ "environment": {
+  "python": "3.13.15",
+  "torch": "2.14.1+cpu",
+  "transformers": "4.57.6",
+  "onnxruntime": "1.30.0",
+  "cpu": "x86_64",
+  "torch_threads": 6
+ },
+ "dataset": {
+  "repo": "karim155/WolBanking77",
+  "revision": "b530b0a641ad4c6fe2881eb3b13a22e77bb39ceb",
+  "license_on_card": "cc-by-4.0",
+  "n_clips": 3204,
+  "n_clips_official_train": 2563,
+  "n_clips_official_test": 641,
+  "sampling_rates": {
+   "16000": 3204
+  },
+  "channels": [
+   1
+  ],
+  "subtypes": [
+   "PCM_16"
+  ],
+  "duration_s": {
+   "total_hours": 4.285480451388889,
+   "mean": 4.815146574594257,
+   "median": 3.90225,
+   "min": 0.7033125,
+   "p05": 1.9545281250000002,
+   "p95": 10.8219375,
+   "max": 15.926625
+  },
+  "n_intents": 10,
+  "clips_per_intent": {
+   "BALANCE": 721,
+   "CASH_DEPOSIT": 523,
+   "LATEST_TRANSACTIONS": 490,
+   "PAY_BILL": 444,
+   "FREEZE": 405,
+   "AMOUNT": 335,
+   "BUS_RESERVATION": 125,
+   "OPEN_ACCOUNT": 89,
+   "TRANSFER_MONEY": 36,
+   "TECHNICAL_VISIT": 36
+  },
+  "sentences_per_intent": {
+   "AMOUNT": 20,
+   "BALANCE": 39,
+   "BUS_RESERVATION": 7,
+   "CASH_DEPOSIT": 29,
+   "FREEZE": 22,
+   "LATEST_TRANSACTIONS": 29,
+   "OPEN_ACCOUNT": 5,
+   "PAY_BILL": 22,
+   "TECHNICAL_VISIT": 2,
+   "TRANSFER_MONEY": 2
+  },
+  "n_unique_sentences": 177,
+  "recordings_per_sentence": {
+   "min": 13,
+   "median": 17.0,
+   "max": 51
+  },
+  "n_speaker_ids": 16,
+  "speakers_in_both_official_splits": 16,
+  "sentences_in_both_official_splits": 176,
+  "gender_field_clip_counts": {
+   "Male": 1675,
+   "Female": 1153,
+   "Unspecified": 376
+  },
+  "speakers": [
+   {
+    "user_id": -1153893252,
+    "clips": 447,
+    "gender_field": "Female/Male",
+    "intents": 10,
+    "minutes": 36.2
+   },
+   {
+    "user_id": 1118793998,
+    "clips": 397,
+    "gender_field": "Male",
+    "intents": 10,
+    "minutes": 34.4
+   },
+   {
+    "user_id": 1861972729,
+    "clips": 382,
+    "gender_field": "Female",
+    "intents": 10,
+    "minutes": 34.1
+   },
+   {
+    "user_id": 880757033,
+    "clips": 329,
+    "gender_field": "Male",
+    "intents": 10,
+    "minutes": 26.4
+   },
+   {
+    "user_id": 2010003089,
+    "clips": 222,
+    "gender_field": "Female",
+    "intents": 10,
+    "minutes": 12.5
+   },
+   {
+    "user_id": 1923836119,
+    "clips": 209,
+    "gender_field": "Unspecified",
+    "intents": 10,
+    "minutes": 17.2
+   },
+   {
+    "user_id": -679802577,
+    "clips": 186,
+    "gender_field": "Male",
+    "intents": 10,
+    "minutes": 14.7
+   },
+   {
+    "user_id": -966850851,
+    "clips": 186,
+    "gender_field": "Male",
+    "intents": 10,
+    "minutes": 13.2
+   },
+   {
+    "user_id": 1767138673,
+    "clips": 185,
+    "gender_field": "Female",
+    "intents": 10,
+    "minutes": 15.2
+   },
+   {
+    "user_id": 1095889973,
+    "clips": 167,
+    "gender_field": "Unspecified",
+    "intents": 10,
+    "minutes": 13.3
+   },
+   {
+    "user_id": 362513649,
+    "clips": 130,
+    "gender_field": "Male",
+    "intents": 9,
+    "minutes": 12.6
+   },
+   {
+    "user_id": 2004232708,
+    "clips": 111,
+    "gender_field": "Male",
+    "intents": 8,
+    "minutes": 6.3
+   },
+   {
+    "user_id": 2013462268,
+    "clips": 108,
+    "gender_field": "Female",
+    "intents": 8,
+    "minutes": 8.1
+   },
+   {
+    "user_id": -1048677443,
+    "clips": 71,
+    "gender_field": "Male",
+    "intents": 3,
+    "minutes": 5.4
+   },
+   {
+    "user_id": 2110743385,
+    "clips": 47,
+    "gender_field": "Female",
+    "intents": 3,
+    "minutes": 4.9
+   },
+   {
+    "user_id": 890644908,
+    "clips": 27,
+    "gender_field": "Female",
+    "intents": 1,
+    "minutes": 2.7
+   }
+  ]
+ },
+ "stage_seconds": {
+  "dataset": 0.4
+ }
+}

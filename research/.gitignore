@@ -1,0 +1,6 @@
+data/*
+!data/.gitkeep
+harness/.venv/
+**/__pycache__/
+*.onnx
+*.npz

@@ -1,0 +1,56 @@
+# Marathi. Every line here is a draft written by a language model, not yet read by a Marathi speaker or a clinician.
+# No official Marathi edition of the MCP card was found, so none of this wording is official.
+id: mr
+name: मराठी
+content: { id: in-mch, version: 0.1.0 }
+defaultStatus: machine_draft
+
+templates:
+  carry_over: "पुढची तपासणी: {next_visit}. धोक्याच्या या लक्षणांकडे लक्ष ठेवा: {signs}. एखादे लक्षण दिसले तर {contact} यांना फोन करा आणि रुग्णालयात जा."
+
+ui:
+  add_person: "नवीन नोंद जोडा"
+  start: "या आठवड्याचे सत्र सुरू करा"
+  clinic_card: "रुग्णालयासाठी कार्ड"
+  language: "भाषा"
+  label: "या नोंदीसाठी एखादे नाव किंवा शब्द"
+  pregnant: "गरोदर"
+  after_birth: "बाळ झाले आहे"
+  due_date: "प्रसूतीची अपेक्षित तारीख"
+  birth_date: "बाळाच्या जन्माची तारीख"
+  next_visit: "पुढच्या तपासणीची तारीख"
+  her_phone: "त्यांचा स्वतःचा फोन नंबर (आठवड्याच्या SMS साठी)"
+  tracks: "नर्सने काय सांगितले आहे"
+  pin: "नोंद बंद ठेवण्यासाठी पिन (ऐच्छिक)"
+  pin_enter: "पिन टाका"
+  wrong_pin: "या पिनने नोंद उघडली नाही."
+  save: "जतन करा"
+  skip: "वगळा"
+  back: "मागे"
+  next: "पुढे"
+  finish: "पूर्ण झाले"
+  name: "नाव"
+  phone: "फोन"
+  place: "ठिकाणाचे नाव"
+  call: "फोन करा"
+  send_sms: "SMS पाठवा"
+  show_pictures: "चित्रे दाखवा"
+  type_here: "किंवा इथे लिहा"
+  send: "पाठवा"
+  draft: "ही शब्दरचना अजून मसुदा आहे. मराठी जाणकाराने किंवा डॉक्टरांनी ती अजून तपासलेली नाही."
+  device_voice: "फोनचा स्वतःचा आवाज वापरला जात आहे. या भाषेतील रेकॉर्ड केलेला आवाज अजून बसवलेला नाही."
+  shared_phone: "जो कोणी हा फोन उघडू शकतो तो ही नोंद पाहू शकतो, तुम्ही पिन लावल्याशिवाय."
+  last_session: "मागचे सत्र"
+  none_yet: "अजून एकही नाही"
+  weeks: "आठवडे"
+  signs_yes: "ज्या लक्षणांना त्यांनी हो म्हटले"
+  signs_unsure: "ज्या लक्षणांबद्दल त्यांना खात्री नव्हती"
+  complaints: "त्यांनी काय त्रास सांगितला"
+  unanswered: "ज्या प्रश्नांची उत्तरे याला देता आली नाहीत"
+  recalled: "मदतीशिवाय आठवलेली लक्षणे"
+  plan: "त्यांची योजना"
+  delete: "ही नोंद पुसा"
+  delete_confirm: "कायमची पुसण्यासाठी पुन्हा दाबा"
+  consent: "ही सेवा सरकारी आरोग्य पुस्तिकांमधून गरोदरपण आणि नवजात बाळाची माहिती देते. ती आरोग्य कर्मचाऱ्याची जागा घेत नाही. ती या फोन नंबरसोबत तुमची उत्तरे ठेवते, संदेश नाही. सर्व काही पुसण्यासाठी कधीही STOP पाठवा."
+  stopped: "या नंबरची सर्व माहिती पुसली आहे."
+  again: "नवीन सत्र सुरू करण्यासाठी कोणताही संदेश पाठवा."

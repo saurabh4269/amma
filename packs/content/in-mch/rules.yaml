@@ -1,0 +1,50 @@
+# One table per group that is checked. The pack validator proves, by trying every combination of answers,
+# that any "yes" ends urgent and any "not sure" reaches a person.
+rules:
+  - group: pregnancy
+    rows:
+      - { id: any_yes, when: { anySign: { group: pregnancy, is: "yes" } }, level: urgent, card: out_preg_urgent }
+      - { id: any_unsure, when: { anySign: { group: pregnancy, is: unsure } }, level: ask_person, card: out_ask }
+      - { id: default, level: none_listed, card: out_none }
+  - group: mother_after_birth
+    rows:
+      - { id: any_yes, when: { anySign: { group: mother_after_birth, is: "yes" } }, level: urgent, card: out_mother_urgent }
+      - { id: any_unsure, when: { anySign: { group: mother_after_birth, is: unsure } }, level: ask_person, card: out_ask }
+      - { id: default, level: none_listed, card: out_none }
+  - group: newborn
+    rows:
+      - { id: any_yes, when: { anySign: { group: newborn, is: "yes" } }, level: urgent, card: out_newborn_urgent }
+      - { id: any_unsure, when: { anySign: { group: newborn, is: unsure } }, level: ask_person, card: out_ask }
+      - { id: default, level: none_listed, card: out_none }
+
+cards:
+  - id: out_preg_urgent
+    kind: outcome
+    status: from_source
+    picture: "🏥"
+    source: { doc: mcp2018, page: "6", quote: "If you or anyone in your family sees any of these danger signs, take the pregnant woman to the nearest appropriate hospital immediately" }
+    ref: "You have a danger sign. Go to the nearest appropriate hospital immediately. Tell your family now."
+  - id: out_mother_urgent
+    kind: outcome
+    status: from_source
+    picture: "🏥"
+    source: { doc: who-pcpnc, page: "M4", quote: "Go to hospital or health centre immediately, day or night, DO NOT wait, if any of the following signs:" }
+    ref: "Mother, you have a danger sign. Go to the hospital immediately. Tell your family now."
+  - id: out_newborn_urgent
+    kind: outcome
+    status: from_source
+    picture: "🏥"
+    source: { doc: mcp2018, page: "8", quote: "Contact your Health Worker immediately if baby:" }
+    ref: "The baby has a danger sign. Contact your health worker immediately."
+  - id: out_ask
+    kind: outcome
+    status: from_source
+    picture: "🧑‍⚕️"
+    source: { doc: mcp-guide, page: "19", quote: "ASHA is the first point of contact for a pregnant woman for any services/ information during pregnancy." }
+    ref: "You were not sure about a sign. Speak to your ASHA or ANM today."
+  - id: out_none
+    kind: outcome
+    status: from_source
+    picture: "🧑‍⚕️"
+    source: { doc: mcp-guide, page: "18", quote: "Any woman can develop complications during pregnancy. In some women, these complications can occur without warning." }
+    ref: "None of the listed danger signs today. Problems can come without warning, so if you are worried, speak to your ASHA or ANM."

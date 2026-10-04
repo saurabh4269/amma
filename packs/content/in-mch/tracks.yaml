@@ -1,0 +1,197 @@
+# A track is a set of cards played one per session, switched on at setup.
+# The tool never infers a condition: a track is on only because she or her helper marked it.
+tracks:
+  - id: pregnancy_care
+    label: t_pregnancy_care
+    phases: [pregnant]
+    cards: [tc_register, tc_bp, tc_tt, tc_iron, tc_calcium, tc_rest, tc_salt, tc_prepare, tc_family]
+  - id: first_pregnancy
+    label: t_first_pregnancy
+    phases: [pregnant]
+    cards: [tf_warning, tf_inform, tf_husband]
+  - id: anaemia
+    label: t_anaemia
+    phases: [pregnant, after_birth]
+    cards: [ta_tablet, ta_food, ta_after]
+    boosts: [breathless]
+  - id: diabetes
+    label: t_diabetes
+    phases: [pregnant, after_birth]
+    cards: [td_test, td_walk, td_food, td_after]
+  - id: entitlements
+    label: t_entitlements
+    phases: [pregnant, after_birth]
+    cards: [te_free, te_transport, te_jsy, te_baby]
+  - id: after_birth_care
+    label: t_after_birth_care
+    phases: [after_birth]
+    cards: [tb_visits, tb_asha, tb_tablets, tb_pad, tb_warm, tb_milk, tb_sick, tb_someone]
+
+cards:
+  - { id: t_pregnancy_care, kind: label, status: interface, ref: "Care during pregnancy" }
+  - { id: t_first_pregnancy, kind: label, status: interface, ref: "First pregnancy" }
+  - { id: t_anaemia, kind: label, status: interface, ref: "Low blood (anaemia)" }
+  - { id: t_diabetes, kind: label, status: interface, ref: "Sugar in pregnancy (diabetes)" }
+  - { id: t_entitlements, kind: label, status: interface, ref: "What is free for you" }
+  - { id: t_after_birth_care, kind: label, status: interface, ref: "Care after the birth" }
+
+  - id: tc_register
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Register with the Health Centre in the 1st trimester." }
+    ref: "Regular check-up is essential during pregnancy. Register with the health centre in the first three months."
+  - id: tc_bp
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Have blood pressure (BP) checked and blood and urine examined at each visit." }
+    ref: "Have your blood pressure checked and your blood and urine examined at each visit."
+  - id: tc_tt
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Take two T.T. Injections. T.T.1 when pregnancy is confirmed and T.T.2 after 1 month." }
+    ref: "Take two T.T. injections: the first when pregnancy is confirmed and the second after 1 month."
+  - id: tc_iron
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Take one tablet of iron folic acid a day for at least 6 months after first trimester. Take at least 180 tablets." }
+    ref: "Take one tablet of iron folic acid a day for at least 6 months after the first three months. Take at least 180 tablets."
+  - id: tc_calcium
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Take two tablets of calcium per day for at least 6 months after 1st trimester" }
+    ref: "Take two tablets of calcium per day for at least 6 months after the first three months."
+  - id: tc_rest
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Take at least two hours of rest during the day and in addition to 8 hours of rest at night." }
+    ref: "Take at least two hours of rest during the day, in addition to 8 hours of rest at night."
+  - id: tc_salt
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Use only adequately iodised/ double fortified salt." }
+    ref: "Use only iodised salt. Take the supplementary nutrition from the Anganwadi centre regularly."
+  - id: tc_prepare
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "6", quote: "Identify hospital in advance" }
+    ref: "Identify the hospital in advance. Arrange for transport in advance. Stay 48 hours in the facility after delivery."
+  - id: tc_family
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "18", quote: "Pregnant woman should immediately inform family members, in case she develops any of the danger/warning signs." }
+    ref: "If you develop any danger sign, tell your family members immediately."
+
+  - id: tf_warning
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "18", quote: "Any woman can develop complications during pregnancy. In some women, these complications can occur without warning." }
+    ref: "Any woman can develop complications during pregnancy. In some women they come without warning. That is why you learn the danger signs."
+  - id: tf_inform
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "19", quote: "ASHA is the first point of contact for a pregnant woman for any services/ information during pregnancy." }
+    ref: "Your ASHA is the first person to contact for any service or information during pregnancy."
+  - id: tf_husband
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "18", quote: "Husbands should accompany a woman during ANC visits to understand all danger signs and ensure that he is aware of emergency contact numbers including the ambulance phone number." }
+    ref: "Your husband should come with you to check-ups, learn the danger signs, and know the emergency numbers, including the ambulance."
+
+  - id: ta_tablet
+    kind: info
+    status: from_source
+    source: { doc: amb, page: "28", quote: "Daily one Red-IFA tablet for 180 days starting from the second trimester of pregnancy." }
+    ref: "Take one red iron folic acid tablet every day for 180 days, starting from the fourth month of pregnancy."
+  - id: ta_food
+    kind: info
+    status: from_source
+    source: { doc: amb, page: "28", quote: "inclusion of iron rich locally available foods and vitamin C to improve absorption and thereby prevent anemia" }
+    ref: "Eat iron-rich foods that are available locally, with vitamin C, which helps the body take in the iron."
+  - id: ta_after
+    kind: info
+    status: from_source
+    source: { doc: amb, page: "28", quote: "Daily one Red-IFA tablet for 180 days starting from delivery upto 6 months post partum" }
+    ref: "After the birth, keep taking one red iron folic acid tablet every day for 180 days."
+
+  - id: td_test
+    kind: info
+    status: from_source
+    source: { doc: gdm, page: "6", quote: "Repeat Testing at 24-28 weeks" }
+    ref: "The sugar test is done at the first check-up. If it is normal, it is repeated between 24 and 28 weeks. You drink glucose in water and wait 2 hours for the test."
+  - id: td_walk
+    kind: info
+    status: from_source
+    source: { doc: gdm, page: "6", quote: "The woman should walk/exercise for 30 mins a day." }
+    ref: "With diabetes in pregnancy, walk or exercise for 30 minutes a day, and follow the meal plan the nurse gives you."
+  - id: td_food
+    kind: info
+    status: from_source
+    source: { doc: gdm, page: "7", quote: "Severe caloric restriction is not recommended as it may result in ketonemia and ketonuria and impair physical and mental development in offspring." }
+    ref: "Do not cut your food down severely. Eating far too little can harm the baby's growth."
+  - id: td_after
+    kind: info
+    status: from_source
+    source: { doc: gdm, page: "PDF 42", quote: "Subsequently, ANM must perform 75 gm OGTT (fasting and 2 hr PP) at 6 weeks postpartum to evaluate glycemic status of woman." }
+    ref: "Sugar usually returns to normal after delivery. The ANM should test your sugar again 6 weeks after the birth. Ask for this test."
+
+  - id: te_free
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "2", quote: "Free and cashless delivery" }
+    ref: "In a government hospital your delivery is free and cashless, including a caesarean, drugs, tests, blood, and food during your stay."
+  - id: te_transport
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "2", quote: "Free transport from home to health institution, between health institutions in case of referral and drop-back home" }
+    ref: "Transport is free from home to the health institution, between institutions if you are referred, and back home."
+  - id: te_jsy
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "2", quote: "Eligible mother gets cash assistance for giving birth in public health facilities and in private accredited hospitals" }
+    ref: "Under Janani Suraksha Yojana, an eligible mother gets cash assistance for giving birth in a public health facility. Ask your ASHA to register you."
+  - id: te_baby
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "2", quote: "For Sick Newborn till one year after birth" }
+    ref: "For a sick baby, until one year after birth, treatment, drugs, tests and transport are free."
+
+  - id: tb_visits
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "22", quote: "First postnatal visit is on Day 1, second on Day 3, third on Day 7 and fourth at 6th week." }
+    ref: "After the birth, mother and baby are checked on day 1, day 3, day 7 and at 6 weeks."
+  - id: tb_asha
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "24", quote: "ASHA is already providing 6-7 home visits from the 1st day of birth to the 42nd day of life on 3rd, 7th, 14th, 21st, 28th, and 42nd days of birth for the newborn." }
+    ref: "Your ASHA visits you and the baby at home on days 3, 7, 14, 21, 28 and 42 after the birth."
+  - id: tb_tablets
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "7", quote: "Take one tablet of iron folic acid per day for atleast 6 months after delivery" }
+    ref: "Take one tablet of iron folic acid and two tablets of calcium per day for at least 6 months after delivery."
+  - id: tb_pad
+    kind: info
+    status: from_source
+    source: { doc: mcp-guide, page: "22", quote: "Mother must use a clean sanitary pad to prevent infection." }
+    ref: "Use a clean sanitary pad to prevent infection."
+  - id: tb_warm
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "8", quote: "Keep the baby warm." }
+    ref: "Keep the baby warm. Do not bathe the baby for the first 48 hours. Keep the cord dry."
+  - id: tb_milk
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "8", quote: "Feed the baby only mother’s milk" }
+    ref: "Feed the baby only mother's milk."
+  - id: tb_sick
+    kind: info
+    status: from_source
+    source: { doc: mcp2018, page: "8", quote: "Keep the baby away from sick people" }
+    ref: "Keep the baby away from sick people."
+  - id: tb_someone
+    kind: info
+    status: from_source
+    source: { doc: who-pcpnc, page: "D28", quote: "Advise to always have someone near for at least 24 hours after delivery to respond to any change in condition." }
+    ref: "Always have someone near the mother for at least 24 hours after delivery."

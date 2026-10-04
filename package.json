@@ -1,0 +1,19 @@
+{
+  "name": "yaay",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.24.0",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p .",
+    "packs:validate": "pnpm --filter @yaay/pack-tools exec tsx src/cli.ts validate packs/content/in-mch"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.0.0",
+    "fast-check": "^4.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

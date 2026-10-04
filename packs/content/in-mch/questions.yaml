@@ -1,0 +1,102 @@
+# Questions she may ask. Each answer is one card that rests on the MCP card.
+questions:
+  - { id: checkups, label: q_checkups_l, answer: q_checkups_a }
+  - { id: iron, label: q_iron_l, answer: q_iron_a }
+  - { id: calcium, label: q_calcium_l, answer: q_calcium_a }
+  - { id: rest, label: q_rest_l, answer: q_rest_a }
+  - { id: weight, label: q_weight_l, answer: q_weight_a }
+  - { id: cost, label: q_cost_l, answer: q_cost_a }
+  - { id: ride, label: q_ride_l, answer: q_ride_a }
+  - { id: doctor_day, label: q_doctor_day_l, answer: q_doctor_day_a }
+  - { id: where_birth, label: q_where_birth_l, answer: q_where_birth_a }
+  - { id: first_feed, label: q_first_feed_l, answer: q_first_feed_a }
+  - { id: baby_food, label: q_baby_food_l, answer: q_baby_food_a }
+  - { id: baby_bath, label: q_baby_bath_l, answer: q_baby_bath_a }
+  - { id: cord, label: q_cord_l, answer: q_cord_a }
+  - { id: small_baby, label: q_small_baby_l, answer: q_small_baby_a }
+
+cards:
+  - { id: q_checkups_l, kind: label, status: interface, ref: "How many check-ups do I need?" }
+  - id: q_checkups_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Have at least 3 antenatal checkups, after registration." }
+    ref: "Register with the health centre in the first three months. Have at least 3 antenatal check-ups after registration. Have your blood pressure checked and your blood and urine examined at each visit."
+  - { id: q_iron_l, kind: label, status: interface, ref: "How do I take the iron tablets?" }
+  - id: q_iron_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Take one tablet of iron folic acid a day for at least 6 months after first trimester. Take at least 180 tablets." }
+    ref: "Take one tablet of iron folic acid a day for at least 6 months after the first three months of pregnancy. Take at least 180 tablets."
+  - { id: q_calcium_l, kind: label, status: interface, ref: "How do I take the calcium tablets?" }
+  - id: q_calcium_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Take two tablets of calcium per day for at least 6 months after 1st trimester" }
+    ref: "Take two tablets of calcium per day for at least 6 months after the first three months of pregnancy."
+  - { id: q_rest_l, kind: label, status: interface, ref: "How much should I rest?" }
+  - id: q_rest_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Take at least two hours of rest during the day and in addition to 8 hours of rest at night." }
+    ref: "Take at least two hours of rest during the day, in addition to 8 hours of rest at night."
+  - { id: q_weight_l, kind: label, status: interface, ref: "How much weight should I gain?" }
+  - id: q_weight_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "4", quote: "Have weight checkup at each visit. Gain at least 9-11 kg. during pregnancy. Gain at least 1 kg every month during the last 6 months of pregnancy." }
+    ref: "Have your weight checked at each visit. Gain at least 9 to 11 kilograms during pregnancy, and at least 1 kilogram every month during the last 6 months."
+  - { id: q_cost_l, kind: label, status: interface, ref: "Do I have to pay for the delivery?" }
+  - id: q_cost_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "2", quote: "Free and cashless delivery" }
+    ref: "In a government hospital, under the Janani-Shishu Suraksha Karyakram, delivery is free and cashless. A caesarean, drugs, tests, blood and food during the stay are also free."
+  - { id: q_ride_l, kind: label, status: interface, ref: "Do I have to pay for the ride to the hospital?" }
+  - id: q_ride_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "2", quote: "Free transport from home to health institution, between health institutions in case of referral and drop-back home" }
+    ref: "Transport is free from home to the health institution, between institutions if you are referred, and back home."
+  - { id: q_doctor_day_l, kind: label, status: interface, ref: "When can a doctor check me?" }
+  - id: q_doctor_day_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "2", quote: "During the 2nd/3rd trimester of your pregnancy, avail at least one Antenatal Checkup by a doctor on the 9th day of the month" }
+    ref: "In the middle or last three months of pregnancy, have at least one check-up by a doctor on the 9th day of the month."
+  - { id: q_where_birth_l, kind: label, status: interface, ref: "Where should I give birth?" }
+  - id: q_where_birth_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "6", quote: "*It is advisable to conduct birth at health facility by skilled birth attendant" }
+    ref: "It is advisable to give birth at a health facility with a skilled birth attendant. Identify the hospital and arrange transport in advance. Stay 48 hours after the delivery."
+  - { id: q_first_feed_l, kind: label, status: interface, ref: "When do I start breastfeeding?" }
+  - id: q_first_feed_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "8", quote: "Start breastfeeding within 1 hr of birth" }
+    ref: "Start breastfeeding within 1 hour of birth."
+  - { id: q_baby_food_l, kind: label, status: interface, ref: "What do I feed the baby?" }
+  - id: q_baby_food_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "8", quote: "Feed the baby only mother’s milk" }
+    ref: "Feed the baby only mother's milk. Early breastfeeding helps the mother breastfeed exclusively for 6 months."
+  - { id: q_baby_bath_l, kind: label, status: interface, ref: "When can I bathe the baby?" }
+  - id: q_baby_bath_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "8", quote: "Do not bathe the baby for the first 48 hours" }
+    ref: "Do not bathe the baby for the first 48 hours. Keep the baby warm."
+  - { id: q_cord_l, kind: label, status: interface, ref: "How do I look after the cord?" }
+  - id: q_cord_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "8", quote: "Keep the cord dry" }
+    ref: "Keep the cord dry."
+  - { id: q_small_baby_l, kind: label, status: interface, ref: "My baby is very small. What should I do?" }
+  - id: q_small_baby_a
+    kind: answer
+    status: from_source
+    source: { doc: mcp2018, page: "7", quote: "If baby is less than 2 kg, contact ANM for support, for continued breastfeeding and Kangaroo mother care" }
+    ref: "A baby under 2.5 kilograms at birth needs special care. If the baby is less than 2 kilograms, contact the ANM for support with breastfeeding and Kangaroo mother care."
