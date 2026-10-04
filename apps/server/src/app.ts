@@ -347,9 +347,11 @@ export function buildApp(cfg: Config): FastifyInstance {
     if (used >= cfg.speech.perHour || sttDay.count >= cfg.speech.perDay) return reply.code(429).send({ error: 'too many requests' });
     sttHits.set(req.ip, { hour, count: used + 1 });
     sttDay.count += 1;
-    const body = req.body as { text?: unknown; lang?: unknown; expect?: unknown };
+    const body = req.body as { text?: unknown; lang?: unknown; expect?: unknown; known?: unknown };
     if (typeof body?.text !== 'string' || !Array.isArray(body.expect) || body.expect.length > 80) return reply.code(400).send({ error: 'bad request' });
     const lang = cfg.languages.find((l) => l.id === body.lang);
+    // The app's own phrase list already knew which problem she meant; only the details in her words are wanted.
+    if (typeof body.known === 'string') return { meaning: body.known, attrs: (await detailsOf(body.text, body.known, lang, req.log)) ?? {} };
     const meaning = await suggest(body.text, body.expect.filter((m): m is string => typeof m === 'string'), lang, req.log);
     req.log.info({ match: true, found: Boolean(meaning) }, 'model asked'); // whether it found one, never the words
     // For a problem, what her words already said about it, so the app does not ask again.

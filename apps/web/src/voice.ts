@@ -238,6 +238,26 @@ export async function matchOnline(text: string, lang: string, expect: string[]):
 }
 
 /**
+ * The phone's own phrase list knew which problem she meant. This reads the details already in her words
+ * (where, how strong, since when) so she is not asked for them again. Nothing comes back without her agreement.
+ */
+export async function detailsOnline(text: string, lang: string, meaning: string): Promise<Record<string, string> | undefined> {
+  if (!navigator.onLine || onlineChoice() !== 'yes' || !meaning.startsWith('complaint:') || !text.trim()) return undefined;
+  try {
+    const res = await fetch(`${SPEECH_URL}/match`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ text, lang, expect: [], known: meaning }),
+      signal: AbortSignal.timeout(7_000),
+    });
+    if (!res.ok) return undefined;
+    return ((await res.json()) as { attrs?: Record<string, string> }).attrs;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * A short general answer, written by the model, for something the booklet has no card for. Only with her
  * agreement and a connection. The caller shows it under a caution that says where it came from.
  */

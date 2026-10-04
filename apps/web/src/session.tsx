@@ -8,7 +8,7 @@ import { alertPhones, PlanView, renderAlert, renderSms, SendText } from './plan.
 import { NearMe } from './near-me.tsx';
 import { Speaker } from './speaker.ts';
 import { askAbout, type About } from './ask-bus.ts';
-import { addExample, adviseOnline, embedAudio, loadExamples, matchOnline, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, warmVoice, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
+import { addExample, adviseOnline, detailsOnline, embedAudio, loadExamples, matchOnline, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, warmVoice, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
 
 /** What one engine step asks the screen to show. */
 interface View {
@@ -310,10 +310,17 @@ function Listen({ ix, words, listen, elsewhere, onHeard, onSpoken, onMic, childr
    */
   const beyond = async (text: string): Promise<About | true | undefined> => {
     const known = other.length ? matchText(text, words.lang.lexicon, other) : undefined;
-    const meant = known?.kind === 'accept' && known.meanings[0] ? { meaning: known.meanings[0] } : await matchOnline(text, words.lang.id, [...listen.expect, ...other]);
+    const meant = known?.kind === 'accept' && known.meanings[0] ? { meaning: known.meanings[0], attrs: await detailsOnline(text, words.lang.id, known.meanings[0]) } : await matchOnline(text, words.lang.id, [...listen.expect, ...other]);
     if (!meant || listen.expect.includes(meant.meaning)) return meant;
     askAbout(meant);
     return true;
+  };
+
+  /** Her words matched the phrase list. If it is a problem, the details she already gave are read so they are not asked again. */
+  const withDetails = async (text: string, heard: Heard): Promise<Heard> => {
+    if (heard.kind !== 'accept' || !heard.meanings[0]) return heard;
+    const attrs = await detailsOnline(text, words.lang.id, heard.meanings[0]);
+    return attrs ? { ...heard, attrs } : heard;
   };
 
   const start = async () => {
@@ -348,8 +355,9 @@ function Listen({ ix, words, listen, elsewhere, onHeard, onSpoken, onMic, childr
       if (text) {
         const heard = matchText(text, words.lang.lexicon, listen.expect);
         if (heard.kind === 'accept') {
+          const full = await withDetails(text, heard);
           setMic('ready');
-          return onSpoken(later, heard, text);
+          return onSpoken(later, full, text);
         }
         // The phrase list did not know her words. The language model may suggest which meaning she meant;
         // the suggestion is played back and only counts if she says yes.
@@ -446,7 +454,7 @@ function Listen({ ix, words, listen, elsewhere, onHeard, onSpoken, onMic, childr
               input.value = '';
               onMic();
               const byPhrase = matchText(typed, words.lang.lexicon, listen.expect);
-              if (byPhrase.kind !== 'abstain') return onHeard(byPhrase, typed);
+              if (byPhrase.kind !== 'abstain') return void withDetails(typed, byPhrase).then((h) => onHeard(h, typed));
               // Typed words the phrase list does not know get the same help as spoken ones.
               void beyond(typed).then((m) => m === true || onHeard(m ? { kind: 'confirm', ...m } : byPhrase, typed));
             }}
