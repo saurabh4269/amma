@@ -44,7 +44,7 @@ export function ShareAudio({ ix, words, profile }: { ix: PackIndex; words: Words
 
   return (
     <>
-      <button class="big" disabled={state === 'working'} onClick={() => void send()}>📲 {words.ui('send_audio')} ({signs.length})</button>
+      <button class="action wide" disabled={state === 'working'} onClick={() => void send()}>{words.ui('send_audio')} ({signs.length})</button>
       {state === 'failed' && <p class="warn">{words.ui('send_audio_failed')}</p>}
     </>
   );

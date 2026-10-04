@@ -1,0 +1,81 @@
+{
+  "projectId": "4636124252891906861",
+  "sessionId": "16935913125099769754",
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "screenshot": {
+              "name": "projects/4636124252891906861/files/9a9f5dd31ae74ad0a4ede4501ce2b49e",
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1U9-nsVLUBAhNHlH3l49q0frTSGSrXtPJpu42SeAoeEPCNGT282P-65rLtX0w5zV1YiJSMvskFbVW_Xm70EvF3qTbgSPwkCurjcV1-K_qW4xzH7x-Yg_lYz9kWD4fjDVmFScuUaYZ3AjzDMAxvily-ZX-8Y2ort1-b-2Q_3XoI1h_e4-VO54guAAFOXpdiD2i9BeSZvjKY85-Lh2khaZFrPOmqyU5V4mUHoZfpbmOJWBAeiQbhLYNhqlew"
+            },
+            "htmlCode": {
+              "name": "projects/4636124252891906861/files/201503a6bfbc465585abdcf1bdaf6f0f",
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzVlMTM4YzU4MTM3MjRiNTk5Mjk5Y2JlOTJjYTQxMTU3EgsSBxCN6aHNtAwYAZIBIwoKcHJvamVjdF9pZBIVQhM0NjM2MTI0MjUyODkxOTA2ODYx&filename=&opi=96797242",
+              "mimeType": "text/html"
+            },
+            "id": "2c86a6d8a166444391b3eb19289114a0",
+            "generatedBy": "figaro_agent",
+            "width": "780",
+            "height": "1768",
+            "title": "AMMA - Danger Sign Check",
+            "prompt": "Design the heart of the AMMA maternal-health check app on a mobile portrait screen (390px width). \n\nVisual style & Tone:\n- Cute, calm, trusted aunt aesthetic ('Warm Cradle' design system with warm terracotta/clay #E07A5F accents, soft cream/warm off-white background, warm cocoa text, round corners, large readable typography).\n- Low literacy friendly, high tactile clarity, works on a shared family smartphone.\n- Strictly NO charts, NO login wall, NO bottom tab bar, NO fake health widgets, NO list of other symptoms. Only one question.\n\nLayout and Structure (Strictly follow):\n1. Thin Top Bar:\n   - Left: Text button \"Close\" (clear, tap-friendly).\n   - Center: Small step indicator \"Sign 4 of 9\" with subtle warm dot indicators or quiet badge.\n   - Right: \"Replay\" text button with a gentle speaker icon so user can hear the question read aloud again.\n\n2. One Large Speech Card (Hero / currently spoken line):\n   - A soft, warm card styled like an active speech bubble with a gentle glowing accent or warm border indicating it was just spoken aloud.\n   - Small warm friendly illustration / picture of a head with subtle headache/sparkle or blurred vision indicator next to the text.\n   - The biggest text on the screen, highly legible, warm cocoa tone: \"Since last time, have you had a bad headache, or has your vision been blurred?\"\n   - Audio waveform or pulsing soft sound ring indicator.\n\n3. Quiet line right under the card:\n   - \"Using the phone's own voice.\" (in small, soft muted tone with a tiny phone/speaker icon).\n\n4. Three Equal Tall Answer Buttons in a horizontal row (crucial interaction, each at least 88px tall, large touch target):\n   - Left: \"Yes\" - Visually the serious one (stands out with alert/warm amber-terracotta tint, clear warning/exclamation icon, bold label, indicating caution/danger).\n   - Middle: \"No\" - The calm one (reassuring soft sage/forest green or warm neutral card with a calm checkmark or soft leaf/shield icon).\n   - Right: \"Not sure\" - The gentle one (gentle soft cream/sand tone with a friendly question mark or hand icon).\n   - All three have simple, universally recognizable icons placed above large, bold labels (\"Yes\", \"No\", \"Not sure\").\n\n5. Bottom Action Area:\n   - A large prominent circular microphone button centered, warm terracotta glow, labelled clearly with large text \"Tap and speak\" and a microphone icon.\n   - Directly underneath: A quiet, accessible single text input field placeholder \"Or type here\" with an attached \"Send\" button for alternative input.\n\nEnsure extreme visual polish, spacious touch-friendly spacing, and accessible contrast.",
+            "name": "projects/4636124252891906861/screens/2c86a6d8a166444391b3eb19289114a0",
+            "theme": {
+              "colorMode": "LIGHT",
+              "roundness": "ROUND_TWELVE",
+              "customColor": "#E07A5F",
+              "headlineFont": "PLUS_JAKARTA_SANS",
+              "labelFont": "NUNITO_SANS",
+              "colorVariant": "TONAL_SPOT",
+              "overridePrimaryColor": "#C4513A",
+              "overrideSecondaryColor": "#2F6F56",
+              "overrideTertiaryColor": "#E8A838",
+              "overrideNeutralColor": "#F6EDE4"
+            },
+            "deviceType": "MOBILE",
+            "screenType": "DESIGN",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "designSystem": {
+              "name": "assets/9389483915077379523",
+              "designSystem": {
+                "displayName": "AMMA Warm Cradle",
+                "theme": {
+                  "colorMode": "LIGHT",
+                  "roundness": "ROUND_TWELVE",
+                  "customColor": "#E07A5F",
+                  "headlineFont": "PLUS_JAKARTA_SANS",
+                  "labelFont": "NUNITO_SANS",
+                  "designMd": "# Design System: AMMA Warm Cradle\n**Project ID:** pending\n\n## 1. Visual Theme & Atmosphere\nAMMA is a weekly maternal check used on a shared family phone by a pregnant woman, a new mother, or the person helping her (family or a community health worker). Many users read slowly or not at all. The mood is warm, calm, and a little soft \u2014 a trusted aunt, not a hospital dashboard and not a toy. Generous whitespace, one job per screen, large tap targets, pictures beside words. Cute through roundness and warmth, never through clutter or baby-clipart that could hide a danger sign.\n\n## 2. Color Palette & Roles\n- Warm paper background (#F6EDE4) \u2014 the page, so the phone never feels clinical white.\n- Cocoa ink (#3A2418) \u2014 all body text. High contrast on paper and on white cards.\n- Clay primary (#C4513A) \u2014 the one main action on a screen (start the check, save, finish).\n- Clay on-primary (#FFF8F3) \u2014 text on the primary button.\n- Sage secondary (#2F6F56) \u2014 \"no / all clear for this sign\", safe confirmation.\n- Honey tertiary (#E8A838) \u2014 \"not sure\", drafts, and gentle notes.\n- Urgent rose (#9B2331) \u2014 danger outcome, delete, and \"yes, this danger sign is present\". Used rarely so it stays serious.\n- White card (#FFFFFF) \u2014 every tappable card and spoken line.\n- Muted cocoa (#7A6558) \u2014 helper text only, never the question itself.\n\n## 3. Typography Rules\n- Headlines: Plus Jakarta Sans, semibold, tight line height. Short. Never more than two lines.\n- Body and questions: Noto Sans at a large size so Hindi and Marathi (Devanagari) stay clear. Questions are the biggest text on the check screen.\n- Labels: Nunito Sans, medium, for small meta such as \"last check\" and distances.\n- No text smaller than 14px. Questions at least 20px.\n\n## 4. Component Stylings\n* **Buttons:** Generously rounded (12px, primary actions fully pill-shaped). Minimum height 56px, full width on mobile. One filled primary button per screen. Secondary actions are white cards with a soft border. Ghost actions are text-only for Back and Skip.\n* **Cards/Containers:** White, generously rounded, a whisper-soft warm shadow. Person cards are tall and show a phase (pregnant or baby born), a week if known, and a small lock if the record is private.\n* **Inputs/Forms:** White fields, 2px warm border, large type, visible labels above the field. Never placeholder-only.\n* **Spoken lines:** Left-aligned speech cards. The line being read aloud has a clay outline.\n* **Answer row:** Three equal buttons \u2014 Yes (urgent rose outline), No (sage outline), Not sure (honey outline). Pictures sit above the word.\n* **Picture tiles:** A two-column grid of large tiles, emoji or simple picture on top, short label under it.\n* **Mic:** A single large circular clay button, thumb-reachable, labelled \"Tap and speak\".\n\n## 5. Layout Principles\nMobile only, one column, max width about 28rem, padding 20px, safe-area aware. The primary action sits in the thumb zone at the bottom. No tab bar, no charts, no fake vitals. Language switch is always on the home header. Back is a text button at the top left, never a mystery icon alone.\n",
+                  "colorVariant": "TONAL_SPOT",
+                  "overridePrimaryColor": "#C4513A",
+                  "overrideSecondaryColor": "#2F6F56",
+                  "overrideTertiaryColor": "#E8A838",
+                  "overrideNeutralColor": "#F6EDE4"
+                }
+              },
+              "version": "1"
+            }
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "I have created the single-question maternal health check screen for **AMMA**, tailored specifically for low-literacy clarity and shared-device accessibility:\n\n### Design Choices\n1. **Header & Context (`Sign 4 of 9`)**: A discreet top bar with a clear \"Close\" action, a progress pill showing progress through the 9 danger signs, and a prominent \"Replay\" button to replay the audio prompt at any time.\n2. **Hero Spoken Speech Card**: The focal point of the screen is an active spoken card displaying the verbatim question *\"Since last time, have you had a bad headache, or has your vision been blurred?\"* paired with an intuitive head illustration and dual English/Hindi bilingual subtitles for immediate comprehension.\n3. **Voice Disclosure**: A subtle indicator beneath the card informs the user: *\"Using the phone's own voice.\"*\n4. **Three Primary Response Targets (\u226588px tall)**:\n   - **Yes (The Serious One)**: Highlighted with an alert icon and warm terracotta/crimson accent to give danger signs proper gravity.\n   - **No (The Calm One)**: Highlighted with a reassuring checkmark and gentle teal/green outline.\n   - **Not sure (The Gentle One)**: A neutral warm-sand tone with a friendly question mark for moments of doubt.\n5. **Multimodal Input**:\n   - A large, accessible circular microphone button with the label **\"Tap and speak\"** (along with bilingual prompt).\n   - An unobtrusive text entry field (*\"Or type here...\"* with a Send button) at the bottom for silent input or family assistance.\n6. **Tone & Restraint**: Strictly excluded tab bars, metric widgets, and extraneous lists to maintain focus on the single danger-sign assessment."
+    },
+    {
+      "suggestion": "Show the 'Yes' confirmation state (urgent referral/care advice)"
+    },
+    {
+      "suggestion": "Show the active listening/recording state when 'Tap and speak' is pressed"
+    },
+    {
+      "suggestion": "Create the Marathi translation version of this question"
+    }
+  ]
+}

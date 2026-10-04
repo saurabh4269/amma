@@ -80,8 +80,8 @@ export function Session({ ix, words, places, profile, onDone, onQuit }: Props) {
   return (
     <main class={urgent ? 'page urgent' : 'page'}>
       <header class="top">
-        <button class="ghost" onClick={() => { speaker.stop(); onQuit(); }}>✕</button>
-        <button class="ghost" aria-label="replay" onClick={() => void speaker.play(words, view.say, setSpeaking)}>🔊</button>
+        <button class="ghost" onClick={() => { speaker.stop(); onQuit(); }}>‹ {words.ui('back')}</button>
+        <button class="ghost" aria-label="replay" onClick={() => void speaker.play(words, view.say, setSpeaking)}>{words.ui('replay')}</button>
       </header>
 
       <section class="said" aria-live="polite">

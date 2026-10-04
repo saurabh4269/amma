@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { Profile } from '@amma/schema';
-import { ClinicCard } from './clinic-card.tsx';
+import { ClinicCard, weeksPregnant } from './clinic-card.tsx';
 import { loadBundle, Words, type Loaded } from './pack.ts';
 import { Session } from './session.tsx';
 import { Setup } from './setup.tsx';
@@ -23,10 +23,21 @@ export function App() {
   const [loaded, setLoaded] = useState<Loaded>();
   const [error, setError] = useState<string>();
   const [metas, setMetas] = useState<ProfileMeta[]>([]);
+  const [open, setOpen] = useState<Record<string, Profile>>({});
   const [screen, setScreen] = useState<Screen>({ at: 'home' });
   const [langId, setLangId] = useState(() => localStorage.getItem(LANG_KEY) ?? '');
 
-  const refresh = () => listProfiles().then(setMetas);
+  const refresh = async () => {
+    const list = await listProfiles();
+    setMetas(list);
+    const next: Record<string, Profile> = {};
+    for (const m of list) {
+      if (m.locked) continue;
+      const p = await openProfile(m.id);
+      if (p) next[m.id] = p;
+    }
+    setOpen(next);
+  };
   useEffect(() => {
     loadBundle().then(setLoaded, (e: unknown) => setError(String(e)));
     void refresh();
@@ -41,7 +52,13 @@ export function App() {
   }, [loaded, langId, screen]);
 
   if (error) return <main class="page"><p class="warn">{error}</p></main>;
-  if (!loaded || !words) return <main class="page"><p>…</p></main>;
+  if (!loaded || !words) {
+    return (
+      <main class="page">
+        <header class="brand"><Mark /><h1>AMMA</h1></header>
+      </main>
+    );
+  }
   const { ix, languages, places } = loaded;
   const home = () => {
     void refresh();
@@ -53,8 +70,9 @@ export function App() {
       return (
         <main class="page">
           <header class="top">
-            <h1>AMMA</h1>
+            <div class="brand"><Mark /><h1>AMMA</h1></div>
             <select
+              class="lang"
               aria-label={words.ui('language')}
               value={words.lang.id}
               onChange={(e) => {
@@ -66,20 +84,38 @@ export function App() {
               {languages.map((l) => <option value={l.id}>{l.name}</option>)}
             </select>
           </header>
+          <section class="hello">
+            <h2>{words.ui('home_title')}</h2>
+            <p class="muted">{words.ui('home_sub')}</p>
+          </section>
           {words.hasUnapprovedContent && <p class="note">{words.ui('draft')}</p>}
           <div class="list">
-            {metas.map((m) => (
-              <button
-                class="big"
-                onClick={async () => {
-                  if (m.locked) return setScreen({ at: 'pin', meta: m });
-                  const p = await openProfile(m.id);
-                  if (p) setScreen({ at: 'person', profile: p });
-                }}
-              >
-                {m.locked ? '🔒 ' : ''}{m.label}
-              </button>
-            ))}
+            {metas.map((m) => {
+              const profile = open[m.id];
+              return (
+                <button
+                  class="person"
+                  onClick={async () => {
+                    if (m.locked) return setScreen({ at: 'pin', meta: m });
+                    const p = profile ?? await openProfile(m.id);
+                    if (p) setScreen({ at: 'person', profile: p });
+                  }}
+                >
+                  <span class="avatar" aria-hidden="true">{m.label.slice(0, 1)}</span>
+                  <span class="person-copy">
+                    <span class="person-name">
+                      {m.label}
+                      {m.locked && <Lock />}
+                    </span>
+                    <span class="muted small">
+                      {profile
+                        ? `${previewLine(profile, words)} · ${words.ui('last_session')}: ${profile.sessions.at(-1)?.date ?? words.ui('none_yet')}`
+                        : words.ui('pin_enter')}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
             <button class="big ghost" onClick={() => setScreen({ at: 'setup' })}>＋ {words.ui('add_person')}</button>
           </div>
         </main>
@@ -104,7 +140,12 @@ export function App() {
     case 'pin':
       return (
         <main class="page">
-          <h2>{screen.meta.label}</h2>
+          <header class="top"><button type="button" class="ghost" onClick={home}>‹ {words.ui('back')}</button></header>
+          <section class="status">
+            <span class="avatar" aria-hidden="true">{screen.meta.label.slice(0, 1)}</span>
+            <h2>{screen.meta.label}</h2>
+            <p class="muted">{words.ui('pin_enter')}</p>
+          </section>
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -129,11 +170,15 @@ export function App() {
       return (
         <main class="page">
           <header class="top"><button class="ghost" onClick={home}>‹ {words.ui('back')}</button><h2>{profile.label}</h2></header>
-          <p class="muted">{words.ui('last_session')}: {last ? last.date : words.ui('none_yet')}</p>
-          <div class="list">
-            <button class="big primary" onClick={() => setScreen({ at: 'session', profile, pin })}>▶ {words.ui('start')}</button>
-            <button class="big" onClick={() => setScreen({ at: 'card', profile, pin })}>📋 {words.ui('clinic_card')}</button>
-            <button class="big" onClick={() => setScreen({ at: 'teach', profile, pin })}>🎤 {words.ui('teach_voice')}</button>
+          <section class="status">
+            {pin && <span class="chip">{words.ui('pin_on')}</span>}
+            <p class="headline">{previewLine(profile, words)}</p>
+            <p class="muted">{words.ui('last_session')}: {last ? last.date : words.ui('none_yet')}</p>
+          </section>
+          <button class="big primary" onClick={() => setScreen({ at: 'session', profile, pin })}>▶ {words.ui('start')}</button>
+          <div class="actions">
+            <button class="action" onClick={() => setScreen({ at: 'card', profile, pin })}>{words.ui('clinic_card')}</button>
+            <button class="action" onClick={() => setScreen({ at: 'teach', profile, pin })}>{words.ui('teach_voice')}</button>
             <ShareAudio ix={ix} words={words} profile={profile} />
           </div>
           <DeleteButton
@@ -168,6 +213,34 @@ export function App() {
     case 'card':
       return <ClinicCard ix={ix} words={words} profile={screen.profile} onBack={() => setScreen({ at: 'person', profile: screen.profile, pin: screen.pin })} />;
   }
+}
+
+function previewLine(profile: Profile, words: Words): string {
+  const phase = words.ui(profile.phase === 'pregnant' ? 'pregnant' : 'after_birth');
+  const weeks = profile.phase === 'pregnant' && profile.anchorDate
+    ? `${weeksPregnant(profile.anchorDate, new Date())} ${words.ui('weeks')}`
+    : '';
+  return [phase, weeks].filter(Boolean).join(' · ');
+}
+
+function Mark() {
+  return (
+    <span class="mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32">
+        <path d="M8 20c1.2-6 4.2-10 8-10s6.8 4 8 10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+        <circle cx="16" cy="13" r="2.1" fill="currentColor" />
+      </svg>
+    </span>
+  );
+}
+
+function Lock() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2" />
+      <path d="M8 10V8a4 4 0 0 1 8 0v2" fill="none" stroke="currentColor" stroke-width="2" />
+    </svg>
+  );
 }
 
 function DeleteButton({ words, onDelete }: { words: Words; onDelete: () => void }) {

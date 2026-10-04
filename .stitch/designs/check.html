@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>AMMA - Maternal Health Check</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans, Noto Sans, Nunito Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;family=Nunito+Sans:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Public+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            paper: '#F6EDE4',
+            cocoa: '#3A2418',
+            clay: '#C4513A',
+            'clay-light': '#FFF8F3',
+            sage: '#2F6F56',
+            'sage-light': '#EBF4F0',
+            honey: '#E8A838',
+            'honey-light': '#FDF6E9',
+            rose: '#9B2331',
+            'rose-light': '#FCECEE',
+            'muted-cocoa': '#7A6558',
+            'warm-card': '#FFFFFF',
+            'warm-border': '#EADBCE'
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Plus Jakarta Sans", "sans-serif"],
+            display: ["Plus Jakarta Sans", "sans-serif"],
+            body: ["Noto Sans", "Public Sans", "sans-serif"],
+            label: ["Nunito Sans", "sans-serif"]
+          },
+          boxShadow: {
+            'cradle': '0 4px 20px -2px rgba(58, 36, 24, 0.06), 0 2px 6px -1px rgba(58, 36, 24, 0.04)',
+            'cradle-speech': '0 8px 30px -4px rgba(196, 81, 58, 0.12), 0 4px 10px -2px rgba(58, 36, 24, 0.05)',
+            'cradle-mic': '0 10px 25px -4px rgba(196, 81, 58, 0.35), 0 4px 10px -2px rgba(196, 81, 58, 0.2)'
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1, 'wght' 450, 'GRAD' 0, 'opsz' 24;
+    }
+    
+    /* Gentle pulsing audio ripple */
+    @keyframes subtle-pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: scale(1.08);
+        opacity: 0.4;
+      }
+    }
+    .animate-audio-ring {
+      animation: subtle-pulse 2.2s infinite ease-in-out;
+    }
+
+    /* Waveform bars */
+    @keyframes sound-bar-1 { 0%, 100% { height: 6px; } 50% { height: 16px; } }
+    @keyframes sound-bar-2 { 0%, 100% { height: 14px; } 50% { height: 8px; } }
+    @keyframes sound-bar-3 { 0%, 100% { height: 8px; } 50% { height: 18px; } }
+    @keyframes sound-bar-4 { 0%, 100% { height: 16px; } 50% { height: 6px; } }
+
+    .sound-1 { animation: sound-bar-1 1.2s infinite ease-in-out; }
+    .sound-2 { animation: sound-bar-2 1.0s infinite ease-in-out; }
+    .sound-3 { animation: sound-bar-3 1.4s infinite ease-in-out; }
+    .sound-4 { animation: sound-bar-4 1.1s infinite ease-in-out; }
+
+    /* Touch optimization */
+    button, input {
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-paper text-cocoa font-body antialiased min-h-screen flex flex-col justify-start items-center select-none overflow-x-hidden p-0 m-0">
+<!-- Mobile Screen Container (Standard 390px bounded cradle) -->
+<main class="w-full max-w-[28rem] min-h-screen bg-paper flex flex-col justify-between px-5 pt-3 pb-6 sm:py-6 shadow-xl sm:border sm:border-warm-border sm:rounded-[2.5rem] relative">
+<!-- 1. TOP APP BAR (Shared Components JSON Anchor & Design System Rules) -->
+<!-- JSON: style_shell_layout: "flex justify-between items-center w-full max-w-[28rem] mx-auto px-5 py-3 pt-safe" -->
+<!-- JSON: style_separation_logic: "bg-transparent", style_shadows_and_elevation: "flat no shadows" -->
+<header class="flex justify-between items-center w-full pt-1 pb-3 px-1 bg-transparent">
+<!-- Left: Clear Text Back / Close Button (Design system: Never a mystery icon alone) -->
+<button aria-label="Close this check" class="flex items-center gap-1.5 py-2 px-2.5 -ml-2 rounded-xl text-muted-cocoa hover:text-cocoa hover:bg-white/60 active:scale-95 transition-all duration-150" onclick="window.history.back()" type="button">
+<span class="material-symbols-outlined text-[20px] text-cocoa" data-icon="close">close</span>
+<span class="font-headline font-semibold text-sm tracking-tight text-cocoa">Close</span>
+</button>
+<!-- Center: Step Indicator with soft dots & badge -->
+<div class="flex flex-col items-center justify-center">
+<div class="inline-flex items-center gap-1.5 bg-white/80 border border-warm-border/80 px-3 py-1 rounded-full shadow-sm">
+<span class="w-2 h-2 rounded-full bg-clay inline-block"></span>
+<span class="font-label font-bold text-xs uppercase tracking-wider text-muted-cocoa">Sign 4 of 9</span>
+</div>
+<!-- Progress mini dots -->
+<div aria-hidden="true" class="flex items-center gap-1 mt-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-clay"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-clay"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-clay"></span>
+<span class="w-4 h-1.5 rounded-full bg-clay"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-warm-border"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-warm-border"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-warm-border"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-warm-border"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-warm-border"></span>
+</div>
+</div>
+<!-- Right: Replay Action with speaker icon and text -->
+<button aria-label="Replay question audio" class="flex items-center gap-1.5 py-2 px-2.5 -mr-2 rounded-xl bg-white/70 border border-warm-border/60 text-clay hover:bg-white active:scale-95 transition-all duration-150 shadow-sm" id="replayBtn" onclick="triggerReplayAnimation()" type="button">
+<span class="material-symbols-outlined text-[20px] text-clay" data-icon="volume_up">volume_up</span>
+<span class="font-headline font-semibold text-xs tracking-tight text-clay">Replay</span>
+</button>
+</header>
+<!-- 2. ONE LARGE SPEECH CARD (Hero / Spoken question) -->
+<section class="mt-2 mb-2 flex flex-col gap-2">
+<div aria-live="polite" class="relative bg-warm-card border-2 border-clay/80 rounded-3xl p-5 sm:p-6 shadow-cradle-speech transition-all duration-300" id="speechCard" role="region">
+<!-- Speech Bubble Tail Indicator (Subtle top-left corner indicator) -->
+<div class="absolute -top-[10px] left-8 w-4 h-4 bg-warm-card border-t-2 border-l-2 border-clay/80 rotate-45"></div>
+<!-- Upper Status Row: Illustration & Active Voice Waveform -->
+<div class="flex items-center justify-between mb-4">
+<!-- Tactile Friendly Picture: Headache / Vision Blur indicator -->
+<div class="flex items-center gap-3">
+<div class="relative w-14 h-14 rounded-2xl bg-rose-light/80 border border-rose/20 flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined fill text-rose text-3xl" data-icon="neurology">neurology</span>
+<!-- Sparkle / aura danger accent -->
+<span class="absolute -top-1 -right-1 text-honey text-xs animate-bounce">✦</span>
+<span class="absolute bottom-0 -left-1 text-clay text-xs">✨</span>
+</div>
+<div>
+<span class="font-label font-bold text-xs uppercase tracking-wider text-rose block">Danger Sign</span>
+<span class="font-label text-xs text-muted-cocoa font-semibold">Head &amp; Eyes</span>
+</div>
+</div>
+<!-- Pulsing Audio Waveform Indicator -->
+<div class="flex items-center gap-1.5 bg-clay-light px-3 py-1.5 rounded-full border border-clay/20" title="Audio playing">
+<div class="flex items-end gap-1 h-5 w-6 pb-0.5 justify-center">
+<span class="w-1 bg-clay rounded-full sound-1"></span>
+<span class="w-1 bg-clay rounded-full sound-2"></span>
+<span class="w-1 bg-clay rounded-full sound-3"></span>
+<span class="w-1 bg-clay rounded-full sound-4"></span>
+</div>
+<span class="font-headline font-semibold text-xs text-clay">Playing</span>
+</div>
+</div>
+<!-- The Question: BIGGEST text on the screen, High legibility, warm cocoa tone (Design System Mandate: Noto Sans at least 20px) -->
+<h1 class="font-body font-semibold text-[22px] leading-[1.32] text-cocoa tracking-tight">
+          "Since last time, have you had a bad headache, or has your vision been blurred?"
+        </h1>
+<!-- Localized Devnagari subtitle for Hindi/Marathi clarity on shared phones -->
+<p class="mt-2.5 font-body text-sm font-medium text-muted-cocoa leading-relaxed border-t border-warm-border/50 pt-2.5">
+          क्या आपको तेज सिरदर्द हुआ है, या आँखों के आगे धुंधलापन दिखाई दे रहा है?
+        </p>
+</div>
+<!-- 3. Quiet line right under the card -->
+<div class="flex items-center justify-center gap-1.5 text-muted-cocoa mt-1 px-3">
+<span class="material-symbols-outlined text-[15px] opacity-75" data-icon="phone_iphone">phone_iphone</span>
+<span class="font-label font-medium text-[13px] tracking-tight">Using the phone's own voice.</span>
+</div>
+</section>
+<!-- 4. THREE EQUAL TALL ANSWER BUTTONS (Crucial touch interaction, min 88px tall) -->
+<section class="my-auto py-2">
+<div aria-label="Answer options" class="grid grid-cols-3 gap-2.5 w-full" role="group">
+<!-- BUTTON 1: "Yes" - The serious danger outcome (Urgent Rose / Terracotta alert styling) -->
+<button class="answer-btn group relative min-h-[96px] flex flex-col items-center justify-center p-2.5 rounded-2xl bg-white border-2 border-rose/85 shadow-cradle active:scale-[0.96] hover:bg-rose-light/50 transition-all duration-150 focus:outline-none focus:ring-4 focus:ring-rose/20" onclick="selectAnswer(this, 'yes')" type="button">
+<!-- Universal Icon -->
+<div class="w-10 h-10 rounded-full bg-rose-light flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined fill text-rose text-2xl" data-icon="warning">warning</span>
+</div>
+<!-- Label: Bold & prominent -->
+<span class="font-headline font-bold text-base text-rose leading-tight">Yes</span>
+<span class="font-label text-[11px] font-semibold text-rose/80">हाँ / Yes</span>
+</button>
+<!-- BUTTON 2: "No" - The calm reassuring one (Sage green outline/fill) -->
+<button class="answer-btn group relative min-h-[96px] flex flex-col items-center justify-center p-2.5 rounded-2xl bg-white border-2 border-sage/80 shadow-cradle active:scale-[0.96] hover:bg-sage-light/60 transition-all duration-150 focus:outline-none focus:ring-4 focus:ring-sage/20" onclick="selectAnswer(this, 'no')" type="button">
+<!-- Universal Icon -->
+<div class="w-10 h-10 rounded-full bg-sage-light flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-sage text-2xl font-bold" data-icon="check_circle">check_circle</span>
+</div>
+<!-- Label -->
+<span class="font-headline font-bold text-base text-sage leading-tight">No</span>
+<span class="font-label text-[11px] font-semibold text-sage/80">नहीं / No</span>
+</button>
+<!-- BUTTON 3: "Not sure" - The gentle one (Warm Honey outline/fill) -->
+<button class="answer-btn group relative min-h-[96px] flex flex-col items-center justify-center p-2.5 rounded-2xl bg-white border-2 border-honey/85 shadow-cradle active:scale-[0.96] hover:bg-honey-light/60 transition-all duration-150 focus:outline-none focus:ring-4 focus:ring-honey/20" onclick="selectAnswer(this, 'notsure')" type="button">
+<!-- Universal Icon -->
+<div class="w-10 h-10 rounded-full bg-honey-light flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-honey text-2xl font-bold" data-icon="help">help</span>
+</div>
+<!-- Label -->
+<span class="font-headline font-bold text-base text-cocoa leading-tight">Not sure</span>
+<span class="font-label text-[11px] font-semibold text-muted-cocoa">पता नहीं</span>
+</button>
+</div>
+</section>
+<!-- 5. BOTTOM ACTION AREA (Tactile Mic + Quiet typed fallback) -->
+<footer class="mt-auto pt-2 flex flex-col items-center gap-4">
+<!-- Primary Mic Button (Design system: large circular clay button, thumb-reachable) -->
+<div class="flex flex-col items-center justify-center w-full">
+<div class="relative flex items-center justify-center">
+<!-- Atmospheric gentle glow ring -->
+<div class="absolute w-20 h-20 rounded-full bg-clay/20 animate-audio-ring"></div>
+<button aria-label="Tap and speak your answer" class="relative w-16 h-16 rounded-full bg-clay hover:bg-clay/95 active:scale-90 text-clay-light flex items-center justify-center shadow-cradle-mic transition-all duration-200 z-10" id="micButton" onclick="toggleMic()" type="button">
+<span class="material-symbols-outlined text-3xl" data-icon="mic" id="micIcon">mic</span>
+</button>
+</div>
+<button class="mt-2 text-center group active:scale-98 transition-transform" onclick="toggleMic()" type="button">
+<span class="font-headline font-bold text-base text-cocoa group-hover:text-clay transition-colors block">
+            Tap and speak
+          </span>
+<span class="font-label text-xs text-muted-cocoa">
+            बोलकर जवाब दें (Speak in any language)
+          </span>
+</button>
+</div>
+<!-- Quiet Accessible Single Text Input Field -->
+<form class="w-full relative mt-1" onsubmit="handleSend(event)">
+<div class="flex items-center w-full bg-white rounded-2xl border-2 border-warm-border focus-within:border-clay/80 focus-within:ring-2 focus-within:ring-clay/10 transition-all shadow-sm pl-4 pr-1.5 py-1.5">
+<span class="material-symbols-outlined text-muted-cocoa text-xl mr-2" data-icon="keyboard">keyboard</span>
+<input aria-label="Type your response alternatively" class="w-full bg-transparent border-0 p-0 text-sm font-body text-cocoa placeholder:text-muted-cocoa/70 focus:ring-0 focus:outline-none" id="typedAnswer" name="typedAnswer" placeholder="Or type here..." type="text"/>
+<button class="ml-2 px-3.5 py-2 rounded-xl bg-paper hover:bg-clay-light text-cocoa hover:text-clay font-headline font-semibold text-xs border border-warm-border active:scale-95 transition-all flex items-center gap-1 shrink-0" type="submit">
+<span>Send</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_upward">arrow_upward</span>
+</button>
+</div>
+</form>
+</footer>
+</main>
+<!-- Inline Vanilla Javascript for Lightweight Interactions & Micro-feedbacks -->
+<script>
+    // Audio Replay interaction feedback
+    function triggerReplayAnimation() {
+      const speechCard = document.getElementById('speechCard');
+      const replayBtn = document.getElementById('replayBtn');
+      
+      // Visual pulse on card
+      speechCard.classList.remove('border-clay/80', 'shadow-cradle-speech');
+      speechCard.classList.add('border-clay', 'ring-4', 'ring-clay/20', 'scale-[1.01]');
+      replayBtn.classList.add('bg-clay', 'text-white');
+      replayBtn.querySelector('span:first-child').classList.remove('text-clay');
+      replayBtn.querySelector('span:first-child').classList.add('text-white');
+
+      setTimeout(() => {
+        speechCard.classList.remove('ring-4', 'ring-clay/20', 'scale-[1.01]');
+        speechCard.classList.add('border-clay/80', 'shadow-cradle-speech');
+        replayBtn.classList.remove('bg-clay', 'text-white');
+        replayBtn.querySelector('span:first-child').classList.add('text-clay');
+        replayBtn.querySelector('span:first-child').classList.remove('text-white');
+      }, 1000);
+    }
+
+    // Three button selection logic
+    function selectAnswer(button, type) {
+      const buttons = document.querySelectorAll('.answer-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('ring-4', 'ring-offset-2', 'ring-cocoa/30', 'scale-105');
+      });
+
+      button.classList.add('ring-4', 'ring-offset-2', 'ring-cocoa/30', 'scale-[1.02]');
+
+      // Haptic imitation toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-24 bg-cocoa text-white font-label font-semibold text-xs px-4 py-2 rounded-full shadow-lg transition-all transform duration-300 opacity-95';
+      toast.textContent = type === 'yes' ? 'Recorded: Yes (Urgent caution logged)' : (type === 'no' ? 'Recorded: No (All clear)' : 'Recorded: Need health worker check');
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 1800);
+    }
+
+    // Mic interaction toggle
+    let isListening = false;
+    function toggleMic() {
+      const micBtn = document.getElementById('micButton');
+      const micIcon = document.getElementById('micIcon');
+      isListening = !isListening;
+
+      if (isListening) {
+        micBtn.classList.remove('bg-clay');
+        micBtn.classList.add('bg-rose', 'animate-pulse');
+        micIcon.textContent = 'graphic_eq';
+      } else {
+        micBtn.classList.remove('bg-rose', 'animate-pulse');
+        micBtn.classList.add('bg-clay');
+        micIcon.textContent = 'mic';
+      }
+    }
+
+    // Handle typed response
+    function handleSend(e) {
+      e.preventDefault();
+      const input = document.getElementById('typedAnswer');
+      if (input.value.trim() !== '') {
+        const userText = input.value;
+        input.value = '';
+        input.blur();
+        
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-24 bg-sage text-white font-label font-semibold text-xs px-4 py-2 rounded-full shadow-lg';
+        toast.textContent = 'Saved: "' + userText + '"';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 1800);
+      }
+    }
+  </script>
+</body></html>

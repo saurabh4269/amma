@@ -1,0 +1,81 @@
+{
+  "projectId": "4636124252891906861",
+  "sessionId": "4564859174462028322",
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "screenshot": {
+              "name": "projects/4636124252891906861/files/f966827db1844b109bd3a12bd82d7b9d",
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WPRbVnNHj6LN8dOCYxfvwm9qcRDGKNB9Den0LccWQZ4bXXs2bgGqPbJ1g0bgFhFFj-3UEOOrPtAHsfFZCU7yIaItPwcRsO7_ENNcF6JP7NqkFTR6KmDKKSegrsdscI9XRKMqxaWrikUDR1VpKKpiQtYmq5I6CX1xCfNz1Lww8qI9Oi8mZoq8cinSwm7wT52psggUnRrB_DUXgnZTNn5_NMrowwRMq51Q7lVnOOXbzM8u3nZcAqG2FZUkk"
+            },
+            "htmlCode": {
+              "name": "projects/4636124252891906861/files/8ddbdcc6ed5f4021b6527ca6caf5d65e",
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2MxNTZjNjhlYTgzNTQxMjU4MzZlNTZjYWNiMjZiM2MzEgsSBxCN6aHNtAwYAZIBIwoKcHJvamVjdF9pZBIVQhM0NjM2MTI0MjUyODkxOTA2ODYx&filename=&opi=96797242",
+              "mimeType": "text/html"
+            },
+            "id": "40cb5462fe544ca0b1c62769f9e4a758",
+            "generatedBy": "figaro_agent",
+            "width": "780",
+            "height": "1768",
+            "title": "Sunita - AMMA Check-in",
+            "prompt": "Design a warm, calm, accessible mobile portrait screen for 'AMMA', a maternal-health check app on a shared family smartphone.\n\nUser context: Sunita, pregnant at 28 weeks. Low-stress, trusted aunt feel, high legibility for low literacy or family assistance, soft tones (terracotta/peach/warm cream), high contrast where needed. Strictly single column layout. No charts, no bottom tab bar, no vitals dashboard, no fake widgets.\n\nPage Structure:\n1. Top bar: Text button 'Back' (with simple arrow or clean text) on the left, her name 'Sunita' as the centered/clear headline title, with clean spacing and soft warm background.\n2. Soft status card: A calming warm pill/card container featuring:\n   - Headline: 'Pregnant \u00b7 28 weeks' in large, clear, reassuring typography.\n   - Subtext: 'Last session: 1 Oct' underneath.\n   - A neat small lock chip/badge: 'PIN on' with a subtle lock icon indicating privacy on a shared family phone.\n   - Gentle, warm illustration or motif of care/cradle.\n3. One dominant primary pill button (full width, generous height ~56px-60px for easy thumb reach, high contrast terracotta accent): 'Start this week's session' with a play or right arrow indicator, inviting and welcoming.\n4. A 2-by-2 grid of soft white action cards, each featuring generous touch padding, rounded corners, a clean line icon, and simple clear label:\n   - Card 1: 'Card for the clinic' (medical record / clipboard or card icon)\n   - Card 2: 'Teach the phone my voice' (microphone / voice wave icon)\n   - Card 3: 'Send danger-sign audio' (alert / speaker audio icon, subtle amber/rose alert hint, serious yet calm)\n   - Card 4: 'Sources' (book / information / trusted seal icon)\n5. A quiet text button at the bottom: 'Delete this record' in subtle muted cocoa text with adequate spacing.\n\nAesthetic details: Friendly typography, ample breathing space, soft terracotta #E07A5F primary accents, warm cream background, soft rounded edges, clear accessible hierarchy for quick offline operation.",
+            "name": "projects/4636124252891906861/screens/40cb5462fe544ca0b1c62769f9e4a758",
+            "theme": {
+              "colorMode": "LIGHT",
+              "roundness": "ROUND_TWELVE",
+              "customColor": "#E07A5F",
+              "headlineFont": "PLUS_JAKARTA_SANS",
+              "labelFont": "NUNITO_SANS",
+              "colorVariant": "TONAL_SPOT",
+              "overridePrimaryColor": "#C4513A",
+              "overrideSecondaryColor": "#2F6F56",
+              "overrideTertiaryColor": "#E8A838",
+              "overrideNeutralColor": "#F6EDE4"
+            },
+            "deviceType": "MOBILE",
+            "screenType": "DESIGN",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "designSystem": {
+              "name": "assets/9389483915077379523",
+              "designSystem": {
+                "displayName": "AMMA Warm Cradle",
+                "theme": {
+                  "colorMode": "LIGHT",
+                  "roundness": "ROUND_TWELVE",
+                  "customColor": "#E07A5F",
+                  "headlineFont": "PLUS_JAKARTA_SANS",
+                  "labelFont": "NUNITO_SANS",
+                  "designMd": "# Design System: AMMA Warm Cradle\n**Project ID:** pending\n\n## 1. Visual Theme & Atmosphere\nAMMA is a weekly maternal check used on a shared family phone by a pregnant woman, a new mother, or the person helping her (family or a community health worker). Many users read slowly or not at all. The mood is warm, calm, and a little soft \u2014 a trusted aunt, not a hospital dashboard and not a toy. Generous whitespace, one job per screen, large tap targets, pictures beside words. Cute through roundness and warmth, never through clutter or baby-clipart that could hide a danger sign.\n\n## 2. Color Palette & Roles\n- Warm paper background (#F6EDE4) \u2014 the page, so the phone never feels clinical white.\n- Cocoa ink (#3A2418) \u2014 all body text. High contrast on paper and on white cards.\n- Clay primary (#C4513A) \u2014 the one main action on a screen (start the check, save, finish).\n- Clay on-primary (#FFF8F3) \u2014 text on the primary button.\n- Sage secondary (#2F6F56) \u2014 \"no / all clear for this sign\", safe confirmation.\n- Honey tertiary (#E8A838) \u2014 \"not sure\", drafts, and gentle notes.\n- Urgent rose (#9B2331) \u2014 danger outcome, delete, and \"yes, this danger sign is present\". Used rarely so it stays serious.\n- White card (#FFFFFF) \u2014 every tappable card and spoken line.\n- Muted cocoa (#7A6558) \u2014 helper text only, never the question itself.\n\n## 3. Typography Rules\n- Headlines: Plus Jakarta Sans, semibold, tight line height. Short. Never more than two lines.\n- Body and questions: Noto Sans at a large size so Hindi and Marathi (Devanagari) stay clear. Questions are the biggest text on the check screen.\n- Labels: Nunito Sans, medium, for small meta such as \"last check\" and distances.\n- No text smaller than 14px. Questions at least 20px.\n\n## 4. Component Stylings\n* **Buttons:** Generously rounded (12px, primary actions fully pill-shaped). Minimum height 56px, full width on mobile. One filled primary button per screen. Secondary actions are white cards with a soft border. Ghost actions are text-only for Back and Skip.\n* **Cards/Containers:** White, generously rounded, a whisper-soft warm shadow. Person cards are tall and show a phase (pregnant or baby born), a week if known, and a small lock if the record is private.\n* **Inputs/Forms:** White fields, 2px warm border, large type, visible labels above the field. Never placeholder-only.\n* **Spoken lines:** Left-aligned speech cards. The line being read aloud has a clay outline.\n* **Answer row:** Three equal buttons \u2014 Yes (urgent rose outline), No (sage outline), Not sure (honey outline). Pictures sit above the word.\n* **Picture tiles:** A two-column grid of large tiles, emoji or simple picture on top, short label under it.\n* **Mic:** A single large circular clay button, thumb-reachable, labelled \"Tap and speak\".\n\n## 5. Layout Principles\nMobile only, one column, max width about 28rem, padding 20px, safe-area aware. The primary action sits in the thumb zone at the bottom. No tab bar, no charts, no fake vitals. Language switch is always on the home header. Back is a text button at the top left, never a mystery icon alone.\n",
+                  "colorVariant": "TONAL_SPOT",
+                  "overridePrimaryColor": "#C4513A",
+                  "overrideSecondaryColor": "#2F6F56",
+                  "overrideTertiaryColor": "#E8A838",
+                  "overrideNeutralColor": "#F6EDE4"
+                }
+              },
+              "version": "1"
+            }
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "I've designed the profile and check-in screen for **Sunita** inside **AMMA**, tailored for low-stress maternal checks on shared family phones.\n\n### Key Design Choices:\n- **Calm, Reassuring Tone:** Built around the *AMMA Warm Cradle* design palette with warm cream tones, soft rounded cards, and welcoming terracotta accents designed to feel like advice from a trusted aunt.\n- **Clear Information Hierarchy:** \n  - **Top Bar:** Simple left-aligned \"Back\" button and bold, clear header identifying Sunita's profile.\n  - **Status Card:** Prominently highlights **\"Pregnant \u00b7 28 weeks\"** and last check-in date (`1 Oct`), alongside a reassuring **\"PIN on\"** privacy chip indicating her medical logs remain protected on a shared device.\n  - **Thumb-Friendly Primary Action:** A full-width, high-contrast terracotta pill button reading **\"Start this week's session\"** that is immediately reachable and unambiguous.\n  - **2x2 Action Grid:** Clean, white tactile cards with accessible line icons and paired descriptions for key helper tasks (*Card for the clinic*, *Teach the phone my voice*, *Send danger-sign audio*, and *Sources*).\n  - **Subtle Utility Actions:** Quiet offline guarantee banner and a discreet **\"Delete this record\"** action placed at the bottom without cluttering primary health tasks."
+    },
+    {
+      "suggestion": "Design the first question screen of the weekly check-in session"
+    },
+    {
+      "suggestion": "Design the 'Card for the clinic' offline summary view"
+    },
+    {
+      "suggestion": "Design the 'Send danger-sign audio' emergency screen"
+    }
+  ]
+}

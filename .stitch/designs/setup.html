@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AMMA - Add a person</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&amp;family=Nunito+Sans:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Public+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            paper: '#FAF6F0',
+            cocoa: '#2D3142',
+            'cocoa-muted': '#7A6558',
+            terracotta: {
+              DEFAULT: '#E07A5F',
+              hover: '#C4513A',
+              subtle: '#FFF5F2'
+            },
+            honey: {
+              bg: '#FDF6E2',
+              border: '#FDE68A',
+              text: '#B45309'
+            },
+            sage: {
+              DEFAULT: '#2F6F56',
+              subtle: '#EBF4F0'
+            },
+            card: '#FFFFFF'
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.25rem",
+            "2xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Plus Jakarta Sans", "Noto Sans", "sans-serif"],
+            display: ["Plus Jakarta Sans", "Noto Sans", "sans-serif"],
+            body: ["Noto Sans", "Public Sans", "sans-serif"],
+            label: ["Nunito Sans", "sans-serif"]
+          },
+          boxShadow: {
+            'warm': '0 4px 18px -2px rgba(60, 40, 30, 0.05), 0 2px 6px -1px rgba(60, 40, 30, 0.03)',
+            'warm-btn': '0 6px 16px -2px rgba(224, 122, 95, 0.35)'
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1;
+    }
+    /* Hide spin buttons on number fields */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#FAF6F0] text-cocoa font-body antialiased min-h-screen selection:bg-terracotta/20 flex flex-col justify-between">
+<!-- Main Mobile Wrapper -->
+<div class="w-full max-w-md mx-auto min-h-screen flex flex-col bg-[#FAF6F0] px-4 pt-2 pb-8 sm:px-5">
+<!-- Top Bar Component (Consistent with Design System & JSON Token) -->
+<header class="flex justify-between items-center w-full max-w-md mx-auto px-1 py-3 mb-2">
+<button class="inline-flex items-center gap-1.5 py-2 px-1 text-cocoa-muted font-label text-base font-semibold hover:opacity-80 active:scale-95 transition-all focus:outline-none" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_back">arrow_back</span>
+<span>Back</span>
+</button>
+<span class="font-headline text-lg font-bold tracking-tight text-cocoa">AMMA</span>
+<button class="inline-flex items-center gap-1 bg-white/70 border border-[#E9DFD3] rounded-full px-3 py-1 font-label text-sm font-semibold text-cocoa-muted hover:opacity-80 active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[17px] text-terracotta" data-icon="language">language</span>
+<span>हिंदी</span>
+</button>
+</header>
+<!-- Headline Section -->
+<section class="mb-5 mt-1 px-1">
+<div class="flex items-baseline justify-between">
+<h1 class="font-headline text-2xl sm:text-[26px] font-bold tracking-tight text-cocoa leading-tight">
+          Add a person
+        </h1>
+<span class="inline-flex items-center text-xs font-label text-cocoa-muted bg-[#EDE3D6] px-2 py-0.5 rounded-full font-medium">
+          Step 1 of 1
+        </span>
+</div>
+<p class="font-body text-sm text-cocoa-muted mt-1 leading-relaxed">
+        Create a warm, private record for weekly health checks.
+      </p>
+</section>
+<!-- Honey Privacy Note Card -->
+<div class="mb-6 rounded-2xl bg-[#FDF6E2] border border-[#FDE68A] p-4 flex items-start gap-3 shadow-sm">
+<div class="w-8 h-8 rounded-full bg-[#FEF08A]/60 flex items-center justify-center shrink-0 mt-0.5 text-[#B45309]">
+<span class="material-symbols-outlined filled text-[19px]" data-icon="lock">lock</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-body font-medium text-[#92400E] leading-snug">
+          Anyone who can open this phone can see this record unless you set a PIN.
+        </p>
+<p class="text-xs text-[#B45309]/80 mt-1 font-label">
+          Shared family phone safe mode
+        </p>
+</div>
+</div>
+<!-- Main Form Fields -->
+<form class="space-y-5 flex-1" onsubmit="event.preventDefault();">
+<!-- Field 1: Name or Word -->
+<div class="space-y-1.5">
+<label class="block font-headline text-base font-semibold text-cocoa" for="record-name">
+          A name or word for this record
+        </label>
+<div class="relative">
+<input class="w-full min-h-[54px] px-4 py-3 bg-white text-cocoa font-body text-lg rounded-xl border-2 border-[#E8DDD2] focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 outline-none transition-all placeholder-cocoa-muted/50 shadow-warm font-medium" id="record-name" placeholder="e.g. Didi, Sunita, Bhabhi" type="text" value="Sunita"/>
+<div class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-label bg-[#FAF6F0] px-2.5 py-1 rounded-md text-cocoa-muted font-medium border border-[#E8DDD2]">
+            सुनीता
+          </div>
+</div>
+</div>
+<!-- Field 2: Language -->
+<div class="space-y-1.5">
+<label class="block font-headline text-base font-semibold text-cocoa" for="language-select">
+          Language
+        </label>
+<div class="relative">
+<div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-cocoa-muted flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[22px] text-terracotta" data-icon="record_voice_over">record_voice_over</span>
+</div>
+<select class="w-full min-h-[54px] pl-11 pr-10 py-3 bg-white text-cocoa font-body text-base rounded-xl border-2 border-[#E8DDD2] focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 outline-none transition-all appearance-none shadow-warm font-medium cursor-pointer" id="language-select">
+<option selected="">हिंदी (Hindi)</option>
+<option>मराठी (Marathi)</option>
+<option>English</option>
+<option>বাংলা (Bengali)</option>
+</select>
+<div class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-cocoa-muted">
+<span class="material-symbols-outlined text-[22px]" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Field 3: Status Selection (Chips) -->
+<div class="space-y-2 pt-1">
+<label class="block font-headline text-base font-semibold text-cocoa">
+          Current status
+        </label>
+<div aria-label="Current status" class="grid grid-cols-2 gap-3" role="radiogroup">
+<!-- Chip 1: Selected (Pregnant) -->
+<button aria-checked="true" class="relative flex flex-col items-center justify-center p-3.5 rounded-2xl bg-terracotta text-white border-2 border-terracotta shadow-warm-btn active:scale-98 transition-all min-h-[96px] text-center group cursor-pointer" role="radio" type="button">
+<span class="material-symbols-outlined text-[30px] mb-1.5 filled" data-icon="pregnant_woman">pregnant_woman</span>
+<span class="font-headline font-bold text-base leading-snug">Pregnant</span>
+<span class="text-xs font-label text-white/90 font-medium">Expecting baby</span>
+<span class="absolute top-2 right-2 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[15px] font-bold text-white" data-icon="check">check</span>
+</span>
+</button>
+<!-- Chip 2: Unselected (Baby is born) -->
+<button aria-checked="false" class="relative flex flex-col items-center justify-center p-3.5 rounded-2xl bg-white text-cocoa border-2 border-[#E8DDD2] hover:border-[#D8CBC0] active:scale-98 transition-all min-h-[96px] text-center group cursor-pointer shadow-warm" role="radio" type="button">
+<span class="material-symbols-outlined text-[28px] mb-1.5 text-cocoa-muted group-hover:text-cocoa transition-colors" data-icon="child_friendly">child_friendly</span>
+<span class="font-headline font-semibold text-base leading-snug">Baby is born</span>
+<span class="text-xs font-label text-cocoa-muted">New mother</span>
+</button>
+</div>
+</div>
+<!-- Field 4: Expected Date of Birth -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="block font-headline text-base font-semibold text-cocoa" for="edb-input">
+            Expected date of birth
+          </label>
+<span class="text-xs font-label text-cocoa-muted font-medium">Approximate is OK</span>
+</div>
+<div class="relative">
+<input class="w-full min-h-[54px] pl-4 pr-11 py-3 bg-white text-cocoa font-body text-base rounded-xl border-2 border-[#E8DDD2] focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 outline-none transition-all shadow-warm font-medium" id="edb-input" placeholder="DD Mon YYYY" type="text" value="18 Nov 2025"/>
+<div class="absolute right-3.5 top-1/2 -translate-y-1/2 text-terracotta flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[22px]" data-icon="calendar_month">calendar_month</span>
+</div>
+</div>
+</div>
+<!-- Field 5: Next Clinic Visit -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="block font-headline text-base font-semibold text-cocoa" for="clinic-date">
+            Next clinic visit
+          </label>
+<span class="text-xs font-label text-cocoa-muted font-medium">Optional</span>
+</div>
+<div class="relative">
+<input class="w-full min-h-[54px] pl-4 pr-11 py-3 bg-white text-cocoa font-body text-base rounded-xl border-2 border-[#E8DDD2] focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 outline-none transition-all placeholder:text-cocoa-muted/60 shadow-warm font-medium" id="clinic-date" placeholder="Select date (e.g. 24 Oct)" type="text"/>
+<div class="absolute right-3.5 top-1/2 -translate-y-1/2 text-cocoa-muted flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[22px]" data-icon="event">event</span>
+</div>
+</div>
+</div>
+<!-- Field 6: Her Own Phone Number -->
+<div class="space-y-1.5">
+<label class="block font-headline text-base font-semibold text-cocoa" for="phone-input">
+          Her own phone number <span class="font-normal text-cocoa-muted text-sm">(for the weekly SMS)</span>
+</label>
+<div class="relative">
+<div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-cocoa-muted flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[22px]" data-icon="sms">sms</span>
+</div>
+<input class="w-full min-h-[54px] pl-11 pr-4 py-3 bg-white text-cocoa font-body text-base rounded-xl border-2 border-[#E8DDD2] focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 outline-none transition-all placeholder:text-cocoa-muted/60 shadow-warm font-medium" id="phone-input" placeholder="10 digit mobile number" type="tel"/>
+</div>
+<p class="text-xs font-label text-cocoa-muted pl-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-sage" data-icon="check_circle">check_circle</span>
+          She will receive a simple check question every Tuesday
+        </p>
+</div>
+<!-- Field 7: What the Nurse Has Told Her -->
+<div class="pt-2 space-y-2.5">
+<div>
+<label class="block font-headline text-base font-semibold text-cocoa">
+            What the nurse has told her
+          </label>
+<p class="text-xs font-label text-cocoa-muted mt-0.5">
+            Helps AMMA tailor checkups safely. Tick if yes.
+          </p>
+</div>
+<div class="space-y-2.5">
+<!-- Checkbox 1 -->
+<label class="flex items-center gap-3.5 p-3.5 bg-white rounded-xl border-2 border-[#E8DDD2] cursor-pointer shadow-warm hover:border-[#DACCC0] transition-colors select-none">
+<input class="w-6 h-6 rounded-lg text-terracotta border-2 border-[#C9BDB0] focus:ring-terracotta focus:ring-offset-0 focus:ring-1" type="checkbox"/>
+<div class="flex-1 flex items-center justify-between pr-1">
+<span class="font-body text-base font-semibold text-cocoa">High blood pressure</span>
+<span class="material-symbols-outlined text-terracotta/80 text-[20px]" data-icon="vital_signs">vital_signs</span>
+</div>
+</label>
+<!-- Checkbox 2 -->
+<label class="flex items-center gap-3.5 p-3.5 bg-white rounded-xl border-2 border-[#E8DDD2] cursor-pointer shadow-warm hover:border-[#DACCC0] transition-colors select-none">
+<input checked="" class="w-6 h-6 rounded-lg text-terracotta border-2 border-[#C9BDB0] focus:ring-terracotta focus:ring-offset-0 focus:ring-1" type="checkbox"/>
+<div class="flex-1 flex items-center justify-between pr-1">
+<span class="font-body text-base font-semibold text-cocoa">First pregnancy</span>
+<span class="material-symbols-outlined text-sage text-[20px]" data-icon="family_star">family_star</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Field 8: PIN Protection -->
+<div class="space-y-1.5 pt-1">
+<label class="block font-headline text-base font-semibold text-cocoa" for="pin-input">
+          PIN to lock this record <span class="font-normal text-cocoa-muted text-sm">(optional)</span>
+</label>
+<div class="relative">
+<div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-cocoa-muted flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[22px]" data-icon="lock_outline">lock_outline</span>
+</div>
+<input class="w-full min-h-[54px] pl-11 pr-4 py-3 bg-white text-cocoa font-body text-base rounded-xl border-2 border-[#E8DDD2] focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 outline-none transition-all placeholder:text-cocoa-muted/60 shadow-warm font-medium tracking-widest" id="pin-input" inputmode="numeric" maxlength="4" placeholder="4 digits (e.g. 1 2 3 4)" type="password"/>
+</div>
+<p class="text-xs font-label text-cocoa-muted pl-1">
+          Keeps this private from others who use this phone.
+        </p>
+</div>
+</form>
+<!-- Bottom Row / Action Footer (Thumb reachable, safe area aware) -->
+<div class="mt-8 pt-4 border-t border-[#EAE0D5] flex items-center justify-between gap-3">
+<button class="min-h-[56px] px-6 rounded-full font-headline text-base font-semibold text-cocoa-muted hover:text-cocoa active:scale-95 transition-all text-center flex items-center justify-center cursor-pointer" onclick="history.back()" type="button">
+        Back
+      </button>
+<button class="flex-1 min-h-[56px] px-8 rounded-full bg-terracotta hover:bg-[#C4513A] text-white font-headline text-lg font-bold shadow-warm-btn active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="check">check</span>
+<span>Save</span>
+</button>
+</div>
+<!-- Offline badge indicator -->
+<div class="mt-4 text-center">
+<span class="inline-flex items-center gap-1.5 text-[11px] font-label font-medium text-cocoa-muted/80">
+<span class="w-2 h-2 rounded-full bg-sage inline-block"></span>
+        Saved locally on this device • Works offline
+      </span>
+</div>
+</div>
+</body></html>

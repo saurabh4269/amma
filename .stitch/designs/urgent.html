@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AMMA - Danger Sign Result</title>
+<!-- Google Fonts: Plus Jakarta Sans, Public Sans, Nunito Sans, Noto Sans Devanagari -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&amp;family=Nunito+Sans:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Public+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            paper: '#F6EDE4',
+            cocoa: '#3A2418',
+            'muted-cocoa': '#7A6558',
+            clay: '#C4513A',
+            'on-clay': '#FFF8F3',
+            sage: '#2F6F56',
+            honey: '#E8A838',
+            urgent: '#9B2331',
+            'urgent-bg': '#FDF2F0',
+            'urgent-border': '#F3C5C0',
+            'card-border': '#EAE0D5'
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Plus Jakarta Sans", "Noto Sans Devanagari", "sans-serif"],
+            display: ["Plus Jakarta Sans", "Noto Sans Devanagari", "sans-serif"],
+            body: ["Public Sans", "Noto Sans Devanagari", "sans-serif"],
+            label: ["Nunito Sans", "Noto Sans Devanagari", "sans-serif"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined[data-weight="fill"],
+    .icon-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      background-color: #F6EDE4;
+      color: #3A2418;
+      font-family: 'Public Sans', 'Noto Sans Devanagari', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sound-pulse {
+      animation: gentle-ring 2.5s infinite;
+    }
+    @keyframes gentle-ring {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen bg-paper flex justify-center selection:bg-urgent/10 selection:text-urgent">
+<!-- Mobile Portrait Shell (Max width ~28rem / 448px, Safe area aware, No bottom tabs) -->
+<main class="w-full max-w-[28rem] min-h-screen flex flex-col justify-between px-5 pt-3 pb-8">
+<!-- Top Bar Component (Guided by Shared JSON) -->
+<div>
+<header class="flex justify-between items-center w-full py-2">
+<!-- Close Action (Task-focused exit with explicit label) -->
+<button aria-label="Close check result" class="flex items-center gap-1.5 px-3 py-2 -ml-2 rounded-full text-cocoa hover:bg-white/60 active:scale-95 transition-all duration-150 group" onclick="window.history.back()" type="button">
+<span class="material-symbols-outlined text-cocoa group-hover:text-urgent transition-colors" data-icon="close">close</span>
+<span class="font-label font-medium text-sm text-muted-cocoa group-hover:text-cocoa">Close</span>
+</button>
+<!-- Brand / Identity Center Anchor -->
+<span class="font-headline font-semibold text-xl tracking-tight text-cocoa">
+          AMMA
+        </span>
+<!-- Audio Replay / Speak Aloud Guidance Button -->
+<button aria-label="Play guidance audio in Hindi and English" class="flex items-center gap-1.5 bg-white/90 border border-card-border px-3.5 py-1.5 rounded-full shadow-sm text-cocoa hover:bg-white active:scale-95 transition-all duration-150" id="audioButton" onclick="triggerAudioFeedback()" type="button">
+<span class="material-symbols-outlined text-clay icon-fill text-lg sound-pulse" data-icon="volume_up" data-weight="fill">volume_up</span>
+<div class="flex flex-col text-left">
+<span class="font-label font-bold text-xs text-cocoa leading-none">बोलकर सुनें</span>
+<span class="font-label font-semibold text-[10px] text-muted-cocoa leading-tight">Listen</span>
+</div>
+</button>
+</header>
+<!-- Status Toast / Speech Visual Indicator -->
+<div class="hidden mt-2 mx-auto bg-cocoa text-on-clay text-xs px-3.5 py-1.5 rounded-full w-max shadow-md flex items-center gap-2 transition-all" id="audioToast">
+<span class="w-2 h-2 rounded-full bg-honey animate-ping"></span>
+<span>Replaying audio guidance (Hindi &amp; English)...</span>
+</div>
+<!-- Main Content Container -->
+<div class="mt-4 space-y-4">
+<!-- 1. Urgent Action Banner (High contrast, serious medical alert, clear without panic) -->
+<section class="bg-urgent-bg border-2 border-urgent-border rounded-xl p-4 shadow-sm relative overflow-hidden">
+<div class="flex items-start gap-3.5">
+<!-- Alert Badge / Icon -->
+<div class="w-12 h-12 rounded-xl bg-urgent flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-white text-2xl icon-fill" data-icon="emergency" data-weight="fill">emergency</span>
+</div>
+<div class="flex-1">
+<span class="inline-block bg-urgent/10 text-urgent font-label font-bold text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
+                Danger Sign Found · खतरा
+              </span>
+<h1 class="font-headline font-bold text-xl text-urgent leading-snug">
+                Go to the hospital now
+              </h1>
+<h2 class="font-headline font-semibold text-lg text-urgent/90 leading-tight mt-0.5">
+                अस्पताल तुरंत जाएं
+              </h2>
+</div>
+</div>
+<!-- Spoken Message Speech Card (Read-aloud visual style from design system) -->
+<div class="mt-3.5 bg-white rounded-lg p-3 border-l-4 border-urgent shadow-xs">
+<p class="font-body text-[15px] font-medium text-cocoa leading-relaxed">
+              "You have one danger sign. Go to the nearest suitable hospital straight away."
+            </p>
+<p class="font-body text-[15px] font-semibold text-muted-cocoa mt-1 leading-relaxed">
+              "आप में एक खतरे का लक्षण पाया गया है। तुरंत नजदीकी अस्पताल जाएं।"
+            </p>
+</div>
+</section>
+<!-- 2. "Her Action Plan" Card (Clean white card, soft shadows, warm borders) -->
+<section class="bg-white rounded-xl border border-card-border p-4 shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-paper">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-clay text-xl" data-icon="assignment">assignment</span>
+<h3 class="font-headline font-bold text-base text-cocoa">
+                Her Action Plan <span class="font-medium text-muted-cocoa text-sm">/ कार्य योजना</span>
+</h3>
+</div>
+<span class="bg-paper text-muted-cocoa text-xs font-semibold px-2 py-0.5 rounded">
+              Ready
+            </span>
+</div>
+<div class="divide-y divide-paper mt-1">
+<!-- Row 1: Hospital Details -->
+<div class="py-3 flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-paper flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-sage text-2xl icon-fill" data-icon="local_hospital" data-weight="fill">local_hospital</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-label text-xs font-semibold text-muted-cocoa uppercase tracking-wide">Primary Facility · अस्पताल</p>
+<p class="font-headline font-bold text-base text-cocoa truncate">District Hospital (जिला अस्पताल)</p>
+<div class="flex items-center gap-2 mt-0.5 text-xs text-muted-cocoa font-medium">
+<span class="flex items-center gap-1 font-semibold text-sage">
+<span class="w-2 h-2 rounded-full bg-sage"></span> 24/7 Emergency Open
+                  </span>
+<span>·</span>
+<span>12 km away (~25 mins)</span>
+</div>
+</div>
+</div>
+<!-- Row 2: Assigned ASHA / Community Health Worker -->
+<div class="pt-3 flex items-start gap-3">
+<div class="w-10 h-10 rounded-lg bg-paper flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-clay text-2xl" data-icon="person_pin">person_pin</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-label text-xs font-semibold text-muted-cocoa uppercase tracking-wide">Local ASHA Worker · साथी दीदी</p>
+<p class="font-headline font-bold text-base text-cocoa truncate">Sunita Devi (सुनीता दीदी)</p>
+<p class="font-label font-medium text-sm text-cocoa mt-0.5">
+                  Phone: <span class="font-mono font-semibold">98200 00000</span>
+</p>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Primary Call Button (Prominent thumb-zone action) -->
+<div>
+<a class="w-full min-h-[58px] bg-clay hover:bg-clay/95 active:scale-[0.98] transition-all rounded-full px-6 py-3.5 flex items-center justify-center gap-3 shadow-md text-on-clay" href="tel:9820000000">
+<span class="material-symbols-outlined text-2xl icon-fill text-on-clay" data-icon="call" data-weight="fill">call</span>
+<div class="text-left">
+<div class="font-headline font-bold text-lg leading-tight">Call Sunita (98200 00000)</div>
+<div class="font-label font-medium text-xs opacity-90">सुनीता दीदी को तुरंत फोन लगाएं</div>
+</div>
+</a>
+<p class="text-center font-label text-xs text-muted-cocoa mt-1.5">
+            Taps directly into phone dialer · मुफ्त कॉल
+          </p>
+</div>
+<!-- 4. SMS Preview Card & Button (Designed specifically for shared family phone) -->
+<section class="bg-white rounded-xl border border-card-border p-4 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-muted-cocoa text-xl" data-icon="sms">sms</span>
+<span class="font-headline font-bold text-sm text-cocoa">SMS for her personal phone</span>
+</div>
+<span class="font-label text-[11px] bg-paper text-muted-cocoa px-2 py-0.5 rounded-full font-semibold">
+              Shared Phone Helper
+            </span>
+</div>
+<!-- SMS Quote bubble -->
+<div class="bg-paper/70 rounded-lg p-3 border border-card-border text-xs text-cocoa leading-relaxed font-body">
+<p class="font-medium">
+<strong class="font-semibold text-urgent">AMMA Alert:</strong> Sunita has 1 danger sign reported today. Please visit District Hospital immediately. 
+            </p>
+<p class="text-muted-cocoa mt-1 font-medium">
+              अम्मा अलर्ट: आज 1 खतरे का लक्षण मिला है। तुरंत अस्पताल ले जाएं।
+            </p>
+</div>
+<!-- Send SMS Button -->
+<a class="mt-3 w-full min-h-[46px] bg-white border-2 border-clay/30 hover:border-clay text-clay hover:bg-clay/5 active:scale-[0.98] rounded-xl flex items-center justify-center gap-2 font-headline font-bold text-sm transition-all" href="sms:9820000000?body=AMMA%20Alert:%20Sunita%20has%201%20danger%20sign%20reported%20today.%20Please%20visit%20District%20Hospital%20immediately.">
+<span class="material-symbols-outlined text-lg" data-icon="send">send</span>
+<span>Send SMS to her phone (मैसेज भेजें)</span>
+</a>
+<p class="text-center font-label text-[11px] text-muted-cocoa mt-1.5">
+            Free SMS will be drafted to 98200 00000
+          </p>
+</section>
+</div>
+</div>
+<!-- Bottom Actions: Secondary Finish Button & Offline Note -->
+<div class="mt-6 pt-2">
+<button class="w-full min-h-[52px] bg-white border border-card-border hover:bg-paper active:scale-[0.98] text-cocoa font-headline font-bold text-base rounded-full shadow-xs flex items-center justify-center gap-2 transition-all" onclick="confirmFinish()" type="button">
+<span class="material-symbols-outlined text-sage" data-icon="check_circle">check_circle</span>
+<span>Finish &amp; Save Check (जांच पूरी करें)</span>
+</button>
+<div class="flex items-center justify-center gap-2 text-center text-xs text-muted-cocoa mt-3 font-label">
+<span class="material-symbols-outlined text-sm text-sage" data-icon="cloud_done">cloud_done</span>
+<span>Saved locally · Works offline · Tap any card to listen</span>
+</div>
+</div>
+</main>
+<!-- Interactive script for voice feedback simulation -->
+<script>
+    function triggerAudioFeedback() {
+      const toast = document.getElementById('audioToast');
+      toast.classList.remove('hidden');
+      
+      // Accessible Web Speech API call if supported
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const msgHindi = new SpeechSynthesisUtterance("आप में एक खतरे का लक्षण पाया गया है। तुरंत नजदीकी अस्पताल जाएं।");
+        msgHindi.lang = 'hi-IN';
+        msgHindi.rate = 0.9;
+        
+        const msgEng = new SpeechSynthesisUtterance("You have one danger sign. Go to the nearest suitable hospital straight away.");
+        msgEng.lang = 'en-IN';
+        msgEng.rate = 0.9;
+
+        window.speechSynthesis.speak(msgHindi);
+        window.speechSynthesis.speak(msgEng);
+      }
+
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 4000);
+    }
+
+    function confirmFinish() {
+      const confirmed = window.confirm("Save this check record offline and return to home?");
+      if (confirmed) {
+        window.location.reload();
+      }
+    }
+  </script>
+</body></html>

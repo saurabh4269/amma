@@ -1,0 +1,69 @@
+{
+  "projectId": "4636124252891906861",
+  "sessionId": "17900670518012318524",
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "screenshot": {
+              "name": "projects/4636124252891906861/files/92aec3da37874c849937c9b4aaa5c186",
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1USv1nOXwVI65HqPUXmoj59ecDithIqnnPuJaCYEB83PyqaYRkBvtKzGkOIAwUOoQYsc5xtzzf56Hoazvz6Xqpa-Mp8MQYCDgX2NVWN7RaVIj9Pe7NSo-xkfHIv2lJpYYSeLa8RcUtEyxrr8SfEe3WNiq5dvWz4zcWLe2Ib69Ugujgv1-C1CXEaQxjvMfL8V9vOJbRS6aq_Yk4_Vc2pTph_2-KnGvNBAU7yYvDaKyTt0o8chsafcvyln2Q"
+            },
+            "htmlCode": {
+              "name": "projects/4636124252891906861/files/d46e48a7dd424b42afe7b0711e2149aa",
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzQ1Yjg2ZjkxMmJmMjRiM2RiZGM3Y2ZkZmQ5NmEwNDBkEgsSBxCN6aHNtAwYAZIBIwoKcHJvamVjdF9pZBIVQhM0NjM2MTI0MjUyODkxOTA2ODYx&filename=&opi=96797242",
+              "mimeType": "text/html"
+            },
+            "id": "9962908251f94aaa86a51b5ba0fbe9b5",
+            "generatedBy": "create_datastore_entry",
+            "width": "2560",
+            "height": "2048",
+            "title": "AMMA - Recall Danger Signs",
+            "name": "projects/4636124252891906861/screens/9962908251f94aaa86a51b5ba0fbe9b5",
+            "theme": {},
+            "deviceType": "DESKTOP",
+            "screenType": "DESIGN",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "designSystem": {
+              "name": "assets/9389483915077379523",
+              "designSystem": {
+                "displayName": "AMMA Warm Cradle",
+                "theme": {
+                  "colorMode": "LIGHT",
+                  "roundness": "ROUND_TWELVE",
+                  "customColor": "#E07A5F",
+                  "headlineFont": "PLUS_JAKARTA_SANS",
+                  "labelFont": "NUNITO_SANS",
+                  "designMd": "# Design System: AMMA Warm Cradle\n**Project ID:** pending\n\n## 1. Visual Theme & Atmosphere\nAMMA is a weekly maternal check used on a shared family phone by a pregnant woman, a new mother, or the person helping her (family or a community health worker). Many users read slowly or not at all. The mood is warm, calm, and a little soft \u2014 a trusted aunt, not a hospital dashboard and not a toy. Generous whitespace, one job per screen, large tap targets, pictures beside words. Cute through roundness and warmth, never through clutter or baby-clipart that could hide a danger sign.\n\n## 2. Color Palette & Roles\n- Warm paper background (#F6EDE4) \u2014 the page, so the phone never feels clinical white.\n- Cocoa ink (#3A2418) \u2014 all body text. High contrast on paper and on white cards.\n- Clay primary (#C4513A) \u2014 the one main action on a screen (start the check, save, finish).\n- Clay on-primary (#FFF8F3) \u2014 text on the primary button.\n- Sage secondary (#2F6F56) \u2014 \"no / all clear for this sign\", safe confirmation.\n- Honey tertiary (#E8A838) \u2014 \"not sure\", drafts, and gentle notes.\n- Urgent rose (#9B2331) \u2014 danger outcome, delete, and \"yes, this danger sign is present\". Used rarely so it stays serious.\n- White card (#FFFFFF) \u2014 every tappable card and spoken line.\n- Muted cocoa (#7A6558) \u2014 helper text only, never the question itself.\n\n## 3. Typography Rules\n- Headlines: Plus Jakarta Sans, semibold, tight line height. Short. Never more than two lines.\n- Body and questions: Noto Sans at a large size so Hindi and Marathi (Devanagari) stay clear. Questions are the biggest text on the check screen.\n- Labels: Nunito Sans, medium, for small meta such as \"last check\" and distances.\n- No text smaller than 14px. Questions at least 20px.\n\n## 4. Component Stylings\n* **Buttons:** Generously rounded (12px, primary actions fully pill-shaped). Minimum height 56px, full width on mobile. One filled primary button per screen. Secondary actions are white cards with a soft border. Ghost actions are text-only for Back and Skip.\n* **Cards/Containers:** White, generously rounded, a whisper-soft warm shadow. Person cards are tall and show a phase (pregnant or baby born), a week if known, and a small lock if the record is private.\n* **Inputs/Forms:** White fields, 2px warm border, large type, visible labels above the field. Never placeholder-only.\n* **Spoken lines:** Left-aligned speech cards. The line being read aloud has a clay outline.\n* **Answer row:** Three equal buttons \u2014 Yes (urgent rose outline), No (sage outline), Not sure (honey outline). Pictures sit above the word.\n* **Picture tiles:** A two-column grid of large tiles, emoji or simple picture on top, short label under it.\n* **Mic:** A single large circular clay button, thumb-reachable, labelled \"Tap and speak\".\n\n## 5. Layout Principles\nMobile only, one column, max width about 28rem, padding 20px, safe-area aware. The primary action sits in the thumb zone at the bottom. No tab bar, no charts, no fake vitals. Language switch is always on the home header. Back is a text button at the top left, never a mystery icon alone.\n",
+                  "colorVariant": "TONAL_SPOT",
+                  "overridePrimaryColor": "#C4513A",
+                  "overrideSecondaryColor": "#2F6F56",
+                  "overrideTertiaryColor": "#E8A838",
+                  "overrideNeutralColor": "#F6EDE4"
+                }
+              },
+              "version": "1"
+            }
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "I have designed the **AMMA - Recall Danger Signs** mobile screen in portrait format, strictly adhering to the Warm Cradle design system and the UX needs of pregnant women and new mothers on shared devices:\n\n### Design Highlights:\n1. **Top Bar**:\n   - Clean, text-accompanied **\"Close\"** action with clear target size.\n   - Distinctive **\"Replay\"** button with a speaker icon and active visual feedback to listen to the prompt again.\n   - Soft step badge indicating an active \"Danger Check\".\n\n2. **Spoken Question Card**:\n   - High-contrast, large-format question: *\"Which signs mean you must go to the hospital straight away?\"*\n   - Bilingual subtitle (*\"\u0915\u094c\u0928 \u0938\u0947 \u0932\u0915\u094d\u0937\u0923\u094b\u0902 \u092e\u0947\u0902 \u0924\u0941\u0930\u0902\u0924 \u0905\u0938\u094d\u092a\u0924\u093e\u0932 \u091c\u093e\u0928\u093e \u091c\u0930\u0942\u0930\u0940 \u0939\u0948?\"*) for Hindi/Marathi/shared phone contexts.\n   - Visual cue showing an urgent hospital badge and animated waveform voice indicator.\n\n3. **Prominent \"Tap and Speak\" Voice Action**:\n   - Located right above the grid with a terracotta circular mic button and audio halo, encouraging hands-free or voice responses.\n\n4. **Two-Column Grid of 6 Large Picture Tiles**:\n   - **Bleeding** (*\u0916\u0942\u0928 \u092c\u0939\u0928\u093e* / blood type drop symbol)\n   - **Fits** (*\u0926\u094c\u0930\u0947 / \u091d\u091f\u0915\u0947* / electric bolt convulsion symbol)\n   - **High fever** (*\u0924\u0947\u091c\u093c \u092c\u0941\u0916\u093e\u0930* / thermometer symbol)\n   - **Severe headache** (*\u0924\u0947\u091c\u093c \u0938\u093f\u0930\u0926\u0930\u094d\u0926* / neurology/head pain symbol)\n   - **Baby not moving** (*\u092c\u091a\u094d\u091a\u0947 \u0915\u0940 \u0939\u0930\u0915\u0924 \u092c\u0902\u0926* / expectant mother symbol)\n   - **Swollen hands** (*\u0939\u093e\u0925\u094b\u0902 \u092e\u0947\u0902 \u0938\u0942\u091c\u0928* / raised hand symbol)\n   - Each tile features high-contrast danger alert styling, large tactile touch targets, bilingual micro-labels, and interactive checkmarks for multi-selection.\n\n5. **Quiet Fallback Input & Offline Reassurance**:\n   - Discreet \"Or type here...\" keyboard input bar with an immediate \"Send\" arrow.\n   - Reassurance footer noting that AMMA works offline and stays safely stored on the device."
+    },
+    {
+      "suggestion": "Add an emergency confirmation drawer when danger tiles are selected"
+    },
+    {
+      "suggestion": "Design the audio recording review state after voice input"
+    },
+    {
+      "suggestion": "Switch the primary language between Hindi and English"
+    }
+  ]
+}

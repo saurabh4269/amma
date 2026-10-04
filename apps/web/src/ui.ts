@@ -1,6 +1,10 @@
 /** App chrome wording. A language pack may override any key under `ui`. Not health content. */
 export const UI_DEFAULT = {
   add_person: 'Add a person',
+  home_title: 'Who are we checking on today?',
+  home_sub: 'A weekly check, in her own words.',
+  pin_on: 'PIN on',
+  replay: 'Replay',
   start: 'Start this week’s session',
   clinic_card: 'Card for the clinic',
   language: 'Language',

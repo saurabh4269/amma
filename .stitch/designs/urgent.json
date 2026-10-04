@@ -1,0 +1,81 @@
+{
+  "projectId": "4636124252891906861",
+  "sessionId": "3313435994102034591",
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "screenshot": {
+              "name": "projects/4636124252891906861/files/e7a10e935fd9415ba9318e2145200303",
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1VDC5XWarOznL6-8P7zgkRZlxgAqKKTxmZDpPqmCzUfNY2NGy2D1UFqO8YGZiRFPoAGa7VReUy7VfmKDUyVu_yW2V88HHIpi3I8fCL_bigagSOZMghTrQktQxYJkq5anfs5r1tNWne_JQ8Rw1rv61Fd5TC2ivrbe27loOgLb20F5hkc_LHgPjHjgCKqy28pPJwc9o3C_CfVTn9Gp8TojV9bzwpoJmv0JCFABFB-79RaQpfwNKV_dQbVTg"
+            },
+            "htmlCode": {
+              "name": "projects/4636124252891906861/files/98bc929a9f6744beb61c883667b30ac4",
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2UyNWFmZTIyNWUxODQ4N2U4NTMyYzc3MGY0YjNlM2FmEgsSBxCN6aHNtAwYAZIBIwoKcHJvamVjdF9pZBIVQhM0NjM2MTI0MjUyODkxOTA2ODYx&filename=&opi=96797242",
+              "mimeType": "text/html"
+            },
+            "id": "5b32eef4ba7f4224a98073c39c43075f",
+            "generatedBy": "figaro_agent",
+            "width": "780",
+            "height": "2344",
+            "title": "AMMA - Urgent Care Plan",
+            "prompt": "Mobile screen (portrait) for AMMA weekly maternal-health check.\nTitle: \"AMMA - Danger Sign Result\"\nContext: The check has just completed and one danger sign is present. Serious, urgent, clear, but reassuring and not panicked. Designed for pregnant women / new mothers in India, shared phone context, high accessibility / low literacy with bilingual Hindi/English clarity.\n\nDesign system rules:\n- Soft warm paper background (#FBF7F0 or #FDFBF7)\n- Rounded cards, large friendly yet serious typography, clear iconography\n- No charts, no login wall, no bottom tab bar, no fake medical telemetry, no confetti or celebrations.\n\nPage Structure:\n1. Top bar:\n   - Left: \"Close\" icon button with 'Close' text\n   - Center/Right: \"Replay\" / \"\u092c\u094b\u0932\u0915\u0930 \u0938\u0941\u0928\u0947\u0902\" button with speaker icon (`volume_up`) to replay the audio guidance clearly.\n\n2. Urgent Action Banner (High contrast, clearly serious and urgent without causing blind panic):\n   - Clear medical amber/deep rust/crimson alert accent (`#BA1A1A` or deep terracotta `#B33927`, soft pale-red/coral warm container)\n   - Prominent alert badge / icon (e.g. urgent hospital/alert icon `emergency` or `local_hospital` or `warning`)\n   - Headline: \"Go to the hospital now\" (\u0905\u0938\u094d\u092a\u0924\u093e\u0932 \u0924\u0941\u0930\u0902\u0924 \u091c\u093e\u090f\u0902)\n   - Spoken message speech-box / text: \"You have one danger sign. Go to the nearest suitable hospital straight away.\"\n   - Hindi translation right below: \"\u0906\u092a \u092e\u0947\u0902 \u090f\u0915 \u0916\u0924\u0930\u0947 \u0915\u093e \u0932\u0915\u094d\u0937\u0923 \u092a\u093e\u092f\u093e \u0917\u092f\u093e \u0939\u0948\u0964 \u0924\u0941\u0930\u0902\u0924 \u0928\u091c\u0926\u0940\u0915\u0940 \u0905\u0938\u094d\u092a\u0924\u093e\u0932 \u091c\u093e\u090f\u0902\u0964\"\n\n3. \"Her emergency plan\" card (Clean white rounded card with clear borders and soft shadow):\n   - Section heading: \"Her Action Plan\" / \u0915\u093e\u0930\u094d\u092f \u092f\u094b\u091c\u0928\u093e\n   - Row 1: Hospital details with icon (`local_hospital`): \"District Hospital\" \u2014 \"12 km away \u00b7 Emergency 24/7\"\n   - Row 2: Emergency contact with icon (`contact_phone` / `person`): \"Sunita (ASHA / Sister)\" \u2014 \"98200 00000\"\n\n4. Primary Call Button (Full width, bold, prominent high-priority action):\n   - Big tappable urgent button with phone icon (`call`): \"Call Sunita (98200 00000)\" or \"Call Now\"\n   - Subtext: \"Taps directly into phone dialer\"\n\n5. SMS Preview Card & Button (For her personal basic phone on shared family device):\n   - Card showing the exact SMS draft text: \"AMMA Alert: Sunita has 1 danger sign reported today. Please visit District Hospital immediately.\"\n   - Clear secondary button with icon (`sms` or `send`): \"Send SMS to her phone\"\n   - Helper caption: \"Free SMS sent to 98200 00000\"\n\n6. Bottom Action:\n   - Secondary filled button: \"Finish & Save Check\"\n   - Small quiet footer note: \"Saved locally \u00b7 Works offline \u00b7 Tap any text to listen\"",
+            "name": "projects/4636124252891906861/screens/5b32eef4ba7f4224a98073c39c43075f",
+            "theme": {
+              "colorMode": "LIGHT",
+              "roundness": "ROUND_TWELVE",
+              "customColor": "#E07A5F",
+              "headlineFont": "PLUS_JAKARTA_SANS",
+              "labelFont": "NUNITO_SANS",
+              "colorVariant": "TONAL_SPOT",
+              "overridePrimaryColor": "#C4513A",
+              "overrideSecondaryColor": "#2F6F56",
+              "overrideTertiaryColor": "#E8A838",
+              "overrideNeutralColor": "#F6EDE4"
+            },
+            "deviceType": "MOBILE",
+            "screenType": "DESIGN",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "designSystem": {
+              "name": "assets/9389483915077379523",
+              "designSystem": {
+                "displayName": "AMMA Warm Cradle",
+                "theme": {
+                  "colorMode": "LIGHT",
+                  "roundness": "ROUND_TWELVE",
+                  "customColor": "#E07A5F",
+                  "headlineFont": "PLUS_JAKARTA_SANS",
+                  "labelFont": "NUNITO_SANS",
+                  "designMd": "# Design System: AMMA Warm Cradle\n**Project ID:** pending\n\n## 1. Visual Theme & Atmosphere\nAMMA is a weekly maternal check used on a shared family phone by a pregnant woman, a new mother, or the person helping her (family or a community health worker). Many users read slowly or not at all. The mood is warm, calm, and a little soft \u2014 a trusted aunt, not a hospital dashboard and not a toy. Generous whitespace, one job per screen, large tap targets, pictures beside words. Cute through roundness and warmth, never through clutter or baby-clipart that could hide a danger sign.\n\n## 2. Color Palette & Roles\n- Warm paper background (#F6EDE4) \u2014 the page, so the phone never feels clinical white.\n- Cocoa ink (#3A2418) \u2014 all body text. High contrast on paper and on white cards.\n- Clay primary (#C4513A) \u2014 the one main action on a screen (start the check, save, finish).\n- Clay on-primary (#FFF8F3) \u2014 text on the primary button.\n- Sage secondary (#2F6F56) \u2014 \"no / all clear for this sign\", safe confirmation.\n- Honey tertiary (#E8A838) \u2014 \"not sure\", drafts, and gentle notes.\n- Urgent rose (#9B2331) \u2014 danger outcome, delete, and \"yes, this danger sign is present\". Used rarely so it stays serious.\n- White card (#FFFFFF) \u2014 every tappable card and spoken line.\n- Muted cocoa (#7A6558) \u2014 helper text only, never the question itself.\n\n## 3. Typography Rules\n- Headlines: Plus Jakarta Sans, semibold, tight line height. Short. Never more than two lines.\n- Body and questions: Noto Sans at a large size so Hindi and Marathi (Devanagari) stay clear. Questions are the biggest text on the check screen.\n- Labels: Nunito Sans, medium, for small meta such as \"last check\" and distances.\n- No text smaller than 14px. Questions at least 20px.\n\n## 4. Component Stylings\n* **Buttons:** Generously rounded (12px, primary actions fully pill-shaped). Minimum height 56px, full width on mobile. One filled primary button per screen. Secondary actions are white cards with a soft border. Ghost actions are text-only for Back and Skip.\n* **Cards/Containers:** White, generously rounded, a whisper-soft warm shadow. Person cards are tall and show a phase (pregnant or baby born), a week if known, and a small lock if the record is private.\n* **Inputs/Forms:** White fields, 2px warm border, large type, visible labels above the field. Never placeholder-only.\n* **Spoken lines:** Left-aligned speech cards. The line being read aloud has a clay outline.\n* **Answer row:** Three equal buttons \u2014 Yes (urgent rose outline), No (sage outline), Not sure (honey outline). Pictures sit above the word.\n* **Picture tiles:** A two-column grid of large tiles, emoji or simple picture on top, short label under it.\n* **Mic:** A single large circular clay button, thumb-reachable, labelled \"Tap and speak\".\n\n## 5. Layout Principles\nMobile only, one column, max width about 28rem, padding 20px, safe-area aware. The primary action sits in the thumb zone at the bottom. No tab bar, no charts, no fake vitals. Language switch is always on the home header. Back is a text button at the top left, never a mystery icon alone.\n",
+                  "colorVariant": "TONAL_SPOT",
+                  "overridePrimaryColor": "#C4513A",
+                  "overrideSecondaryColor": "#2F6F56",
+                  "overrideTertiaryColor": "#E8A838",
+                  "overrideNeutralColor": "#F6EDE4"
+                }
+              },
+              "version": "1"
+            }
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "Here is the screen for when a danger sign is detected in the **AMMA** weekly maternal health check:\n\n### Key Design Highlights:\n1. **Calm Urgency & High Clarity:**\n   - The top banner uses a deliberate, high-contrast crimson/terracotta alert treatment (`Go to the hospital now / \u0905\u0938\u094d\u092a\u0924\u093e\u0932 \u0924\u0941\u0930\u0902\u0924 \u091c\u093e\u090f\u0902`) alongside a prominent medical warning badge. It signals seriousness without alarming or causing blind panic.\n   - The verbatim spoken audio transcript (*\"You have one danger sign. Go to the nearest suitable hospital straight away\"*) is presented prominently with Hindi text below and an accessible \"Replay / \u092c\u094b\u0932\u0915\u0930 \u0938\u0941\u0928\u0947\u0902\" control at the top.\n\n2. **Action-Oriented Plan:**\n   - **Her Action Plan card:** Displays key destination details clearly (`District Hospital, 12 km away, 24/7 Emergency`) and the local health worker contact (`Sunita Devi, ASHA Worker`).\n   - **One-Tap Dialing:** A full-width, high-touch primary call button triggers a direct phone call to Sunita without complex steps.\n\n3. **Shared Phone Accommodations:**\n   - **SMS helper card:** A dedicated module allows drafting and sending an instant SMS summary to the mother's own basic feature phone, ensuring she retains the clinic guidance even after returning the shared family smartphone.\n\n4. **Zero Distractions:**\n   - Complies strictly with AMMA design principles: no confusing telemetry graphs, no login gate, no bottom nav bar, and an offline-ready local storage confirmation at the bottom."
+    },
+    {
+      "suggestion": "Show the dialer confirmation modal when tapping 'Call Sunita'"
+    },
+    {
+      "suggestion": "Design the 'Check Completed with No Danger Signs' healthy summary screen"
+    },
+    {
+      "suggestion": "Create an audio-first Marathi language variation of this alert"
+    }
+  ]
+}

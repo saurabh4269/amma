@@ -1,0 +1,81 @@
+{
+  "projectId": "4636124252891906861",
+  "sessionId": "11105445807053102287",
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "screenshot": {
+              "name": "projects/4636124252891906861/files/de3a847ebddf4691a2f8d57beabc5425",
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UXSC_co6hvlaDU4Ss66SH1v_jVOA9jb18Mo95qFY7_Xn-4uyhhB0e6RgJj_oI5UpA89tPtEoLxzbwseyUTa_Q8i1KwO_ZALGo-vWzvZMtwBf3ISOC4Tssu4z5v65Aj6zlYv-cjuA-ITFtXe_86eXijCmPPUCCd-qHl6N52Xc3F4BKUZI2JleN007Van_iJZQrFt-GPyPSAqn0v0Q35mBz0PU6rQHjQZ2HKZXk5L2prgv-4kB3lE_46sro"
+            },
+            "htmlCode": {
+              "name": "projects/4636124252891906861/files/8813f2d772024f91abda18c44ee461bf",
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2I0Nzk0ZmYyZjE3ODQ2ODRhMmRjMGY2MTFlM2IwZTRiEgsSBxCN6aHNtAwYAZIBIwoKcHJvamVjdF9pZBIVQhM0NjM2MTI0MjUyODkxOTA2ODYx&filename=&opi=96797242",
+              "mimeType": "text/html"
+            },
+            "id": "e3fdeacacc5145f29d6e21bc104196e6",
+            "generatedBy": "figaro_agent",
+            "width": "780",
+            "height": "2782",
+            "title": "Sunita - Card for the clinic",
+            "prompt": "Mobile portrait clinic summary paper card screen for AMMA.\nDesign context and styling:\nWarm paper cream background (like other AMMA screens, e.g. #F8F4EF or #FAF6F0).\nTop bar with '\u2190 Back' and title 'Card for the clinic', with an optional 'Share' or print icon. Sub-banner or helper text: 'Show this card to the midwife or doctor at the clinic.'\n\nMain central clinical paper card:\nA clean, crisp white physical card with subtle rounded corners and soft warm drop shadow/border, optimized to be read clearly at arm's length by healthcare staff in a busy clinic.\n\nCard Contents (follow strictly, verbatim):\n1. Card Header Band:\n- Patient Name: 'Sunita' (bold, high-legibility clinical typography)\n- Subtitle badge: 'Pregnant \u00b7 28 weeks'\n- Tag/Flag: Tracks 'High blood pressure' (clearly marked with clinical tag/badge)\n- Offline & timestamp meta: 'Generated 1 Oct \u00b7 Works offline'\n\n2. Urgent Section \u2014 'Signs she said yes to':\n- Visual treatment: urgent/danger styling (deep terra cotta / warning crimson tint box or border with alert badge) designed so danger looks serious immediately\n- Line 1: '1 Oct \u2014 Severe headache' (with warning icon)\n- Line 2: '1 Oct \u2014 Blurred vision' (with warning icon)\n- Note or indicator that both indicate pre-eclampsia risk check\n\n3. Amber Section \u2014 'Signs she was not sure about':\n- Warm amber/mustard soft badge/card\n- Line: '1 Oct \u2014 Swollen hands'\n\n4. Section \u2014 'What she described':\n- Crisp clean card section\n- Line: '24 Sep \u2014 Fever, two days'\n\n5. Meta line:\n- Subtle divider with monospace or crisp small text:\n'Signs recalled without help: 1 / 11 (1 Oct)'\n\n6. Section \u2014 'Her plan' (formatted as a clean, spaced definition list / key-value grid):\n- 'Who decides': Sunita's mother\n- 'Hospital': District Hospital \u00b7 12 km\n- 'Next visit': 18 Oct\n\nBottom Card Footer / Actions:\n- Prominent secondary actions: 'Share / Save as PDF' or 'Read aloud for nurse'\n- Footer notice: 'AMMA maternal record \u00b7 Confidential patient summary'\n- NO complex charts, NO fitness widgets, NO bottom navigation tabs. Pure high-legibility clinical paper card layout.",
+            "name": "projects/4636124252891906861/screens/e3fdeacacc5145f29d6e21bc104196e6",
+            "theme": {
+              "colorMode": "LIGHT",
+              "roundness": "ROUND_TWELVE",
+              "customColor": "#E07A5F",
+              "headlineFont": "PLUS_JAKARTA_SANS",
+              "labelFont": "NUNITO_SANS",
+              "colorVariant": "TONAL_SPOT",
+              "overridePrimaryColor": "#C4513A",
+              "overrideSecondaryColor": "#2F6F56",
+              "overrideTertiaryColor": "#E8A838",
+              "overrideNeutralColor": "#F6EDE4"
+            },
+            "deviceType": "MOBILE",
+            "screenType": "DESIGN",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "designSystem": {
+              "name": "assets/9389483915077379523",
+              "designSystem": {
+                "displayName": "AMMA Warm Cradle",
+                "theme": {
+                  "colorMode": "LIGHT",
+                  "roundness": "ROUND_TWELVE",
+                  "customColor": "#E07A5F",
+                  "headlineFont": "PLUS_JAKARTA_SANS",
+                  "labelFont": "NUNITO_SANS",
+                  "designMd": "# Design System: AMMA Warm Cradle\n**Project ID:** pending\n\n## 1. Visual Theme & Atmosphere\nAMMA is a weekly maternal check used on a shared family phone by a pregnant woman, a new mother, or the person helping her (family or a community health worker). Many users read slowly or not at all. The mood is warm, calm, and a little soft \u2014 a trusted aunt, not a hospital dashboard and not a toy. Generous whitespace, one job per screen, large tap targets, pictures beside words. Cute through roundness and warmth, never through clutter or baby-clipart that could hide a danger sign.\n\n## 2. Color Palette & Roles\n- Warm paper background (#F6EDE4) \u2014 the page, so the phone never feels clinical white.\n- Cocoa ink (#3A2418) \u2014 all body text. High contrast on paper and on white cards.\n- Clay primary (#C4513A) \u2014 the one main action on a screen (start the check, save, finish).\n- Clay on-primary (#FFF8F3) \u2014 text on the primary button.\n- Sage secondary (#2F6F56) \u2014 \"no / all clear for this sign\", safe confirmation.\n- Honey tertiary (#E8A838) \u2014 \"not sure\", drafts, and gentle notes.\n- Urgent rose (#9B2331) \u2014 danger outcome, delete, and \"yes, this danger sign is present\". Used rarely so it stays serious.\n- White card (#FFFFFF) \u2014 every tappable card and spoken line.\n- Muted cocoa (#7A6558) \u2014 helper text only, never the question itself.\n\n## 3. Typography Rules\n- Headlines: Plus Jakarta Sans, semibold, tight line height. Short. Never more than two lines.\n- Body and questions: Noto Sans at a large size so Hindi and Marathi (Devanagari) stay clear. Questions are the biggest text on the check screen.\n- Labels: Nunito Sans, medium, for small meta such as \"last check\" and distances.\n- No text smaller than 14px. Questions at least 20px.\n\n## 4. Component Stylings\n* **Buttons:** Generously rounded (12px, primary actions fully pill-shaped). Minimum height 56px, full width on mobile. One filled primary button per screen. Secondary actions are white cards with a soft border. Ghost actions are text-only for Back and Skip.\n* **Cards/Containers:** White, generously rounded, a whisper-soft warm shadow. Person cards are tall and show a phase (pregnant or baby born), a week if known, and a small lock if the record is private.\n* **Inputs/Forms:** White fields, 2px warm border, large type, visible labels above the field. Never placeholder-only.\n* **Spoken lines:** Left-aligned speech cards. The line being read aloud has a clay outline.\n* **Answer row:** Three equal buttons \u2014 Yes (urgent rose outline), No (sage outline), Not sure (honey outline). Pictures sit above the word.\n* **Picture tiles:** A two-column grid of large tiles, emoji or simple picture on top, short label under it.\n* **Mic:** A single large circular clay button, thumb-reachable, labelled \"Tap and speak\".\n\n## 5. Layout Principles\nMobile only, one column, max width about 28rem, padding 20px, safe-area aware. The primary action sits in the thumb zone at the bottom. No tab bar, no charts, no fake vitals. Language switch is always on the home header. Back is a text button at the top left, never a mystery icon alone.\n",
+                  "colorVariant": "TONAL_SPOT",
+                  "overridePrimaryColor": "#C4513A",
+                  "overrideSecondaryColor": "#2F6F56",
+                  "overrideTertiaryColor": "#E8A838",
+                  "overrideNeutralColor": "#F6EDE4"
+                }
+              },
+              "version": "1"
+            }
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "I've designed the **Card for the clinic** screen for Sunita, following AMMA's warm, trusted visual identity while treating this specific screen as an authoritative clinical handover document.\n\n### Key Design Details:\n- **Physical Paper Card Metaphor**: High-contrast white clinical card resting on the signature warm paper background, formatted with bold typography and generous padding so a nurse, midwife, or doctor can immediately digest it at arm's length in a busy room.\n- **Immediate Clinical Triage Hierarchy**:\n  - **Header Band**: Sunita\u2019s name in large type, gestational age (`Pregnant \u00b7 28 weeks`), and a highlighted warning pill for pre-existing `High blood pressure`, alongside an offline indicator.\n  - **Urgent Alert Section (\"Signs she said yes to\")**: Framed in a bold crimson/terracotta alert boundary with clear warning icons for **1 Oct \u2014 Severe headache** and **1 Oct \u2014 Blurred vision**, highlighting pre-eclampsia risk flags.\n  - **Uncertainty Section (\"Signs she was not sure about\")**: Amber-accented block detailing **1 Oct \u2014 Swollen hands**.\n  - **Reported History (\"What she described\")**: Neutral archival log showing **24 Sep \u2014 Fever, two days**.\n  - **Meta Line**: Clear verification tracking (`Signs recalled without help: 1 / 11 (1 Oct)`).\n- **\"Her Plan\" Definition List**: A structured key-value summary specifying the decision maker (*Sunita's mother*), designated facility (*District Hospital \u00b7 12 km*), and scheduled checkup (*18 Oct*).\n- **Assisted Consultation Tools**: Bottom quick actions include a prominent \"Read aloud for nurse\" option, PDF export, and SMS sharing, with no charts, fake metric widgets, or complex tab bars."
+    },
+    {
+      "suggestion": "Add a Hindi/bilingual toggle switch for the clinical card"
+    },
+    {
+      "suggestion": "Add a quick-action button to call the ASHA worker / ambulance"
+    },
+    {
+      "suggestion": "Show the expanded audio recording player for the midwife"
+    }
+  ]
+}

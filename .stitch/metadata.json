@@ -1,0 +1,7 @@
+{
+  "projectId": "4636124252891906861",
+  "title": "AMMA maternal check",
+  "designSystem": "assets/9389483915077379523",
+  "deviceType": "MOBILE",
+  "screens": ["home", "person", "setup", "check", "pictures", "clinic", "teach", "urgent"]
+}

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AMMA - Teach the phone my voice</title>
+<!-- Google Fonts: Plus Jakarta Sans, Public Sans, Nunito Sans, Noto Sans Devanagari -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&amp;family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Public+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            paper: '#F6EDE4',
+            cocoa: '#3A2418',
+            clay: '#C4513A',
+            'clay-light': '#FFF5F2',
+            'clay-on': '#FFF8F3',
+            sage: '#2F6F56',
+            'sage-light': '#EBF4F0',
+            honey: '#E8A838',
+            'honey-light': '#FDF6E9',
+            urgent: '#9B2331',
+            'muted-cocoa': '#7A6558',
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "2xl": "1.25rem",
+            "3xl": "1.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Plus Jakarta Sans", "Noto Sans Devanagari", "sans-serif"],
+            display: ["Plus Jakarta Sans", "sans-serif"],
+            body: ["Public Sans", "Noto Sans Devanagari", "sans-serif"],
+            label: ["Nunito Sans", "sans-serif"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    
+    /* Gentle audio pulse animation */
+    @keyframes barPulse {
+      0%, 100% { height: 6px; }
+      50% { height: 26px; }
+    }
+    .wave-bar {
+      animation: barPulse 1.2s ease-in-out infinite;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(6) { animation-delay: 0.5s; }
+    .wave-bar:nth-child(7) { animation-delay: 0.1s; }
+
+    /* Whisper warm card shadow */
+    .shadow-warm-sm {
+      box-shadow: 0 3px 12px -2px rgba(58, 36, 24, 0.06), 0 1px 3px 0 rgba(58, 36, 24, 0.04);
+    }
+    .shadow-warm-active {
+      box-shadow: 0 10px 25px -4px rgba(196, 81, 58, 0.15), 0 4px 6px -2px rgba(196, 81, 58, 0.05);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-paper text-cocoa font-body min-h-screen antialiased flex flex-col justify-start items-center selection:bg-clay selection:text-clay-on">
+<!-- Mobile Outer Frame Wrapper (Max 28rem/448px standard AMMA width) -->
+<main class="w-full max-w-md mx-auto min-h-screen flex flex-col px-5 pb-8 pt-2">
+<!-- TopAppBar (Shared Component Implementation) -->
+<header class="flex justify-between items-center w-full max-w-md mx-auto px-1 py-3 bg-transparent">
+<!-- Leading: Back Action with Icon and explicit text -->
+<button aria-label="Go back" class="flex items-center gap-1.5 text-cocoa hover:opacity-80 active:scale-95 transition-all text-base font-semibold group focus:outline-none" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-clay group-hover:-translate-x-0.5 transition-transform" data-icon="arrow_back">arrow_back</span>
+<span class="font-headline font-bold text-xl tracking-tight text-cocoa">AMMA</span>
+</button>
+<!-- Trailing: Language Switcher Pill -->
+<button aria-label="Switch Language" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#EADBCE] text-cocoa text-sm font-label font-bold shadow-warm-sm active:scale-95 hover:opacity-80 transition-all focus:outline-none" type="button">
+<span class="material-symbols-outlined text-muted-cocoa text-[18px]" data-icon="translate">translate</span>
+<span>हिंदी / English</span>
+</button>
+</header>
+<!-- Header & Friendly Guidance Section -->
+<section class="mt-4 mb-5">
+<!-- Title -->
+<h1 class="font-headline text-2xl sm:text-[26px] font-bold text-cocoa leading-tight tracking-tight">
+        Teach the phone my voice
+      </h1>
+<!-- Bilingual Explainer Box -->
+<div class="mt-2.5 space-y-1">
+<p class="text-[15px] text-cocoa font-normal leading-relaxed">
+          Tap a sign, say it in your own words, then tap again. Do each one two or three times.
+        </p>
+<p class="text-[14px] text-muted-cocoa font-normal leading-snug">
+          संकेत पर टैप करें, अपनी आवाज़ में बोलें, फिर से टैप करें।
+        </p>
+</div>
+<!-- Offline / Privacy Reassurance Pill -->
+<div class="mt-3.5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EFE4D8] border border-[#E3D4C4] text-[13px] text-cocoa font-label">
+<span class="material-symbols-outlined text-muted-cocoa text-[16px]" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span>Saved only on this phone. No audio is shared.</span>
+</div>
+</section>
+<!-- Danger Signs Voice Calibration List (5 Tactile Rows) -->
+<section aria-label="Danger signs voice recording list" class="flex flex-col gap-3.5 flex-1">
+<!-- CARD 1: Bleeding during pregnancy (Quiet, 2 Saved) -->
+<article class="bg-white rounded-2xl p-4 border border-[#F0E4D8] shadow-warm-sm hover:border-[#E1D1C2] transition-colors active:scale-[0.99]">
+<div class="flex items-center justify-between gap-3">
+<!-- Icon & Text Group -->
+<div class="flex items-center gap-3.5 flex-1">
+<div class="w-12 h-12 rounded-xl bg-urgent/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-urgent text-2xl" data-icon="water_drop" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+</div>
+<div>
+<h2 class="font-headline text-[17px] font-semibold text-cocoa leading-snug">
+                Bleeding during pregnancy
+              </h2>
+<p class="text-[13.5px] text-muted-cocoa mt-0.5">
+                गर्भावस्था में खून बहना
+              </p>
+</div>
+</div>
+<!-- Progress Dots & Status -->
+<div class="flex flex-col items-end shrink-0 pl-1">
+<div aria-label="Progress: 2 out of 3 recorded" class="flex items-center gap-1.5 mb-1">
+<span class="w-2.5 h-2.5 rounded-full bg-clay"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-clay"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#E9DDD1]"></span>
+</div>
+<span class="text-xs font-label font-bold text-muted-cocoa">2 saved</span>
+</div>
+</div>
+</article>
+<!-- CARD 2: Fits (convulsions) (Quiet, 0 Saved) -->
+<article class="bg-white rounded-2xl p-4 border border-[#F0E4D8] shadow-warm-sm hover:border-[#E1D1C2] transition-colors active:scale-[0.99]">
+<div class="flex items-center justify-between gap-3">
+<!-- Icon & Text Group -->
+<div class="flex items-center gap-3.5 flex-1">
+<div class="w-12 h-12 rounded-xl bg-honey-light border border-honey/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-honey text-2xl" data-icon="electric_bolt" style="font-variation-settings: 'FILL' 1;">electric_bolt</span>
+</div>
+<div>
+<h2 class="font-headline text-[17px] font-semibold text-cocoa leading-snug">
+                Fits (convulsions)
+              </h2>
+<p class="text-[13.5px] text-muted-cocoa mt-0.5">
+                दौरे / झटके आना
+              </p>
+</div>
+</div>
+<!-- Progress Dots & Status -->
+<div class="flex flex-col items-end shrink-0 pl-1">
+<div aria-label="Progress: 0 recorded" class="flex items-center gap-1.5 mb-1">
+<span class="w-2.5 h-2.5 rounded-full bg-[#E9DDD1]"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#E9DDD1]"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#E9DDD1]"></span>
+</div>
+<span class="text-xs font-label font-medium text-muted-cocoa">Not recorded</span>
+</div>
+</div>
+</article>
+<!-- CARD 3: ACTIVE RECORDING STATE - High Fever (Standout, Highlighted) -->
+<article aria-live="assertive" class="bg-clay-light rounded-3xl p-4 sm:p-5 border-2 border-clay shadow-warm-active relative overflow-hidden transition-all">
+<!-- Live Acoustic Aura Ribbon -->
+<div class="flex items-start justify-between gap-3">
+<!-- Icon & Titles -->
+<div class="flex items-center gap-3.5">
+<div class="relative">
+<div class="w-13 h-13 w-12 h-12 rounded-2xl bg-clay text-clay-on flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-2xl" data-icon="device_thermostat" style="font-variation-settings: 'FILL' 1;">device_thermostat</span>
+</div>
+<!-- Pulse ring -->
+<span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-clay opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-clay"></span>
+</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-headline text-lg font-bold text-cocoa leading-tight">
+                  High fever
+                </h2>
+<span class="px-2 py-0.5 rounded-full bg-clay text-clay-on text-[11px] font-label font-bold uppercase tracking-wider">
+                  Listening...
+                </span>
+</div>
+<p class="text-[14px] text-cocoa/80 mt-0.5 font-medium">
+                तेज़ बुखार
+              </p>
+</div>
+</div>
+<!-- Counter State -->
+<div class="flex flex-col items-end shrink-0">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2.5 h-2.5 rounded-full bg-clay"></span>
+<span class="w-2.5 h-2.5 rounded-full border border-clay bg-white animate-pulse"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#E9DDD1]"></span>
+</div>
+<span class="text-xs font-label font-bold text-clay">1 of 3 saved</span>
+</div>
+</div>
+<!-- Live Waveform Audio Visualization Strip -->
+<div class="mt-4 bg-white/80 rounded-xl p-3 border border-clay/20 flex items-center justify-between">
+<div class="flex items-center gap-2 text-xs font-label font-semibold text-clay">
+<span class="material-symbols-outlined text-clay text-[18px]" data-icon="mic" style="font-variation-settings: 'FILL' 1;">mic</span>
+<span>Say: "Mera shareer bohot garam hai"</span>
+</div>
+<!-- Animated Audio Bars -->
+<div aria-hidden="true" class="flex items-center gap-1 h-7 px-1">
+<div class="w-1 bg-clay rounded-full wave-bar"></div>
+<div class="w-1 bg-clay rounded-full wave-bar"></div>
+<div class="w-1 bg-clay rounded-full wave-bar"></div>
+<div class="w-1 bg-clay rounded-full wave-bar"></div>
+<div class="w-1 bg-clay rounded-full wave-bar"></div>
+<div class="w-1 bg-clay rounded-full wave-bar"></div>
+<div class="w-1 bg-clay rounded-full wave-bar"></div>
+</div>
+</div>
+<!-- Large Primary Touch Action Button (Stop/Finish Speaking) -->
+<button aria-label="Tap when you have finished speaking" class="mt-4 w-full min-h-[58px] bg-clay hover:bg-clay/95 text-clay-on rounded-full font-headline font-semibold text-[16px] flex items-center justify-center gap-2.5 shadow-md active:scale-[0.98] transition-transform focus:outline-none" type="button">
+<span class="material-symbols-outlined text-2xl" data-icon="stop_circle" style="font-variation-settings: 'FILL' 1;">stop_circle</span>
+<span class="flex flex-col items-center leading-tight py-1">
+<span>Tap when you have finished</span>
+<span class="text-xs font-normal text-clay-on/90">बोलने के बाद यहाँ टैप करें</span>
+</span>
+</button>
+</article>
+<!-- CARD 4: Severe headache & blurry vision (Quiet, 0 Saved) -->
+<article class="bg-white rounded-2xl p-4 border border-[#F0E4D8] shadow-warm-sm hover:border-[#E1D1C2] transition-colors active:scale-[0.99]">
+<div class="flex items-center justify-between gap-3">
+<!-- Icon & Text Group -->
+<div class="flex items-center gap-3.5 flex-1">
+<div class="w-12 h-12 rounded-xl bg-urgent/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-urgent text-2xl" data-icon="visibility_off">visibility_off</span>
+</div>
+<div>
+<h2 class="font-headline text-[17px] font-semibold text-cocoa leading-snug">
+                Severe headache &amp; blurry vision
+              </h2>
+<p class="text-[13.5px] text-muted-cocoa mt-0.5">
+                तेज़ सिरदर्द और धुंधला दिखना
+              </p>
+</div>
+</div>
+<!-- Progress Dots & Status -->
+<div class="flex flex-col items-end shrink-0 pl-1">
+<div aria-label="Progress: 0 recorded" class="flex items-center gap-1.5 mb-1">
+<span class="w-2.5 h-2.5 rounded-full bg-[#E9DDD1]"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#E9DDD1]"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#E9DDD1]"></span>
+</div>
+<span class="text-xs font-label font-medium text-muted-cocoa">0 saved</span>
+</div>
+</div>
+</article>
+<!-- CARD 5: Baby moving less (Quiet, 3 Saved - Fully Ready) -->
+<article class="bg-white rounded-2xl p-4 border border-[#F0E4D8] shadow-warm-sm hover:border-[#E1D1C2] transition-colors active:scale-[0.99]">
+<div class="flex items-center justify-between gap-3">
+<!-- Icon & Text Group -->
+<div class="flex items-center gap-3.5 flex-1">
+<div class="w-12 h-12 rounded-xl bg-sage-light border border-sage/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sage text-2xl" data-icon="child_care" style="font-variation-settings: 'FILL' 1;">child_care</span>
+</div>
+<div>
+<h2 class="font-headline text-[17px] font-semibold text-cocoa leading-snug">
+                Baby moving less
+              </h2>
+<p class="text-[13.5px] text-muted-cocoa mt-0.5">
+                शिशु की हलचल कम होना
+              </p>
+</div>
+</div>
+<!-- Progress Dots & Complete Status -->
+<div class="flex flex-col items-end shrink-0 pl-1">
+<div aria-label="Progress: 3 out of 3 recorded, complete" class="flex items-center gap-1.5 mb-1">
+<span class="w-2.5 h-2.5 rounded-full bg-sage"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-sage"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-sage"></span>
+</div>
+<span class="text-xs font-label font-bold text-sage flex items-center gap-0.5">
+              3 saved · Ready
+              <span class="material-symbols-outlined text-[14px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</span>
+</div>
+</div>
+</article>
+</section>
+<!-- Bottom Reassurance & Footer Support (No BottomNavBar per Semantic Rules for Calibration Task) -->
+<footer class="mt-6 pt-2 pb-4 text-center">
+<div class="flex items-center justify-center gap-1.5 text-xs text-muted-cocoa font-label">
+<span class="material-symbols-outlined text-[16px] text-sage" data-icon="verified_user">verified_user</span>
+<span>AMMA works offline. Voice patterns stay strictly on this device.</span>
+</div>
+<p class="text-[11px] text-muted-cocoa/75 mt-1 font-label">
+        आपकी आवाज़ सुरक्षित है और कभी भी इंटरनेट पर नहीं भेजी जाती।
+      </p>
+</footer>
+</main>
+<!-- Interactive Demo Script: Click cards to simulate activation switch -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Gentle haptic feedback simulation or click tap response
+      const touchCards = document.querySelectorAll('article');
+      touchCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+          // If clicking inside the active button, don't trigger outer container animation
+          if (e.target.closest('button')) return;
+          
+          card.classList.add('scale-[0.98]');
+          setTimeout(() => {
+            card.classList.remove('scale-[0.98]');
+          }, 150);
+        });
+      });
+    });
+  </script>
+</body></html>

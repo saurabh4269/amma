@@ -49,7 +49,7 @@ export function ClinicCard({ ix, words, profile, onBack }: { ix: PackIndex; word
 function Section({ title, items, tone }: { title: string; items: string[]; tone?: string }) {
   if (items.length === 0) return null;
   return (
-    <section class={tone}>
+    <section class={tone ? `sheet ${tone}` : 'sheet'}>
       <h3>{title}</h3>
       <ul>{items.map((i) => <li>{i}</li>)}</ul>
     </section>

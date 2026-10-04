@@ -1,0 +1,81 @@
+{
+  "projectId": "4636124252891906861",
+  "sessionId": "737543727184024475",
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "screenshot": {
+              "name": "projects/4636124252891906861/files/b03f5afb4704463b9754ca32a4642cd2",
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1X5j-B2CjTxMz9kOApHSlXiYeNnkVKjEYJztMKpTYjVTjU1x-sisUY4zZ6FBBStauP5IUvF2XN4UuQk6TXrN016b3461bXM4rVVhq5jKhdWXNLwoBKShjA5SHg4pJ0oBund9f1QGtx7K5eJwUM_VTDwfaeIHjUudz9ZJWfhCNF4KdbPRZ0jWzzYQ8_e1VUoOktWHVShpWPKd0Z_vFbMmqH6LPicLteZv8VZ8coa5bqxKiD0CV2TDFsduTk"
+            },
+            "htmlCode": {
+              "name": "projects/4636124252891906861/files/02e12d7ecc56438c97ccea0624ad70db",
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Q1ZThmYmU1NTZiZjQzMDU5ODFmZDc0ZDExMjk0MDQ3EgsSBxCN6aHNtAwYAZIBIwoKcHJvamVjdF9pZBIVQhM0NjM2MTI0MjUyODkxOTA2ODYx&filename=&opi=96797242",
+              "mimeType": "text/html"
+            },
+            "id": "1e4b799b61914006943bfc261e2e3aff",
+            "generatedBy": "figaro_agent",
+            "width": "780",
+            "height": "2992",
+            "title": "Add a person",
+            "prompt": "Mobile portrait form screen for AMMA - Weekly Maternal Health Check.\nScreen title: \"Add a person\".\nVisual style: AMMA Warm Cradle theme - cute, calm, warm, like a trusted aunt. Soft cards, warm cream/sand background (#FAF6F0 or soft off-white), terracotta primary accents (#E07A5F), warm honey/amber banner (#FDF6E2 / #D97706 border/text), deep legible charcoal text (#2D3142), rounded corners (round-2xl/round-xl), high readability for low-literacy users, generous spacing, 48px+ touch targets. No fake charts, no login wall, no bottom tab bar. Works offline.\n\nScreen contents (follow exact page structure requested):\n1. Top Bar / Header:\n   - Left text button \"\u2190 Back\" (accessible, gentle)\n   - Large warm headline: \"Add a person\" (with gentle subtitle if helpful or clean clear typography)\n2. Honey privacy note card (amber/honey soft background with subtle warm border, padlock / alert icon):\n   - Text: \"Anyone who can open this phone can see this record unless you set a PIN.\"\n   - Prominent, reassuring, and clear.\n3. Form fields (each field has a clear, visible label above the field, white rounded container/input with soft border and clear text):\n   - Field 1: Label \"A name or word for this record\" -> White rounded input filled with \"Sunita\" (\u0938\u0941\u0928\u0940\u0924\u093e)\n   - Field 2: Label \"Language\" -> White rounded dropdown/selector displaying \"\u0939\u093f\u0902\u0926\u0940 (Hindi)\" with an icon or globe/audio cue\n   - Field 3: Status selection with two equal choice chips side by side:\n     * Chip 1 (Selected): \"Pregnant\" (with subtle pregnancy/belly illustration or icon, warm terracotta filled/active state)\n     * Chip 2 (Unselected): \"Baby is born\" (with baby icon, clean neutral outline state)\n   - Field 4: Label \"Expected date of birth\" -> White rounded date picker / input showing date format placeholder or clear sample like \"18 Nov 2025\" with a calendar icon\n   - Field 5: Label \"Next clinic visit\" -> White rounded date selector with calendar icon\n   - Field 6: Label \"Her own phone number (for the weekly SMS)\" -> White rounded input with phone icon and helper indicator for SMS\n   - Field 7: Group titled \"What the nurse has told her\" with friendly note and two clear, large, touch-friendly checkboxes:\n     * Checkbox 1: \"High blood pressure\" (with subtle health badge or icon)\n     * Checkbox 2: \"First pregnancy\"\n   - Field 8: Label \"PIN to lock this record (optional)\" -> White rounded field with lock icon, placeholder e.g. \"4 digits (e.g. 1 2 3 4)\", and discreet helper text \"Keeps this private from others who use this phone\"\n4. Bottom row / action footer (sticky or well-spaced at bottom of form):\n   - Left: Text button \"Back\"\n   - Right: Filled pill button \"Save\" in warm terracotta (#E07A5F) with bold, confident text and warm shadow.",
+            "name": "projects/4636124252891906861/screens/1e4b799b61914006943bfc261e2e3aff",
+            "theme": {
+              "colorMode": "LIGHT",
+              "roundness": "ROUND_TWELVE",
+              "customColor": "#E07A5F",
+              "headlineFont": "PLUS_JAKARTA_SANS",
+              "labelFont": "NUNITO_SANS",
+              "colorVariant": "TONAL_SPOT",
+              "overridePrimaryColor": "#C4513A",
+              "overrideSecondaryColor": "#2F6F56",
+              "overrideTertiaryColor": "#E8A838",
+              "overrideNeutralColor": "#F6EDE4"
+            },
+            "deviceType": "MOBILE",
+            "screenType": "DESIGN",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "designSystem": {
+              "name": "assets/9389483915077379523",
+              "designSystem": {
+                "displayName": "AMMA Warm Cradle",
+                "theme": {
+                  "colorMode": "LIGHT",
+                  "roundness": "ROUND_TWELVE",
+                  "customColor": "#E07A5F",
+                  "headlineFont": "PLUS_JAKARTA_SANS",
+                  "labelFont": "NUNITO_SANS",
+                  "designMd": "# Design System: AMMA Warm Cradle\n**Project ID:** pending\n\n## 1. Visual Theme & Atmosphere\nAMMA is a weekly maternal check used on a shared family phone by a pregnant woman, a new mother, or the person helping her (family or a community health worker). Many users read slowly or not at all. The mood is warm, calm, and a little soft \u2014 a trusted aunt, not a hospital dashboard and not a toy. Generous whitespace, one job per screen, large tap targets, pictures beside words. Cute through roundness and warmth, never through clutter or baby-clipart that could hide a danger sign.\n\n## 2. Color Palette & Roles\n- Warm paper background (#F6EDE4) \u2014 the page, so the phone never feels clinical white.\n- Cocoa ink (#3A2418) \u2014 all body text. High contrast on paper and on white cards.\n- Clay primary (#C4513A) \u2014 the one main action on a screen (start the check, save, finish).\n- Clay on-primary (#FFF8F3) \u2014 text on the primary button.\n- Sage secondary (#2F6F56) \u2014 \"no / all clear for this sign\", safe confirmation.\n- Honey tertiary (#E8A838) \u2014 \"not sure\", drafts, and gentle notes.\n- Urgent rose (#9B2331) \u2014 danger outcome, delete, and \"yes, this danger sign is present\". Used rarely so it stays serious.\n- White card (#FFFFFF) \u2014 every tappable card and spoken line.\n- Muted cocoa (#7A6558) \u2014 helper text only, never the question itself.\n\n## 3. Typography Rules\n- Headlines: Plus Jakarta Sans, semibold, tight line height. Short. Never more than two lines.\n- Body and questions: Noto Sans at a large size so Hindi and Marathi (Devanagari) stay clear. Questions are the biggest text on the check screen.\n- Labels: Nunito Sans, medium, for small meta such as \"last check\" and distances.\n- No text smaller than 14px. Questions at least 20px.\n\n## 4. Component Stylings\n* **Buttons:** Generously rounded (12px, primary actions fully pill-shaped). Minimum height 56px, full width on mobile. One filled primary button per screen. Secondary actions are white cards with a soft border. Ghost actions are text-only for Back and Skip.\n* **Cards/Containers:** White, generously rounded, a whisper-soft warm shadow. Person cards are tall and show a phase (pregnant or baby born), a week if known, and a small lock if the record is private.\n* **Inputs/Forms:** White fields, 2px warm border, large type, visible labels above the field. Never placeholder-only.\n* **Spoken lines:** Left-aligned speech cards. The line being read aloud has a clay outline.\n* **Answer row:** Three equal buttons \u2014 Yes (urgent rose outline), No (sage outline), Not sure (honey outline). Pictures sit above the word.\n* **Picture tiles:** A two-column grid of large tiles, emoji or simple picture on top, short label under it.\n* **Mic:** A single large circular clay button, thumb-reachable, labelled \"Tap and speak\".\n\n## 5. Layout Principles\nMobile only, one column, max width about 28rem, padding 20px, safe-area aware. The primary action sits in the thumb zone at the bottom. No tab bar, no charts, no fake vitals. Language switch is always on the home header. Back is a text button at the top left, never a mystery icon alone.\n",
+                  "colorVariant": "TONAL_SPOT",
+                  "overridePrimaryColor": "#C4513A",
+                  "overrideSecondaryColor": "#2F6F56",
+                  "overrideTertiaryColor": "#E8A838",
+                  "overrideNeutralColor": "#F6EDE4"
+                }
+              },
+              "version": "1"
+            }
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "I have created the **Add a person** screen for **AMMA**, designed specifically for low-literacy maternal checkups on shared family smartphones:\n\n### Key Design Details:\n- **Warm & Reassuring Tone:** Styled with AMMA's warm terracotta (`#E07A5F`), soft sand background, and rounded cards to create a comforting, \"trusted aunt\" presence.\n- **Header:** Clean top bar with a simple text `Back` button, AMMA wordmark, and a language toggle indicator.\n- **Honey Privacy Notice:** A warm amber/honey callout card highlighting: *\"Anyone who can open this phone can see this record unless you set a PIN.\"* to safeguard privacy on shared family devices.\n- **Visible, Accessible Form Fields:**\n  - **Record Name:** Label clearly placed above, prefilled with *\"Sunita\"* (alongside Hindi script *\"\u0938\u0941\u0928\u0940\u0924\u093e\"* badge).\n  - **Language:** Selector set to *\"\u0939\u093f\u0902\u0926\u0940 (Hindi)\"*.\n  - **Status Selection:** Two balanced choice chips with supportive icons \u2014 *\"Pregnant\"* (active/selected in terracotta) and *\"Baby is born\"* (unselected).\n  - **Dates & Reminders:** Distinct white rounded cards with calendar icons for *\"Expected date of birth\"* and *\"Next clinic visit\"*.\n  - **SMS Phone Number:** Dedicated field with reassurance note regarding the weekly check question.\n  - **\"What the nurse has told her\":** High-contrast touch-friendly checkboxes for *\"High blood pressure\"* and *\"First pregnancy\"*.\n  - **PIN Lock:** Optional 4-digit security field with padlock indicator.\n- **Footer Actions:** Spacious bottom row with a text `Back` button and a prominent, rounded pill `Save` action button.\n- **No distractions:** Excluded bottom navigation bars, charts, or unnecessary biometric widgets to keep the experience calm and focused."
+    },
+    {
+      "suggestion": "Show the weekly questionnaire screen for Sunita"
+    },
+    {
+      "suggestion": "Design the PIN entry lock screen for shared phone protection"
+    },
+    {
+      "suggestion": "Add an audio / voice read-aloud button next to each question"
+    }
+  ]
+}

@@ -19,6 +19,7 @@ export function Setup({ ix, languages, words, onCancel, onSave }: Props) {
 
   return (
     <main class="page">
+      <header class="top"><button type="button" class="ghost" onClick={onCancel}>‹ {words.ui('back')}</button><h2>AMMA</h2></header>
       <h2>{words.ui('add_person')}</h2>
       <p class="note">{words.ui('shared_phone')}</p>
       <form

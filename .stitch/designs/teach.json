@@ -1,0 +1,81 @@
+{
+  "projectId": "4636124252891906861",
+  "sessionId": "7679020789810908601",
+  "outputComponents": [
+    {
+      "design": {
+        "screens": [
+          {
+            "screenshot": {
+              "name": "projects/4636124252891906861/files/b9b39977079f404e995fa648b72681c3",
+              "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XBTn-nzyus_ojAPwqaKQjLs7T52PUj1nc1EjZMDNpEVCQ164kn0mKOCRDCSo611vTRCcbSp2m2JKV55ZmLXA35LvGJGMeLO2lJ2tfUIoJhan_Le2f_ZdrxAYYD-ou8FCWpg9UwL3xqIps8xqYecmBBDwXPz2yZJpnlUsiaL3WCQkWGHvGMWeF31S9gTsX1gqqfTq2KEAUOu18hLMG4pUH04z2U6eA7ZRptyeWNV4G0M-RYDry4Yj_2oHY"
+            },
+            "htmlCode": {
+              "name": "projects/4636124252891906861/files/af22b4cdf90f47178cdcc222c31e3e5c",
+              "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2ZiNjBlZDFjZmRjMDQyZGY4ZjliZDZhNDFkM2YzN2FjEgsSBxCN6aHNtAwYAZIBIwoKcHJvamVjdF9pZBIVQhM0NjM2MTI0MjUyODkxOTA2ODYx&filename=&opi=96797242",
+              "mimeType": "text/html"
+            },
+            "id": "e90dca7e46754cf59e29763c0e9fcf93",
+            "generatedBy": "figaro_agent",
+            "width": "780",
+            "height": "2178",
+            "title": "Teach the phone my voice",
+            "prompt": "Mobile portrait screen for AMMA maternal health check.\nTitle: \"Teach the phone my voice\"\n\nVisual Theme & Palette (AMMA Warm Cradle):\n- Warm cream/linen background (`#F9F6F0` or warm soft tone), warm terracotta/terracotta clay primary accents (`#E07A5F`), deep cocoa ink text (`#2D2422`), warm surface cards (`#FFFFFF`), subtle muted borders and soft tactile radii (rounded-2xl / rounded-3xl).\n- Calming, trustworthy, like a loving aunt or healthcare worker: gentle, non-clinical, warm, accessible.\n\nStructure & Elements:\n1. Top navigation:\n   - \"Back\" button with icon arrow, title \"AMMA\" or profile label, language pill \"\u0939\u093f\u0902\u0926\u0940 / Eng\".\n2. Header & Guidance:\n   - Screen Title: \"Teach the phone my voice\" (large, warm, readable typography font-headline).\n   - One sentence of help in clear, warm friendly language: \"Tap a sign, say it in your own words, then tap again. Do each one two or three times.\" With Hindi subtitle underneath for low literacy/multilingual comfort: \"\u0938\u0902\u0915\u0947\u0924 \u092a\u0930 \u091f\u0948\u092a \u0915\u0930\u0947\u0902, \u0905\u092a\u0928\u0940 \u0906\u0935\u093e\u091c\u093c \u092e\u0947\u0902 \u092c\u094b\u0932\u0947\u0902, \u092b\u093f\u0930 \u0938\u0947 \u091f\u0948\u092a \u0915\u0930\u0947\u0902\u0964\"\n   - Privacy/offline reassurance badge: \"\ud83d\udd12 Saved only on this phone. No audio is stored or shared.\"\n\n3. Vertical list of 5 large tactile rows/cards:\n   - Row 1: \"Bleeding during pregnancy\" (\u0917\u0930\u094d\u092d\u093e\u0935\u0938\u094d\u0925\u093e \u092e\u0947\u0902 \u0916\u0942\u0928 \u092c\u0939\u0928\u093e)\n     - Icon/Picture: warm soft illustration/icon of blood drop/danger droplet with warm tint.\n     - Status: 2 examples saved (showing progress dots or pills: \"2 saved\" with 2 filled dots, 1 empty dot).\n     - State: Quiet / completed 2 times. Quiet card styling with white/cream bg and soft shadow.\n\n   - Row 2: \"Fits (convulsions)\" (\u0926\u094c\u0930\u0947 / \u091d\u091f\u0915\u0947 \u0906\u0928\u093e)\n     - Icon/Picture: lightning/wave tremor warm icon badge.\n     - Status: 0 examples saved (\"0 saved\" or \"Not recorded yet\").\n     - State: Quiet.\n\n   - Row 3 (ACTIVE RECORDING STATE - standout, highlighted): \"High fever\" (\u0924\u0947\u091c\u093c \u092c\u0941\u0916\u093e\u0930)\n     - Icon/Picture: thermometer / heat warmth glow icon with active animated pulse or terracotta badge.\n     - Status: Currently has 1 saved example, but actively recording now!\n     - Active recording visual treatment: Soft terracotta tinted card background or glowing warm border (`border-2 border-[#E07A5F] bg-[#FFF5F2]`), live sound wave / voice pulse bar or ripple indicator, animated mic pulsing gently.\n     - Prominent active recording action button / banner inside row: Large tactile button: \"Tap when you have finished\" (\u092c\u094b\u0932\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u092f\u0939\u093e\u0901 \u091f\u0948\u092a \u0915\u0930\u0947\u0902) with a stop / microphone icon and subtle listening waveform.\n     - Makes it unmistakable that this row is the live, active one while others are quiet.\n\n   - Row 4: \"Severe headache & blurry vision\" (\u0924\u0947\u091c\u093c \u0938\u093f\u0930\u0926\u0930\u094d\u0926)\n     - Icon/Picture: head / eye alert icon.\n     - Status: 0 examples saved (\"0 saved\").\n     - State: Quiet.\n\n   - Row 5: \"Baby moving less\" (\u0936\u093f\u0936\u0941 \u0915\u0940 \u0939\u0932\u091a\u0932 \u0915\u092e \u0939\u094b\u0928\u093e)\n     - Icon/Picture: gentle baby / womb movement icon.\n     - Status: 3 examples saved (\"3 saved \u00b7 Ready \u2713\" with all 3 dots filled in gentle herbal sage/terracotta).\n     - State: Quiet, complete.\n\n4. Bottom footer:\n   - Subtle note: \"AMMA works offline. Your voice patterns stay strictly on this device.\"\n   - Large touch targets (minimum 56px-64px height per row), generous tap margins, friendly bicultural bilingual hints for accessibility on shared family smartphones. No charts, no fake heart rate widgets, no bottom nav bar.",
+            "name": "projects/4636124252891906861/screens/e90dca7e46754cf59e29763c0e9fcf93",
+            "theme": {
+              "colorMode": "LIGHT",
+              "roundness": "ROUND_TWELVE",
+              "customColor": "#E07A5F",
+              "headlineFont": "PLUS_JAKARTA_SANS",
+              "labelFont": "NUNITO_SANS",
+              "colorVariant": "TONAL_SPOT",
+              "overridePrimaryColor": "#C4513A",
+              "overrideSecondaryColor": "#2F6F56",
+              "overrideTertiaryColor": "#E8A838",
+              "overrideNeutralColor": "#F6EDE4"
+            },
+            "deviceType": "MOBILE",
+            "screenType": "DESIGN",
+            "screenMetadata": {
+              "agentType": "PRO_AGENT",
+              "status": "COMPLETE"
+            },
+            "designSystem": {
+              "name": "assets/9389483915077379523",
+              "designSystem": {
+                "displayName": "AMMA Warm Cradle",
+                "theme": {
+                  "colorMode": "LIGHT",
+                  "roundness": "ROUND_TWELVE",
+                  "customColor": "#E07A5F",
+                  "headlineFont": "PLUS_JAKARTA_SANS",
+                  "labelFont": "NUNITO_SANS",
+                  "designMd": "# Design System: AMMA Warm Cradle\n**Project ID:** pending\n\n## 1. Visual Theme & Atmosphere\nAMMA is a weekly maternal check used on a shared family phone by a pregnant woman, a new mother, or the person helping her (family or a community health worker). Many users read slowly or not at all. The mood is warm, calm, and a little soft \u2014 a trusted aunt, not a hospital dashboard and not a toy. Generous whitespace, one job per screen, large tap targets, pictures beside words. Cute through roundness and warmth, never through clutter or baby-clipart that could hide a danger sign.\n\n## 2. Color Palette & Roles\n- Warm paper background (#F6EDE4) \u2014 the page, so the phone never feels clinical white.\n- Cocoa ink (#3A2418) \u2014 all body text. High contrast on paper and on white cards.\n- Clay primary (#C4513A) \u2014 the one main action on a screen (start the check, save, finish).\n- Clay on-primary (#FFF8F3) \u2014 text on the primary button.\n- Sage secondary (#2F6F56) \u2014 \"no / all clear for this sign\", safe confirmation.\n- Honey tertiary (#E8A838) \u2014 \"not sure\", drafts, and gentle notes.\n- Urgent rose (#9B2331) \u2014 danger outcome, delete, and \"yes, this danger sign is present\". Used rarely so it stays serious.\n- White card (#FFFFFF) \u2014 every tappable card and spoken line.\n- Muted cocoa (#7A6558) \u2014 helper text only, never the question itself.\n\n## 3. Typography Rules\n- Headlines: Plus Jakarta Sans, semibold, tight line height. Short. Never more than two lines.\n- Body and questions: Noto Sans at a large size so Hindi and Marathi (Devanagari) stay clear. Questions are the biggest text on the check screen.\n- Labels: Nunito Sans, medium, for small meta such as \"last check\" and distances.\n- No text smaller than 14px. Questions at least 20px.\n\n## 4. Component Stylings\n* **Buttons:** Generously rounded (12px, primary actions fully pill-shaped). Minimum height 56px, full width on mobile. One filled primary button per screen. Secondary actions are white cards with a soft border. Ghost actions are text-only for Back and Skip.\n* **Cards/Containers:** White, generously rounded, a whisper-soft warm shadow. Person cards are tall and show a phase (pregnant or baby born), a week if known, and a small lock if the record is private.\n* **Inputs/Forms:** White fields, 2px warm border, large type, visible labels above the field. Never placeholder-only.\n* **Spoken lines:** Left-aligned speech cards. The line being read aloud has a clay outline.\n* **Answer row:** Three equal buttons \u2014 Yes (urgent rose outline), No (sage outline), Not sure (honey outline). Pictures sit above the word.\n* **Picture tiles:** A two-column grid of large tiles, emoji or simple picture on top, short label under it.\n* **Mic:** A single large circular clay button, thumb-reachable, labelled \"Tap and speak\".\n\n## 5. Layout Principles\nMobile only, one column, max width about 28rem, padding 20px, safe-area aware. The primary action sits in the thumb zone at the bottom. No tab bar, no charts, no fake vitals. Language switch is always on the home header. Back is a text button at the top left, never a mystery icon alone.\n",
+                  "colorVariant": "TONAL_SPOT",
+                  "overridePrimaryColor": "#C4513A",
+                  "overrideSecondaryColor": "#2F6F56",
+                  "overrideTertiaryColor": "#E8A838",
+                  "overrideNeutralColor": "#F6EDE4"
+                }
+              },
+              "version": "1"
+            }
+          }
+        ],
+        "theme": {}
+      }
+    },
+    {
+      "text": "Here is the **\"Teach the phone my voice\"** screen designed for AMMA, following the warm, reassuring visual language of the existing maternal health system:\n\n### Key Design Highlights:\n1. **Warm, Caring Atmosphere**:\n   - Crafted with AMMA's soft palette (`#FAF7F2` linen background, `#E07A5F` terracotta accents, deep cocoa typography, and soft rounded cards) avoiding clinical harshness.\n   - Includes privacy reassurance at the top and bottom emphasizing that recordings stay strictly on this device and work offline.\n\n2. **Clear Information & Visual Scaffolding**:\n   - Top navigation includes a clean back button and bilingual language toggle.\n   - Prominent, easy-to-read guidance text: *\"Tap a sign, say it in your own words, then tap again. Do each one two or three times.\"* accompanied by Hindi subtitles for low-literacy and multi-lingual comfort.\n\n3. **Quiet vs. Active Visual Hierarchy**:\n   - **Active Recording State (High Fever \u00b7 1 of 3 saved)**: Elevated with a terracotta outline, pulsating \"LISTENING...\" badge, prompt clue (*Say: \"Mera shareer bohot garam hai\"*), and a large, tactile button clearly labelled **\"Tap when you have finished\"**.\n   - **Quiet States**: Clean, calm white cards displaying recognizable illustrated icons, clear danger sign labels, bilingual translations, and visual 3-dot progress indicators:\n     - *Bleeding during pregnancy* (2 saved)\n     - *Fits (convulsions)* (0 saved / Not recorded)\n     - *Severe headache & blurry vision* (0 saved)\n     - *Baby moving less* (3 saved \u00b7 Ready \u2713)"
+    },
+    {
+      "suggestion": "Add an audio replay confirmation dialog when a recording finishes"
+    },
+    {
+      "suggestion": "Show how the screen looks when all 5 signs are fully trained"
+    },
+    {
+      "suggestion": "Explore how this connects back to the Sunita check-in hub screen"
+    }
+  ]
+}

@@ -50,8 +50,8 @@ export function Teach({ ix, words, profile, onBack }: { ix: PackIndex; words: Wo
           return (
             <button class={`big teach ${mine ?? ''}`} disabled={!ready || (busy !== undefined && !mine) || mine === 'thinking'} onClick={() => void tap(s.id)}>
               <span class="pic">{words.picture(s.label)}</span>
-              {words.card(s.label)}
-              <span class="muted small">{mine === 'recording' ? `⏹ ${words.ui('mic_stop')}` : mine === 'thinking' ? '…' : `🎤 × ${counts[meaning.sign(s.id)] ?? 0}`}</span>
+              <span class="teach-name">{words.card(s.label)}</span>
+              <span class="muted small teach-count">{mine === 'recording' ? words.ui('mic_stop') : mine === 'thinking' ? '…' : `× ${counts[meaning.sign(s.id)] ?? 0}`}</span>
             </button>
           );
         })}
