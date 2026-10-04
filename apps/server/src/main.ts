@@ -29,7 +29,8 @@ const app = buildApp({
   languages,
   store,
   authToken: need('TWILIO_AUTH_TOKEN'),
-  publicUrl: need('PUBLIC_URL'),
+  // Render tells a service its own public address; elsewhere it must be set.
+  publicUrl: (process.env.PUBLIC_URL ?? process.env.RENDER_EXTERNAL_URL ?? need('PUBLIC_URL')).replace(/\/$/, ''),
   today: () => new Date().toISOString().slice(0, 10),
   ratePerMinute: Number(process.env.RATE_PER_MINUTE ?? 20),
   callback: process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_FROM_NUMBER

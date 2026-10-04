@@ -145,3 +145,15 @@ Twilio must reach the server from the internet. A tunnel gives a laptop a public
 4. Send a message from a verified phone.
 
 Free tunnel addresses change on every start. Each time: update `PUBLIC_URL`, restart the server, and update the addresses in Twilio. All three must match or the signature check refuses the request.
+
+## Render, in one click
+
+`render.yaml` at the repository root describes the server for Render's free plan.
+
+1. Open https://render.com/deploy?repo=https://github.com/saurabh4269/amma and sign in.
+2. Enter `TWILIO_AUTH_TOKEN` when asked (Twilio console, Account Info, Auth Token).
+3. When the service is live, note its address, for example `https://amma-server-xxxx.onrender.com`. The server reads this address from Render itself, so `PUBLIC_URL` does not need to be set.
+4. In the Twilio console, under Messaging, Try it out, Send a WhatsApp message, Sandbox settings, set "When a message comes in" to `<address>/twilio/message`, method POST.
+
+On the free plan the service sleeps after about 15 minutes without traffic and takes up to a minute to wake, which is longer than Twilio waits. Open `<address>/health` in a browser just before a demo. Records are kept in a temporary file and are lost on restart. Not verified against a live Render service at the time of writing.
+

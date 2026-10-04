@@ -1,0 +1,25 @@
+# Render blueprint for the AMMA messaging server (WhatsApp, SMS, calls through Twilio).
+# The web app is separate and is hosted as static files.
+services:
+  - type: web
+    name: amma-server
+    runtime: docker
+    dockerfilePath: ./Dockerfile.server
+    dockerContext: .
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # Twilio signs each webhook with the account's Auth Token (Twilio console, Account Info).
+      # An API key secret does not work here. Entered by hand so it is never stored in the repository.
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      # The free plan has no lasting disk: records are lost when the service restarts or sleeps.
+      # For real use, attach a disk at /data and remove this line.
+      - key: DATABASE_FILE
+        value: /tmp/amma.sqlite
+      - key: RETENTION_DAYS
+        value: "400"
+      - key: RATE_PER_MINUTE
+        value: "20"
