@@ -12,6 +12,10 @@ export interface User {
   phaseChosen?: boolean;
   profile?: Profile;
   conversation?: Conversation;
+  /** Something she brought up out of turn, being dealt with before going back to where she was. */
+  aside?: Conversation;
+  /** What she brought up before her language and stage were known. The meaning only, never her words. */
+  pending?: string;
 }
 
 export interface Store {

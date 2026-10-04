@@ -55,3 +55,28 @@ test('a problem described to the assistant can raise a danger sign and bring up 
   // Asking is not a weekly session.
   await expect(page.getByText('No session yet. After the first session')).toBeVisible();
 });
+
+test('a problem she describes when asked something else is taken up by the assistant, then she is back where she was', async ({ page }) => {
+  await page.route(/onrender\.com\/health/, (r) => r.fulfill({ json: { ok: true } }));
+  await page.route(/onrender\.com\/match/, (r) => r.fulfill({ json: { meaning: 'complaint:pain' }, headers: { 'access-control-allow-origin': '*' } }));
+  await page.addInitScript(() => localStorage.setItem('amma.onlineHelp.v2', 'yes'));
+  await page.goto('/');
+  await page.locator('button.big.ghost').click();
+  await page.locator('input[name=label]').fill('elsewhere');
+  await page.locator('button.primary').click();
+  await page.getByText('Start this week’s session').click();
+  for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Skip' }).click();
+  await expect(page.getByText('Which signs mean you must go to the hospital straight away?')).toBeVisible();
+
+  // Asked to name a danger sign, she says what is wrong with her instead.
+  await page.locator('.dock .side, input[name=said]').first().waitFor();
+  if (!(await page.locator('input[name=said]').isVisible())) await page.locator('.dock .side').first().click();
+  await page.locator('input[name=said]').fill('my back has been aching for days');
+  await page.getByRole('button', { name: 'Send' }).click();
+
+  // The assistant opens on it and plays it back; nothing is assumed.
+  await expect(page.locator('.top-title')).toBeVisible();
+  await expect(page.getByText('Did you say:').last()).toBeVisible();
+  await page.getByRole('button', { name: /Back/ }).last().click();
+  await expect(page.getByText('Which signs mean you must go to the hospital straight away?')).toBeVisible();
+});

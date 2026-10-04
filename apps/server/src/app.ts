@@ -2,8 +2,8 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import formbody from '@fastify/formbody';
 import { Profile, type LanguagePack } from '@amma/schema';
 import type { PackIndex } from '@amma/engine';
-import { askAside, begin, candidates, interpret, receive, REPEAT, type Turn } from '@amma/channel-text';
-import { matchText } from '@amma/matcher';
+import { askAside, asideMeanings, begin, beginAside, interpret, receive, receiveAside, REPEAT, type Turn } from '@amma/channel-text';
+import { matchText, normalise } from '@amma/matcher';
 import type { Candidate, Pick } from './llm.ts';
 import type { Store, User } from './store.ts';
 import { twiml, validSignature, voiceTwiml } from './twilio.ts';
@@ -65,10 +65,11 @@ const SERVER_UI = {
   pregnant: 'Pregnant',
   after_birth: 'Baby is born',
   skip: 'Skip',
-  heard: 'I heard:',
+  heard: 'You said:',
   tap_to_confirm: 'Please tap your answer, so a mishearing cannot hide a danger sign.',
   not_heard: 'I could not make out that voice note. Please say it again, or type it.',
   voice_note: 'You can also send a voice note. It goes to a speech service to be turned into text and is not kept.',
+  first_this: 'I will come to that. First tell me:',
   ai_note: 'When your words are not recognised, they are sent to an AI model (OpenAI) only to work out which listed topic you mean. It does not write the answers. Send STOP if you do not agree.',
 } as const;
 
@@ -82,6 +83,14 @@ interface TelegramUpdate {
 interface Part {
   text: string;
   lang?: LanguagePack;
+}
+/**
+ * What her free words were taken to mean: a language, her stage, one of the offered answers, or a question or
+ * problem from the pack. `sure` is true when her own words matched the phrase list; otherwise a model suggested it.
+ */
+interface Route {
+  id: string;
+  sure: boolean;
 }
 interface Reply {
   parts: Part[];
@@ -201,15 +210,67 @@ export function buildApp(cfg: Config): FastifyInstance {
     return { id: meaning, label: own && own !== ref ? `${ref} / ${own}` : ref };
   };
   /** Ask the model, but only among meanings that exist in the pack; any failure simply means "no suggestion". */
-  const suggest = async (text: string, meanings: string[], lang: LanguagePack | undefined, log: { warn: (o: object, m: string) => void }): Promise<string | undefined> => {
+  const suggest = async (text: string, meanings: string[], lang: LanguagePack | undefined, log: { warn: (o: object, m: string) => void }, extra: Candidate[] = [], asked?: string): Promise<string | undefined> => {
     if (!cfg.pick) return undefined;
-    const list = meanings.flatMap((m) => describe(m, lang) ?? []);
+    const list = [...extra, ...meanings.flatMap((m) => describe(m, lang) ?? [])];
     try {
-      return await cfg.pick(text, list, lang?.name ?? cfg.ix.pack.refLang);
+      const id = await cfg.pick(text, list, lang?.name ?? cfg.ix.pack.refLang, asked);
+      // Whatever the model is, its answer counts only if it was one of the things it was offered.
+      return list.some((c) => c.id === id) ? id : undefined;
     } catch (e) {
       log.warn({ err: String(e) }, 'model suggestion failed');
       return undefined;
     }
+  };
+
+  /**
+   * What did she mean? Wherever she is, her words may be an answer to what was asked, or something else entirely:
+   * a problem she wants to describe, or a question. The phrase list is tried first; the model only when it does not know.
+   * Whatever comes back is one id from a fixed list. A model's suggestion never clears a danger sign (see the caller).
+   */
+  const understand = async (address: string, body: string, log: { warn: (o: object, m: string) => void }): Promise<Route | undefined> => {
+    const t = body.trim();
+    if (!t || /^\/?\d+$/.test(t) || STOP.test(t) || RESTART.test(t)) return undefined;
+    const user = cfg.store.get(address);
+    const lang = cfg.languages.find((l) => l.id === user?.lang);
+    const say = (card: string) => cfg.ix.card.get(card)?.ref ?? card;
+    const profile = user?.conversation?.session.profile ?? user?.profile ?? Profile.parse({ id: address, label: '', lang: lang?.id ?? cfg.ix.pack.refLang, phase: 'pregnant' });
+    const tell = asideMeanings(cfg.ix, profile, cfg.today());
+    const extra: Candidate[] = [];
+    let listen: string[] = [];
+    let asked: string | undefined;
+    if (!user?.consented || !lang) {
+      const n = normalise(t);
+      const named = cfg.languages.find((l) => normalise(l.name) === n || l.id === n);
+      if (named) return { id: `lang:${named.id}`, sure: true };
+      extra.push(...cfg.languages.map((l) => ({ id: `lang:${l.id}`, label: `She wants to use this language: ${l.name}` })));
+      asked = 'Which language do you want to use?';
+    } else if (!user.phaseChosen) {
+      extra.push({ id: 'phase:pregnant', label: 'She is pregnant now' }, { id: 'phase:after_birth', label: 'Her baby has already been born' });
+      asked = 'Are you pregnant now, or has the baby been born?';
+    } else {
+      const a = (user.aside ?? user.conversation)?.awaiting;
+      if (a?.kind === 'choice') {
+        // Her own word for one of the answers needs no help.
+        if (interpret(t, { kind: 'choice', options: a.options }, lang)) return undefined;
+        listen = a.listen ?? [];
+        extra.push(...a.options.map((o) => ({ id: `option:${o.id}`, label: `Her answer to what she was asked is: ${say(o.card)}` })));
+        asked = a.asked ? say(a.asked) : undefined;
+      } else if (a?.kind === 'input') {
+        // She is being asked for a name and a number. Those are hers and her family's, and are not sent to a model:
+        // only a longer sentence with no number in it, which is more likely a problem she is describing, is looked at.
+        if (/\d{4,}/.test(t) || t.split(/\s+/).length < 4) return undefined;
+        extra.push({ id: 'answer:name', label: 'She is answering with the name of a person or a place, or a phone number, or saying she has nobody' });
+        asked = say(cfg.ix.pack.plan.find((p) => p.id === a.slot)?.ask ?? '');
+      }
+    }
+    const meanings = [...new Set([...listen, ...tell])];
+    if (lang) {
+      const hit = matchText(t, lang.lexicon, meanings);
+      if (hit.kind === 'accept' && hit.meanings[0]) return { id: hit.meanings[0], sure: true };
+    }
+    const id = await suggest(t, meanings, lang, log, extra, asked);
+    return id ? { id, sure: false } : undefined;
   };
 
   // For the web app: which of these meanings did she mean? Same limits and same pages as /stt.
@@ -264,6 +325,10 @@ export function buildApp(cfg: Config): FastifyInstance {
     };
     const json = (method: string, payload: object) => api(method, JSON.stringify(payload), { 'content-type': 'application/json' });
 
+    // She sees straight away that the bot is working on it, instead of a silent wait.
+    const busy = (action: 'typing' | 'record_voice') => void json('sendChatAction', { chat_id: chat, action });
+    busy('typing');
+
     let body = update.callback_query?.data ?? update.message?.text ?? '';
     if (update.callback_query) {
       void json('answerCallbackQuery', { callback_query_id: update.callback_query.id });
@@ -272,29 +337,29 @@ export function buildApp(cfg: Config): FastifyInstance {
       if (answered !== undefined) void json('editMessageReplyMarkup', { chat_id: chat, message_id: answered, reply_markup: { inline_keyboard: [] } });
     }
     const voice = update.message?.voice;
-    let heard: string | undefined;
+    // What the speech service made of her voice note. It is shown back at the top of the reply, so she can see it before the bot acts on it.
+    let echo = '';
     if (voice && tg.transcribe) {
+      const known = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
+      let heard: string;
       try {
         const got = await json('getFile', { file_id: voice.file_id });
         if (!got) throw new Error('telegram unreachable');
         const file = (await got.json()) as { result?: { file_path?: string } };
         const audio = await (await tg.fetch(`https://api.telegram.org/file/bot${tg.token}/${file.result?.file_path}`, { signal: AbortSignal.timeout(15000) })).arrayBuffer();
-        const lang = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
-        heard = (await tg.transcribe(new Uint8Array(audio), lang?.locale)).trim();
+        heard = (await tg.transcribe(new Uint8Array(audio), known?.locale)).trim();
       } catch (e) {
         req.log.error({ err: String(e) }, 'voice note could not be transcribed');
         heard = '';
       }
       // How long the transcript was, never what it said.
       req.log.info({ voiceNote: true, chars: heard.length }, 'voice note handled');
-      const known = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
       if (!heard) {
         // Nothing usable was heard: say so and leave the session where it was, rather than treat silence as an answer.
         await json('sendMessage', { chat_id: chat, text: ui(known, 'not_heard') });
         return { ok: true };
       }
-      // She sees exactly what the service made of her words before the bot acts on them.
-      await json('sendMessage', { chat_id: chat, text: `🎤 ${ui(known, 'heard')} "${heard}"` });
+      echo = `🎤 ${ui(known, 'heard')} "${heard}"`;
       // A danger-sign question may be answered "yes" by voice, because that only raises a flag.
       // A spoken "no" or "not sure" could be a mishearing that clears one, so it must be tapped.
       const waiting = cfg.store.get(address)?.conversation?.awaiting;
@@ -305,8 +370,8 @@ export function buildApp(cfg: Config): FastifyInstance {
           const say = (card: string) => known.translations[card]?.text ?? cfg.ix.card.get(card)?.ref ?? card;
           await json('sendMessage', {
             chat_id: chat,
-            text: ui(known, 'tap_to_confirm'),
-            reply_markup: { inline_keyboard: waiting.options.map((o, i) => [{ text: say(o.card), callback_data: String(i + 1) }]) },
+            text: `${echo}\n\n${ui(known, 'tap_to_confirm')}`,
+            reply_markup: { inline_keyboard: [waiting.options.map((o, i) => ({ text: say(o.card), callback_data: String(i + 1) }))] },
           });
           return { ok: true };
         }
@@ -315,25 +380,48 @@ export function buildApp(cfg: Config): FastifyInstance {
     }
 
     const firstContact = !cfg.store.get(address)?.consented;
-    // Words the phrase list does not know go to the model for a suggestion, which she is then asked to confirm.
-    let hint: string | undefined;
-    const before = cfg.store.get(address);
-    const talking = before?.conversation;
-    const hers = cfg.languages.find((l) => l.id === before?.lang);
-    if (cfg.pick && talking && hers && body.trim() && !/^\/?\d*$/.test(body.trim()) && !STOP.test(body) && !RESTART.test(body) && talking.awaiting.kind !== 'input') {
-      const options = candidates(cfg.ix, talking);
-      if (options.length && matchText(body, hers.lexicon, options).kind === 'abstain') hint = await suggest(body, options, hers, req.log);
+    const route = await understand(address, body, req.log);
+    // A model reading her words as "no" or "not sure" could clear a danger sign by mistake, so that answer must be tapped.
+    const now = cfg.store.get(address);
+    const waiting = (now?.aside ?? now?.conversation)?.awaiting;
+    if (route && !route.sure && route.id.startsWith('option:') && route.id !== 'option:yes' && waiting?.kind === 'choice' && waiting.options.some((o) => o.id === 'yes')) {
+      const known = cfg.languages.find((l) => l.id === now?.lang);
+      const say = (card: string) => known?.translations[card]?.text ?? cfg.ix.card.get(card)?.ref ?? card;
+      await json('sendMessage', {
+        chat_id: chat,
+        text: `${echo ? `${echo}\n\n` : ''}${ui(known, 'tap_to_confirm')}`,
+        reply_markup: { inline_keyboard: [waiting.options.map((o, i) => ({ text: say(o.card), callback_data: String(i + 1) }))] },
+      });
+      return { ok: true };
     }
-    const out = handle(address, body, 'text', hint);
+    const out = handle(address, body, 'text', route);
     const lang = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
     // She is told where a voice note goes at the moment she agrees, in her language.
     // Said in the very first message (in English, before a language is chosen) and again in her language once it is.
     if (firstContact && tg.transcribe && out.parts[0]) out.parts[0].text += `\n${ui(lang, 'voice_note')}`;
     if (firstContact && cfg.pick && out.parts[0]) out.parts[0].text += `\n${ui(lang, 'ai_note')}`;
+    if (echo && out.parts[0]) out.parts[0].text = `${echo}\n\n${out.parts[0].text}`;
+
+    // The cards' audio goes up while the text is being sent, so her wait is the longer of the two, not the sum.
+    // The clips are plain MP3 and play back to back when joined. A voice message plays in the chat like her own;
+    // if Telegram will not take it as one, it is sent as an audio file.
+    const clips = lang ? out.said.flatMap((card) => tg.clip(lang, card) ?? []) : [];
+    const audioForm = (field: 'voice' | 'audio') => {
+      const form = new FormData();
+      form.set('chat_id', String(chat));
+      form.set(field, new Blob(clips, { type: 'audio/mpeg' }), 'amma.mp3');
+      if (field === 'audio') form.set('title', 'AMMA');
+      return form;
+    };
+
     for (const [i, part] of out.parts.entries()) {
       // Numbered lines become buttons, so she can tap an answer.
       const last = i === out.parts.length - 1;
-      const buttons = last ? [...part.text.matchAll(/^(\d+)\. (.+)$/gm)].map((m) => ({ text: m[2]!.slice(0, 60), callback_data: m[1]! })) : [];
+      const numbered = last ? [...part.text.matchAll(/^(\d+)\. (.+)$/gm)] : [];
+      const buttons = numbered.map((m) => ({ text: m[2]!.slice(0, 60), callback_data: m[1]! }));
+      // When every option fits on its button, the same list is not also written out above the buttons.
+      const question = part.text.replace(/^\d+\. .+$\n?/gm, '').trim();
+      const text = numbered.length && question && numbered.every((m) => m[2]!.length <= 60) ? question : part.text;
       // A plan question takes typed or spoken words; it still gets a way out, and yes/no where that is the answer.
       const awaiting = cfg.store.get(address)?.conversation?.awaiting;
       if (last && awaiting?.kind === 'input') {
@@ -341,22 +429,18 @@ export function buildApp(cfg: Config): FastifyInstance {
         if (awaiting.slotKind === 'yesno') buttons.push({ text: say(cfg.ix.pack.prompts.yes!), callback_data: '1' }, { text: say(cfg.ix.pack.prompts.no!), callback_data: '2' });
         buttons.push({ text: ui(lang, 'skip'), callback_data: '0' });
       }
+      // Short answers sit side by side; long ones get a row each so they can be read.
+      const short = buttons.length <= 3 && buttons.every((b) => b.text.length <= 14);
       await json('sendMessage', {
         chat_id: chat,
-        text: part.text,
-        reply_markup: buttons.length ? { inline_keyboard: buttons.map((b) => [b]) } : undefined,
+        text,
+        reply_markup: buttons.length ? { inline_keyboard: short ? [buttons] : buttons.map((b) => [b]) } : undefined,
       });
     }
-    // The same cards as one audio message: the clips are plain MP3 and play back to back when joined.
-    if (lang) {
-      const clips = out.said.flatMap((card) => tg.clip(lang, card) ?? []);
-      if (clips.length) {
-        const form = new FormData();
-        form.set('chat_id', String(chat));
-        form.set('audio', new Blob(clips, { type: 'audio/mpeg' }), 'amma.mp3');
-        form.set('title', 'AMMA');
-        await api('sendAudio', form);
-      }
+    if (clips.length) {
+      busy('record_voice');
+      const sent = await api('sendVoice', audioForm('voice'));
+      if (!sent?.ok) await api('sendAudio', audioForm('audio'));
     }
     return { ok: true };
   });
@@ -396,9 +480,11 @@ export function buildApp(cfg: Config): FastifyInstance {
     return { parts: turn.messages.map((text) => ({ text, lang })), said: [], ended: false };
   }
 
-  function handle(address: string, body: string, channel: 'text' | 'voice', hint?: string): Reply {
+  function handle(address: string, body: string, channel: 'text' | 'voice', route?: Route): Reply {
     const user: User = cfg.store.get(address) ?? { address, consented: false };
     const lang = cfg.languages.find((l) => l.id === user.lang);
+    // A question or a problem from the pack, as opposed to an answer to what was asked.
+    const meant = route && /^(question|complaint|sign):/.test(route.id) ? route : undefined;
 
     if (STOP.test(body)) {
       cfg.store.forget(address);
@@ -411,13 +497,20 @@ export function buildApp(cfg: Config): FastifyInstance {
       user.consented = false;
       user.phaseChosen = false;
       user.conversation = undefined;
+      user.aside = undefined;
+      user.pending = undefined;
       cfg.store.put(user);
     }
 
     // First contact: say what this is and what is kept. Choosing a language is the consent.
     if (!user.consented || !cfg.languages.some((l) => l.id === user.lang)) {
-      const picked = cfg.languages[Number(body.trim()) - 1];
+      const picked = cfg.languages[Number(body.trim()) - 1] ?? cfg.languages.find((l) => route?.id === `lang:${l.id}`);
       if (!picked) {
+        // She began by saying what is wrong. It is remembered (the meaning, not her words) and taken up once she has chosen.
+        if (meant) {
+          user.pending = meant.id;
+          cfg.store.put(user);
+        }
         if (channel === 'voice') {
           // On a call each language announces itself in its own voice; the explanation follows once she has chosen.
           return { parts: cfg.languages.map((l, i) => ({ text: (l.ui.press_for ?? `${l.name}: {n}`).replace('{n}', String(i + 1)), lang: l })), said: [], ended: false };
@@ -435,20 +528,64 @@ export function buildApp(cfg: Config): FastifyInstance {
 
     if (!user.phaseChosen) {
       const answer = body.trim();
-      if (answer !== '1' && answer !== '2') return { parts: [{ text: phaseMenu(chosen), lang: chosen }], said: [], ended: false };
-      const phase = answer === '1' ? 'pregnant' : 'after_birth';
+      const phase = answer === '1' || route?.id === 'phase:pregnant' ? 'pregnant' : answer === '2' || route?.id === 'phase:after_birth' ? 'after_birth' : undefined;
+      if (!phase) {
+        if (!meant) return { parts: [{ text: phaseMenu(chosen), lang: chosen }], said: [], ended: false };
+        user.pending = meant.id;
+        cfg.store.put(user);
+        return { parts: [{ text: `${ui(chosen, 'first_this')}\n${phaseMenu(chosen)}`, lang: chosen }], said: [], ended: false };
+      }
       user.phaseChosen = true;
       user.profile = Profile.parse({ ...(user.profile ?? { id: address, label: '' }), lang: chosen.id, phase });
+      // What she said before she was asked anything comes first; the weekly session can wait.
+      if (user.pending) {
+        const m = user.pending;
+        user.pending = undefined;
+        return asideTurn(user, beginAside(cfg.ix, chosen, user.profile, cfg.today(), m, false));
+      }
       return finishTurn(user, begin(cfg.ix, chosen, user.profile, cfg.today()));
     }
 
-    if (!user.conversation) {
+    // A model's reading of her words as one of the offered answers is passed on as that answer's number.
+    const answerOf = (awaiting: Turn['conversation']['awaiting']) => {
+      const i = route?.id.startsWith('option:') && awaiting.kind === 'choice' ? awaiting.options.findIndex((o) => `option:${o.id}` === route.id) : -1;
+      return i >= 0 ? String(i + 1) : body;
+    };
+    if (user.aside) return asideTurn(user, receiveAside(cfg.ix, chosen, user.aside, answerOf(user.aside.awaiting), meant?.id));
+
+    const conv = user.conversation;
+    const stepListens = conv?.awaiting.kind === 'choice' && Boolean(meant && conv.awaiting.listen?.includes(meant.id));
+    // She described a problem instead of answering: deal with it now, then come back to where she was.
+    if (meant && !meant.id.startsWith('question:') && !stepListens) {
+      return asideTurn(user, beginAside(cfg.ix, chosen, conv?.session.profile ?? user.profile!, cfg.today(), meant.id, meant.sure));
+    }
+    if (!conv) {
       // Between sessions she can still ask a question and get its card, without a new session starting.
-      const aside = askAside(cfg.ix, chosen, user.profile!, body);
+      const hinted = meant ? cfg.ix.pack.questions.find((q) => `question:${q.id}` === meant.id) : undefined;
+      const said = (card: string) => chosen.translations[card]?.text ?? cfg.ix.card.get(card)?.ref ?? card;
+      const aside = askAside(cfg.ix, chosen, user.profile!, body) ?? (hinted ? { messages: [said(hinted.answer)], said: [hinted.answer] } : undefined);
       if (aside) return { parts: [...aside.messages, ui(chosen, 'again')].map((text) => ({ text, lang: chosen })), said: aside.said, ended: false };
       return finishTurn(user, begin(cfg.ix, chosen, user.profile!, cfg.today()));
     }
-    return finishTurn(user, receive(cfg.ix, chosen, user.conversation, body, hint));
+    return finishTurn(user, receive(cfg.ix, chosen, conv, answerOf(conv.awaiting), meant?.id));
+  }
+
+  /** One turn of something she brought up out of turn. When it is finished she is taken back to where she was. */
+  function asideTurn(user: User, turn: Turn): Reply {
+    const lang = cfg.languages.find((l) => l.id === user.lang)!;
+    if (!turn.ended) {
+      user.aside = turn.conversation;
+      cfg.store.put(user);
+      return { parts: turn.messages.map((text) => ({ text, lang })), said: turn.said, ended: false };
+    }
+    // Only what she described is kept. This was not a weekly session and is not recorded as one.
+    const complaints = turn.conversation.session.profile.complaints;
+    if (user.profile) user.profile = { ...user.profile, complaints };
+    if (user.conversation) user.conversation.session.profile.complaints = complaints;
+    user.aside = undefined;
+    cfg.store.put(user);
+    const back = user.conversation ? receive(cfg.ix, lang, user.conversation, REPEAT).messages : [ui(lang, 'again')];
+    return { parts: [...turn.messages, ...back].map((text) => ({ text, lang })), said: turn.said, ended: false };
   }
 
   const phaseMenu = (l: LanguagePack) => `${ui(l, 'phase_ask')}\n1. ${ui(l, 'pregnant')}\n2. ${ui(l, 'after_birth')}`;

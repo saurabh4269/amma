@@ -7,7 +7,8 @@ import type { Words } from './pack.ts';
 import { alertPhones, PlanView, renderAlert, renderSms, SendText } from './plan.tsx';
 import { NearMe } from './near-me.tsx';
 import { Speaker } from './speaker.ts';
-import { addExample, embedAudio, loadExamples, matchOnline, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
+import { askAbout } from './ask-bus.ts';
+import { addExample, embedAudio, loadExamples, matchOnline, onlineChoice, setOnlineChoice, startRecording, transcribeOnline, understand, voiceStatus, warmVoice, wakeSpeechServer, type OnlineChoice, type Recording } from './voice.ts';
 
 /** What one engine step asks the screen to show. */
 interface View {
@@ -48,9 +49,20 @@ interface Props {
    * It is not a weekly session and is not recorded as one.
    */
   mode?: 'weekly' | 'ask';
+  /** In `ask` mode: a meaning she already brought up on the screen underneath. It is played back for her to confirm. */
+  about?: string;
 }
 
-export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'weekly' }: Props) {
+/** Every question and problem the "anything to ask or tell?" step listens for. */
+function askMeanings(ix: PackIndex, profile: Profile): string[] {
+  const only = { ...ix, pack: { ...ix.pack, flow: ['open' as const] } };
+  const r = step(only, createSession(profile, new Date().toISOString().slice(0, 10)), { type: 'start' });
+  return r.effects.flatMap((e) => (e.type === 'listen' ? e.expect : []));
+}
+
+export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'weekly', about }: Props) {
+  // In a weekly session, what she may say that belongs to the assistant instead of the step in front of her.
+  const elsewhere = useMemo(() => (mode === 'weekly' ? askMeanings(ix, profile) : []), []);
   const speaker = useMemo(() => new Speaker(), []);
   const state = useRef<SessionState>(createSession(profile, new Date().toISOString().slice(0, 10)));
   const [view, setView] = useState<View>({ say: [], showPlan: false, ended: false });
@@ -71,9 +83,10 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
   };
 
   // The last thing she said that has not yet been tied to a meaning, kept only until she confirms or corrects it.
-  const spoken = useRef<{ vector: Float32Array; guess?: string }>();
+  // The vector may still be being worked out: the reply does not wait for it.
+  const spoken = useRef<{ vector: Promise<Float32Array | undefined>; guess?: string }>();
   const learn = (meaning: string) => {
-    if (spoken.current) void addExample(words.lang.id, meaning, spoken.current.vector, profile.id);
+    void spoken.current?.vector.then((v) => v && addExample(words.lang.id, meaning, v, profile.id));
     spoken.current = undefined;
   };
 
@@ -114,6 +127,7 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
   };
   useEffect(() => {
     dispatch({ type: 'start' });
+    if (about) dispatch({ type: 'heard', result: { kind: 'confirm', meaning: about } });
     return () => speaker.stop();
   }, []);
 
@@ -158,6 +172,7 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
           ix={ix}
           words={words}
           listen={view.listen}
+          elsewhere={elsewhere}
           onMic={() => { speaker.stop(); setSpeaking(-1); }}
           onHeard={(result, her) => dispatch({ type: 'heard', result }, her)}
           onSpoken={(vector, result, her) => {
@@ -208,12 +223,14 @@ export function Session({ ix, words, places, profile, onDone, onQuit, mode = 'we
  * The microphone sits in a bar at the bottom of the screen so it is always under her thumb.
  * In the recall step the pictures stay hidden until asked for, because seeing them turns recall into recognition.
  */
-function Listen({ ix, words, listen, onHeard, onSpoken, onMic, children }: {
+function Listen({ ix, words, listen, elsewhere, onHeard, onSpoken, onMic, children }: {
   ix: PackIndex;
   words: Words;
   listen: Extract<Effect, { type: 'listen' }>;
+  /** Meanings this step does not listen for but the assistant does. Hearing one opens the assistant with it. */
+  elsewhere: string[];
   onHeard: (r: Heard, said?: string) => void;
-  onSpoken: (vector: Float32Array, r: Heard, said?: string) => void;
+  onSpoken: (vector: Promise<Float32Array | undefined>, r: Heard, said?: string) => void;
   /** She has started to speak: whatever AMMA was saying must stop, or the phone records itself. */
   onMic: () => void;
   children?: ComponentChildren;
@@ -249,9 +266,24 @@ function Listen({ ix, words, listen, onHeard, onSpoken, onMic, children }: {
     if (v === 'yes') wakeSpeechServer();
   };
 
+  const other = elsewhere.filter((m) => !listen.expect.includes(m));
+  /**
+   * Words this step's phrase list did not know. They may still be an answer to it, or they may be something else
+   * she wants to say: a problem, or a question. The second kind is handed to the assistant rather than ignored.
+   * Returns a meaning for this step to play back, or undefined; `true` means the assistant has taken it.
+   */
+  const beyond = async (text: string): Promise<string | true | undefined> => {
+    const known = other.length ? matchText(text, words.lang.lexicon, other) : undefined;
+    const meant = known?.kind === 'accept' ? known.meanings[0] : await matchOnline(text, words.lang.id, [...listen.expect, ...other]);
+    if (!meant || listen.expect.includes(meant)) return meant;
+    askAbout(meant);
+    return true;
+  };
+
   const start = async () => {
     onMic();
     setRetry(false);
+    warmVoice();
     try {
       recording.current = await startRecording({
         onLevel: (v) => button.current?.style.setProperty('--level', v.toFixed(2)),
@@ -271,32 +303,32 @@ function Listen({ ix, words, listen, onHeard, onSpoken, onMic, children }: {
     setMic('thinking');
     try {
       const { audio, blob } = await rec.stop();
+      // Her speech as a vector, worked out on the phone while the online service is being asked. The reply never waits for it
+      // when the online answer is enough; it is only what lets the phone learn her voice for when there is no connection.
+      const vector = embedAudio(audio);
+      const later = vector.catch(() => undefined);
       // Online first, when she has agreed and there is a connection: it understands free speech.
       const text = onlineChoice() === 'yes' ? await transcribeOnline(blob, words.lang.locale ?? words.lang.id) : undefined;
       if (text) {
         const heard = matchText(text, words.lang.lexicon, listen.expect);
         if (heard.kind === 'accept') {
-          // Her own vector is kept with the meaning, so the phone gets better at hearing her offline too.
-          const vector = await embedAudio(audio).catch(() => undefined);
           setMic('ready');
-          return vector ? onSpoken(vector, heard, text) : onHeard(heard, text);
+          return onSpoken(later, heard, text);
         }
         // The phrase list did not know her words. The language model may suggest which meaning she meant;
         // the suggestion is played back and only counts if she says yes.
-        const suggested = await matchOnline(text, words.lang.id, listen.expect);
+        const suggested = await beyond(text);
         if (suggested) {
-          const vector = await embedAudio(audio).catch(() => undefined);
           setMic('ready');
-          const guess = { kind: 'confirm', meaning: suggested } as const;
-          return vector ? onSpoken(vector, guess, text) : onHeard(guess, text);
+          return suggested === true ? undefined : onSpoken(later, { kind: 'confirm', meaning: suggested }, text);
         }
       }
       // No connection, no consent, or words the phrase list does not know: the model on the phone has a go.
-      const { vector, heard } = await understand(audio, await loadExamples(words.lang.id), listen.expect);
+      const heard = await understand(await vector, await loadExamples(words.lang.id), listen.expect);
       setMic('ready');
       // With nothing to compare against, show the pictures: her tap teaches the phone what she just said.
       if (heard.kind === 'abstain') setOpen(true);
-      onSpoken(vector, heard, text);
+      onSpoken(later, heard, text);
     } catch {
       // The recording could not be read or the model could not run. The microphone itself is fine: she can try again.
       setMic('ready');
@@ -378,9 +410,9 @@ function Listen({ ix, words, listen, onHeard, onSpoken, onMic, children }: {
               input.value = '';
               onMic();
               const byPhrase = matchText(typed, words.lang.lexicon, listen.expect);
-              if (byPhrase.kind !== 'abstain' || online !== 'yes') return onHeard(byPhrase, typed);
+              if (byPhrase.kind !== 'abstain') return onHeard(byPhrase, typed);
               // Typed words the phrase list does not know get the same help as spoken ones.
-              void matchOnline(typed, words.lang.id, listen.expect).then((m) => onHeard(m ? { kind: 'confirm', meaning: m } : byPhrase, typed));
+              void beyond(typed).then((m) => m === true || onHeard(m ? { kind: 'confirm', meaning: m } : byPhrase, typed));
             }}
           >
             <input name="said" placeholder={words.ui('type_here')} autocomplete="off" autoFocus={typing} />

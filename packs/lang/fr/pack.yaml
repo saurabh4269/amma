@@ -66,6 +66,8 @@ ui:
   no_voice: "Le modèle de reconnaissance de la voix n'est pas installé sur ce téléphone."
   mic_start: "Touchez et parlez"
   mic_stop: "Touchez quand vous avez fini"
+  first_this: "J'y viens. Dites-moi d'abord :"
+  not_understood: "Je n'ai pas compris. Choisissez une de ces réponses, ou dites-le autrement."
   mic_listening: "J'écoute…"
   mic_thinking: "Je cherche à comprendre…"
   mic_retry: "Je n'ai pas entendu. Touchez et parlez encore, ou touchez une image."

@@ -216,11 +216,12 @@ describe('telegram', () => {
   it('explains itself first, then turns numbered choices into buttons and sends the card audio', async () => {
     const { telegram, tg, store } = server();
     await telegram(text('/start'));
-    expect((tg[0]!.body as { text: string }).text).toContain('STOP');
+    expect(tg[0]!.method).toBe('sendChatAction'); // she sees it is working before anything else
+    expect((tg.find((c) => c.method === 'sendMessage')!.body as { text: string }).text).toContain('STOP');
     await telegram({ callback_query: { id: 'c1', data: '1', message: { chat: { id: 42 } } } });
     expect(store.get('telegram:42')?.consented).toBe(true);
     await telegram(text('1')); // pregnant
-    expect(tg.map((c) => c.method)).toContain('sendAudio'); // the plan introduction has a clip in this test
+    expect(tg.map((c) => c.method)).toContain('sendVoice'); // the plan introduction has a clip in this test
     const planQuestion = tg.filter((c) => c.method === 'sendMessage').at(-1)!.body as { reply_markup?: { inline_keyboard: { text: string; callback_data: string }[][] } };
     expect(planQuestion.reply_markup?.inline_keyboard.at(-1)).toEqual([{ text: 'Skip', callback_data: '0' }]);
     // Skip the plan, finish recall: the check then offers yes / no / not sure as buttons.
@@ -228,7 +229,9 @@ describe('telegram', () => {
     await telegram(text('0'));
     await telegram(text('1'));
     const last = tg.filter((c) => c.method === 'sendMessage').at(-1)!.body as { reply_markup?: { inline_keyboard: { text: string; callback_data: string }[][] } };
-    expect(last.reply_markup?.inline_keyboard.map((r) => r[0]!.callback_data)).toEqual(['1', '2', '3']);
+    expect(last.reply_markup?.inline_keyboard.flat().map((b) => b.callback_data)).toEqual(['1', '2', '3']);
+    // The options are on the buttons, not written out a second time above them.
+    expect((last as unknown as { text: string }).text).not.toMatch(/^1\. /m);
   });
 
   it('a voice note is transcribed and used as her answer', async () => {
@@ -247,7 +250,8 @@ describe('telegram', () => {
     await telegram(text('1'));
     await telegram({ message: { chat: { id: 42 }, voice: { file_id: 'F1' } } });
     const texts = tg.filter((c) => c.method === 'sendMessage').map((c) => (c.body as { text: string }).text);
-    expect(texts).toContain('🎤 I heard: "Asha Tai 9820000000"');
+    // What it heard opens the reply, in the same message.
+    expect(texts.some((t) => t.startsWith('🎤 You said: "Asha Tai 9820000000"\n\n'))).toBe(true);
   });
 
   it('a spoken "yes" to a danger sign is taken, but a spoken "no" must be tapped', async () => {
@@ -288,7 +292,8 @@ describe('telegram', () => {
     for (const t of ['hi', '1', '1', 'Asha Tai 9820000000']) await telegram(text(t));
     expect(store.get('telegram:42')?.conversation).toBeDefined();
     await telegram(text('/start'));
-    expect((tg.filter((c) => c.method === 'sendMessage').at(-1)!.body as { text: string }).text).toContain('1. English');
+    const menu = tg.filter((c) => c.method === 'sendMessage').at(-1)!.body as { reply_markup?: { inline_keyboard: { text: string }[][] } };
+    expect(menu.reply_markup?.inline_keyboard.flat().map((b) => b.text)).toContain('English');
     expect(store.get('telegram:42')?.conversation).toBeUndefined();
     await telegram(text('1'));
     await telegram(text('2')); // this time: the baby is born
@@ -394,7 +399,7 @@ describe('model suggestions on the server', () => {
     const store = new SqliteStore(':memory:');
     const app = buildApp({
       ix: indexPack(fixture), languages: [referenceLanguage(fixture, 'English')], store, authToken: TOKEN, publicUrl: URL, today: () => '2026-10-04', ratePerMinute: 100,
-      pick: async (text, cands) => { asked.push({ text, ids: cands.map((c) => c.id) }); return answer; },
+      pick: async (text, cands) => { asked.push({ text, ids: cands.map((c) => c.id) }); return text === 'hi' ? undefined : answer; },
       speech: { transcribe: async () => '', origins: ['https://app.example'], perHour: 50, perDay: 100 },
       telegram: { token: 'B', secret: 's', clip: () => undefined, fetch: (async (url: string, init?: RequestInit) => { if (String(url).endsWith('/sendMessage')) sent.push((JSON.parse(String(init?.body)) as { text: string }).text); return new Response('{"ok":true}'); }) as unknown as typeof fetch },
     });
@@ -425,10 +430,49 @@ describe('model suggestions on the server', () => {
     expect(store.get('telegram:3')!.conversation!.session.recalled).toEqual(['head']);
   });
 
-  it('numbers, plan answers and STOP are never sent to the model', async () => {
+  it('numbers, names and phone numbers for the plan, and STOP are never sent to the model', async () => {
     const { type, asked } = make('sign:head');
-    for (const t of ['hi', '1', '1', 'Asha Tai 9820000000', '0', '1', '2', 'STOP']) await type(t);
+    for (const t of ['1', '1', 'Asha Tai 9820000000', 'Ramesh', '0', '1', '2', 'STOP']) await type(t);
     expect(asked).toEqual([]);
+  });
+
+  it('a problem described before she has chosen anything is taken up as soon as she has, instead of the menu again', async () => {
+    const { type, sent, store } = make('complaint:pain');
+    await type('I am having back pain'); // before a language is chosen
+    expect(store.get('telegram:3')!.pending).toBe('complaint:pain'); // the meaning, not her words
+    await type('1'); // English
+    await type('1'); // pregnant
+    expect(store.get('telegram:3')!.aside).toBeDefined();
+    expect(store.get('telegram:3')!.conversation).toBeUndefined(); // the weekly session has not been started over her
+    expect(sent.at(-1)).toContain('p_did_you_say');
+  });
+
+  it('her stage and her language can be said in words', async () => {
+    const lang = make('lang:en');
+    await lang.type('english please');
+    expect(lang.store.get('telegram:3')!.lang).toBe('en');
+    const phase = make('phase:after_birth');
+    await phase.type('1');
+    await phase.type('my baby came last week');
+    expect(phase.store.get('telegram:3')!.profile!.phase).toBe('after_birth');
+  });
+
+  it('a problem described in the middle of the check is dealt with, then the same sign is asked again', async () => {
+    const { type, sent, store } = make('complaint:pain');
+    for (const t of ['1', '1', '0', '0', '1']) await type(t); // language, pregnant, skip plan, recall done: now in the check
+    const at = store.get('telegram:3')!.conversation!.awaiting;
+    await type('actually my back has been hurting a lot');
+    expect(store.get('telegram:3')!.aside).toBeDefined();
+    expect(store.get('telegram:3')!.conversation!.awaiting).toEqual(at); // the check has not moved
+  });
+
+  it('a model reading her words as "no" to a danger sign does not count until she taps it', async () => {
+    const { type, sent, store } = make('option:no');
+    for (const t of ['1', '1', '0', '0', '1']) await type(t);
+    const facts = { ...store.get('telegram:3')!.conversation!.session.facts };
+    await type('nothing like that at all');
+    expect(sent.at(-1)).toContain('tap your answer');
+    expect(store.get('telegram:3')!.conversation!.session.facts).toEqual(facts);
   });
 });
 

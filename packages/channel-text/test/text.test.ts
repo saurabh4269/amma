@@ -48,7 +48,8 @@ describe('text channel', () => {
     const before = turns.at(-1)!;
     const after = receive(ix, lang, before.conversation, 'maybe?');
     expect(after.conversation).toBe(before.conversation);
-    expect(after.messages[0]).toMatch(/^1\. /);
+    expect(after.messages[0]).toContain('I did not understand');
+    expect(after.messages[0]).toMatch(/^1\. /m);
   });
 
   it('words that match nothing during recall count as not understood, never as a sign', () => {
@@ -69,7 +70,7 @@ describe('text channel', () => {
     expect(after.conversation).toBe(before.conversation); // the session has not moved
     expect(after.said).toEqual(['q_food_a']);
     expect(after.messages[0]).toBe('q_food_a');
-    expect(after.messages[1]).toMatch(/^1\. Yes/);
+    expect(after.messages[1]).toMatch(/^1\. Yes/m);
   });
 
   it('a model hint is played back for her to confirm, never taken as her answer', () => {

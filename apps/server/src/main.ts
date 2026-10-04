@@ -39,8 +39,12 @@ async function transcribe(audio: Uint8Array, locale: string | undefined): Promis
   const form = new FormData();
   form.set('model_id', process.env.ELEVENLABS_STT_MODEL ?? 'scribe_v1');
   if (locale) form.set('language_code', locale.split('-')[0]!);
+  // Only the words are wanted: no sound-event tags, no per-word timing, no speaker labels.
+  form.set('tag_audio_events', 'false');
+  form.set('timestamps_granularity', 'none');
+  form.set('diarize', 'false');
   form.set('file', new Blob([audio]), 'voice.oga');
-  const res = await fetch('https://api.elevenlabs.io/v1/speech-to-text', { method: 'POST', headers: { 'xi-api-key': need('ELEVENLABS_API_KEY') }, body: form });
+  const res = await fetch('https://api.elevenlabs.io/v1/speech-to-text', { method: 'POST', headers: { 'xi-api-key': need('ELEVENLABS_API_KEY') }, body: form, signal: AbortSignal.timeout(15_000) });
   if (!res.ok) throw new Error(`speech service answered ${res.status}`);
   return ((await res.json()) as { text?: string }).text ?? '';
 }
@@ -68,7 +72,7 @@ const app = buildApp({
         },
       }
     : undefined,
-  pick: process.env.OPENAI_API_KEY ? openAiPick({ apiKey: process.env.OPENAI_API_KEY, model: process.env.OPENAI_MODEL ?? 'gpt-6-luna' }) : undefined,
+  pick: process.env.OPENAI_API_KEY ? openAiPick({ apiKey: process.env.OPENAI_API_KEY, model: process.env.OPENAI_MODEL ?? 'gpt-6-luna', reasoningEffort: process.env.OPENAI_REASONING_EFFORT }) : undefined,
   speech: process.env.ELEVENLABS_API_KEY
     ? {
         transcribe,

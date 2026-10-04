@@ -74,7 +74,7 @@ export interface RecordingOptions {
 }
 
 const SPEECH_LEVEL = 0.04;
-const QUIET_AFTER_SPEECH_MS = 1600;
+const QUIET_AFTER_SPEECH_MS = 1200;
 const QUIET_WITHOUT_SPEECH_MS = 7000;
 
 export async function startRecording(opts: RecordingOptions = {}): Promise<Recording> {
@@ -160,16 +160,15 @@ export async function embedAudio(audio: Float32Array): Promise<Float32Array> {
   return (await loadEmbedder()).embed(audio);
 }
 
-export interface Listened {
-  vector: Float32Array;
-  /** Always a question to confirm, or an abstention. Never an acceptance. */
-  heard: Heard;
+/** Start loading the speech model while she is still talking, so it is ready by the time she stops. */
+export function warmVoice(): void {
+  void loadEmbedder().catch(() => undefined);
 }
 
-export async function understand(audio: Float32Array, examples: Example[], expect: string[]): Promise<Listened> {
-  const vector = await embedAudio(audio);
+/** The closest known meaning to her vector, as a question to confirm, or an abstention. Never an acceptance. */
+export async function understand(vector: Float32Array, examples: Example[], expect: string[]): Promise<Heard> {
   const top = (await speech()).scoreMeanings(vector, examples, expect)[0];
-  return { vector, heard: top ? { kind: 'confirm', meaning: top.meaning } : { kind: 'abstain' } };
+  return top ? { kind: 'confirm', meaning: top.meaning } : { kind: 'abstain' };
 }
 
 // ── Online listening ───────────────────────────────────────────────────────
@@ -222,7 +221,7 @@ export async function matchOnline(text: string, lang: string, expect: string[]):
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ text, lang, expect }),
-      signal: AbortSignal.timeout(12_000),
+      signal: AbortSignal.timeout(7_000),
     });
     if (!res.ok) return undefined;
     const { meaning } = (await res.json()) as { meaning?: string | null };

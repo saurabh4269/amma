@@ -5,6 +5,7 @@ import type { PackIndex } from '@amma/engine';
 import type { Words } from './pack.ts';
 import { Session } from './session.tsx';
 import { Speaker } from './speaker.ts';
+import { onAskAbout } from './ask-bus.ts';
 
 /** What the screen underneath tells the assistant: the pack, the wording, and whose record is open, if any. */
 export interface AssistantContext {
@@ -31,10 +32,20 @@ export function publishAssistant(ctx: AssistantContext | undefined) {
 export function AssistantShell({ children }: { children: ComponentChildren }) {
   const [, redraw] = useState(0);
   const [asking, setAsking] = useState(false);
+  // What she brought up on the screen underneath, if that is why the assistant opened.
+  const [about, setAbout] = useState<string>();
   useEffect(() => {
     const l = () => redraw((n) => n + 1);
     listeners.add(l);
-    return () => void listeners.delete(l);
+    onAskAbout((meaning) => {
+      Speaker.stopAll();
+      setAbout(meaning);
+      setAsking(true);
+    });
+    return () => {
+      listeners.delete(l);
+      onAskAbout(undefined);
+    };
   }, []);
   const ctx = current;
   // Only the ask step: no plan, no recall, no check, and no SMS.
@@ -42,6 +53,7 @@ export function AssistantShell({ children }: { children: ComponentChildren }) {
   const close = () => {
     Speaker.stopAll();
     setAsking(false);
+    setAbout(undefined);
   };
   return (
     <>
@@ -54,6 +66,7 @@ export function AssistantShell({ children }: { children: ComponentChildren }) {
       {asking && ctx && askIx && (
         <Session
           mode="ask"
+          about={about}
           ix={askIx}
           words={ctx.words}
           places={ctx.places}

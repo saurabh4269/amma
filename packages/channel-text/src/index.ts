@@ -1,5 +1,5 @@
 import type { LanguagePack, PlanSlot, PlanValue } from '@amma/schema';
-import { CHOICE, createSession, step, type Effect, type Event, type Option, type PackIndex, type SessionState } from '@amma/engine';
+import { CHOICE, createSession, outcome, signFact, signsFor, step, type Effect, type Event, type Option, type PackIndex, type SessionState } from '@amma/engine';
 import { matchText, normalise } from '@amma/matcher';
 import type { Profile } from '@amma/schema';
 
@@ -11,7 +11,7 @@ import type { Profile } from '@amma/schema';
 /** What the next inbound message will be read as. Stored with the conversation between messages. */
 export type Awaiting =
   | { kind: 'none' }
-  | { kind: 'choice'; options: Option[]; listen?: string[] }
+  | { kind: 'choice'; options: Option[]; listen?: string[]; /** The card that asked the question, so it can be asked again in full. */ asked?: string }
   | { kind: 'input'; slot: string; slotKind: PlanSlot['kind'] };
 
 export interface Conversation {
@@ -46,7 +46,7 @@ function render(ix: PackIndex, lang: LanguagePack, effects: Effect[], profile: P
         listen = e.expect;
         break;
       case 'choice':
-        awaiting = { kind: 'choice', options: e.options, listen };
+        awaiting = { kind: 'choice', options: e.options, listen, asked: said.at(-1) };
         lines.push(e.options.map((o, i) => `${i + 1}. ${text(ix, lang, o.card)}`).join('\n'));
         break;
       case 'input':
@@ -138,7 +138,7 @@ export function askAside(ix: PackIndex, lang: LanguagePack, profile: Profile, bo
 }
 
 function askAgain(ix: PackIndex, lang: LanguagePack, a: Awaiting): string {
-  if (a.kind === 'choice') return a.options.map((o, i) => `${i + 1}. ${text(ix, lang, o.card)}`).join('\n');
+  if (a.kind === 'choice') return [...(a.asked ? [text(ix, lang, a.asked)] : []), ...a.options.map((o, i) => `${i + 1}. ${text(ix, lang, o.card)}`)].join('\n');
   if (a.kind === 'input') return text(ix, lang, ix.pack.plan.find((s) => s.id === a.slot)?.ask ?? '');
   return '';
 }
@@ -181,13 +181,62 @@ export function receive(ix: PackIndex, lang: LanguagePack, conversation: Convers
     event = { type: 'heard', result: { kind: 'confirm', meaning: hint } };
   }
   if (!event) {
-    // Not an answer we offered: repeat the question rather than guess.
+    // Not an answer we offered: say so and repeat the question rather than guess.
     const again = askAgain(ix, lang, a);
-    return same(again ? [again] : []);
+    return same(again ? [`${lang.ui.not_understood ?? NOT_UNDERSTOOD}\n${again}`] : []);
   }
   const r = step(ix, conversation.session, event);
   const out = render(ix, lang, r.effects, r.state.profile);
   return { conversation: { session: r.state, awaiting: out.awaiting }, messages: out.messages, said: out.said, ended: out.ended };
+}
+
+const NOT_UNDERSTOOD = 'I did not understand that. Please choose one of these, or say it another way.';
+
+// ── Something she tells or asks out of turn ────────────────────────────────
+// At any point she may describe a problem ("my back hurts") instead of answering what was asked.
+// That is handled by the session's own "anything to ask or tell?" step, run on its own beside whatever
+// she was doing: the same clarifying questions, the same danger-sign questions, the same rule tables.
+
+const asideIndex = (ix: PackIndex): PackIndex => ({ ...ix, pack: { ...ix.pack, flow: ['open'] } });
+
+/** Every question and complaint she may bring up out of turn. */
+export function asideMeanings(ix: PackIndex, profile: Profile, date: string): string[] {
+  const a = begin(asideIndex(ix), { translations: {} } as unknown as LanguagePack, profile, date).conversation.awaiting;
+  return a.kind === 'choice' ? (a.listen ?? []) : [];
+}
+
+/**
+ * With no check step, the aside itself must say what her answers mean. The same rule tables decide.
+ * With nothing flagged it says nothing: it has not checked her.
+ */
+function closeAside(ix: PackIndex, lang: LanguagePack, turn: Turn): Turn {
+  if (!turn.ended) return turn;
+  const st = turn.conversation.session;
+  const answered = signsFor(ix, st.phase, 'check').filter((s) => st.facts[signFact(s.id)] !== undefined);
+  const groups = [...new Set(answered.map((s) => s.group))];
+  const o = groups.length ? outcome(ix, groups, st.facts) : undefined;
+  if (!o || o.level === 'none_listed') return turn;
+  const lines = o.cards.map((c) => text(ix, lang, c));
+  if (o.level === 'urgent') {
+    for (const slot of ix.pack.plan) {
+      const v = st.profile.plan[slot.id];
+      if (v) lines.push(`${text(ix, lang, slot.label)}: ${planText(v)}`);
+    }
+  }
+  return { ...turn, messages: [...turn.messages, lines.join('\n')], said: [...turn.said, ...o.cards] };
+}
+
+/** `sure` is true when her own words matched the phrase list; a model's suggestion is played back for her to confirm. */
+export function beginAside(ix: PackIndex, lang: LanguagePack, profile: Profile, date: string, meaning: string, sure: boolean): Turn {
+  const aix = asideIndex(ix);
+  const started = step(aix, createSession(profile, date), { type: 'start' });
+  const r = step(aix, started.state, { type: 'heard', result: sure ? { kind: 'accept', meanings: [meaning] } : { kind: 'confirm', meaning } });
+  const out = render(aix, lang, r.effects, r.state.profile);
+  return closeAside(ix, lang, { conversation: { session: r.state, awaiting: out.awaiting }, messages: out.messages, said: out.said, ended: out.ended });
+}
+
+export function receiveAside(ix: PackIndex, lang: LanguagePack, conversation: Conversation, body: string, hint?: string): Turn {
+  return closeAside(ix, lang, receive(asideIndex(ix), lang, conversation, body, hint));
 }
 
 export { CHOICE };
