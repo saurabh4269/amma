@@ -55,9 +55,16 @@ describe('rules', () => {
 
   it('the validator catches a table that clears an unsure answer', () => {
     const broken = structuredClone(fixtureInput);
-    broken.rules[0]!.rows.splice(1, 1);
+    broken.rules[0]!.rows.splice(2, 1);
     const pack = ContentPack.parse(broken);
     expect(checkTable(indexPack(pack), pack.rules[0]!).map((p) => p.problem)).toContain('unsure_cleared');
+  });
+
+  it('the validator catches a table that ignores a see-a-worker-soon sign', () => {
+    const broken = structuredClone(fixtureInput);
+    broken.rules[1]!.rows.splice(1, 1);
+    const pack = ContentPack.parse(broken);
+    expect(checkTable(indexPack(pack), pack.rules[1]!).map((p) => p.problem)).toContain('soon_yes_cleared');
   });
 
   it('a clinical card without a source fails validation', () => {
@@ -194,11 +201,34 @@ describe('session', () => {
   it('after birth, mother and newborn signs are both taught and checked', () => {
     const { said, st } = drive(createSession(profile({ plan: planned, phase: 'after_birth' }), '2026-10-04'), [
       chose(CHOICE.done),
-      ...answers('no', 'unsure'),
+      ...answers('no', 'no', 'unsure'),
       chose(CHOICE.done),
     ]);
-    expect(said).toEqual(expect.arrayContaining(['pp_bleed_t', 'nb_feed_t', 'pp_bleed_a', 'nb_feed_a', 'out_ask']));
+    expect(said).toEqual(expect.arrayContaining(['pp_bleed_t', 'nb_feed_t', 'pp_bleed_a', 'pp_breast_a', 'nb_feed_a', 'out_ask']));
     expect(st.level).toBe('ask_person');
+  });
+
+  it('a "yes" on a see-a-worker-soon sign says what it is, then "soon", and offers the worker but not the emergency plan', () => {
+    const { said, st, effects } = drive(createSession(profile({ plan: planned, phase: 'after_birth' }), '2026-10-04'), [
+      chose(CHOICE.done),
+      ...answers('no', 'yes', 'no'),
+      chose(CHOICE.done),
+    ]);
+    expect(st.level).toBe('soon');
+    expect(said.slice(-2)).toEqual(['pp_breast_t', 'out_soon']);
+    expect(said).not.toContain('out_urgent');
+    expect(effects.some((e) => e.type === 'show_plan')).toBe(false);
+    expect(effects).toContainEqual({ type: 'offer_call', contacts: [{ slot: 'decider', name: 'A', phone: '1' }] });
+  });
+
+  it('see-a-worker-soon signs are not part of recall, and an urgent "yes" outranks a soon "yes"', () => {
+    const { st } = drive(createSession(profile({ plan: planned, phase: 'after_birth' }), '2026-10-04'), [
+      chose(CHOICE.done),
+      ...answers('yes', 'yes', 'no'),
+      chose(CHOICE.done),
+    ]);
+    expect(st.due).toEqual(['pp_bleed', 'nb_feed']);
+    expect(st.level).toBe('urgent');
   });
 
   it('a track plays one card per session and widens what she can ask', () => {
@@ -232,7 +262,9 @@ describe('properties', () => {
         const { st, said } = drive(createSession(profile({ phase: afterBirth ? 'after_birth' : 'pregnant' }), '2026-10-04'), events);
         const answersGiven = Object.entries(st.facts).filter(([k]) => k.startsWith('sign:')).map(([, v]) => v);
         if (st.level !== undefined) {
-          if (answersGiven.includes('yes')) expect(st.level).toBe('urgent');
+          const yesOn = (u: string) => fixture.signs.some((s) => s.urgency === u && st.facts[signFact(s.id)] === 'yes');
+          if (yesOn('urgent')) expect(st.level).toBe('urgent');
+          else if (yesOn('soon')) expect(st.level).toBe('soon');
           if (st.level === 'none_listed') expect(answersGiven.every((a) => a === 'no')).toBe(true);
         }
         // Everything spoken is a card in the pack: the engine cannot say anything else.

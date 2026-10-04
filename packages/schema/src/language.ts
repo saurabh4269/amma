@@ -39,6 +39,8 @@ export const Thresholds = z.strictObject({
 export const LanguagePack = z.strictObject({
   id: z.string().regex(/^[a-z]{2,3}(-[A-Za-z0-9]+)*$/, 'BCP 47 tag'),
   name: z.string(),
+  /** Language with region, as speech services want it, for example `hi-IN`. Needed for phone calls. */
+  locale: z.string().regex(/^[a-z]{2,3}-[A-Z]{2}$/).optional(),
   content: z.strictObject({ id: Id, version: z.string() }),
   translations: z.record(Id, Translation),
   templates: z.record(Id, Translation).default({}),

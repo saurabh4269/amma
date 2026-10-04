@@ -2,6 +2,7 @@
 # No official Marathi edition of the MCP card was found, so none of this wording is official.
 id: mr
 name: मराठी
+locale: mr-IN
 content: { id: in-mch, version: 0.1.0 }
 defaultStatus: machine_draft
 
@@ -57,6 +58,7 @@ ui:
   no_coverage: "तुम्ही जिथे आहात तिथली आरोग्य केंद्रांची यादी बसवलेली नाही. नाव लिहा."
   no_location: "फोनला स्वतःचे ठिकाण सांगता आले नाही. नाव लिहा."
   unconfirmed: "सार्वजनिक नकाशावरून, अधिकृत यादीतून नाही"
+  press_for: "मराठीसाठी {n} दाबा."
   consent: "ही सेवा सरकारी आरोग्य पुस्तिकांमधून गरोदरपण आणि नवजात बाळाची माहिती देते. ती आरोग्य कर्मचाऱ्याची जागा घेत नाही. ती या फोन नंबरसोबत तुमची उत्तरे ठेवते, संदेश नाही. सर्व काही पुसण्यासाठी कधीही STOP पाठवा."
   stopped: "या नंबरची सर्व माहिती पुसली आहे."
   again: "नवीन सत्र सुरू करण्यासाठी कोणताही संदेश पाठवा."

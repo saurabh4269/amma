@@ -1,0 +1,56 @@
+# Signs that mean "see a health worker as soon as possible", not "go now".
+# They rest on the woman-facing sheets M4 and M6 of the WHO 2015 guide. The Indian card has no such tier.
+# They are asked about in the check but are not part of the recall step.
+x-src:
+  breast: &breast { doc: who-pcpnc, page: "M4", quote: "Swollen, red or tender breasts or nipples." }
+  urine: &urine { doc: who-pcpnc, page: "M4", quote: "Problems urinating, or leaking." }
+  wound: &wound { doc: who-pcpnc, page: "M4", quote: "Increased pain or infection in the perineum." }
+  discharge: &discharge { doc: who-pcpnc, page: "M4", quote: "Smelly vaginal discharge." }
+  eyes: &eyes { doc: who-pcpnc, page: "M6", quote: "Pus coming from the eyes." }
+  cord: &cord { doc: who-pcpnc, page: "M6", quote: "Irritated cord with pus or blood." }
+  mouth: &mouth { doc: who-pcpnc, page: "M6", quote: "Ulcers or thrush (white patches) in the mouth." }
+
+signs:
+  - { id: pp_breast, group: mother_after_birth, urgency: soon, label: pp_breast_l, teach: pp_breast_t, ask: pp_breast_a }
+  - { id: pp_urine, group: mother_after_birth, urgency: soon, label: pp_urine_l, teach: pp_urine_t, ask: pp_urine_a }
+  - { id: pp_wound, group: mother_after_birth, urgency: soon, label: pp_wound_l, teach: pp_wound_t, ask: pp_wound_a }
+  - { id: pp_discharge, group: mother_after_birth, urgency: soon, label: pp_discharge_l, teach: pp_discharge_t, ask: pp_discharge_a }
+  - { id: nb_eyes, group: newborn, urgency: soon, label: nb_eyes_l, teach: nb_eyes_t, ask: nb_eyes_a }
+  - { id: nb_cord, group: newborn, urgency: soon, label: nb_cord_l, teach: nb_cord_t, ask: nb_cord_a }
+  - { id: nb_mouth, group: newborn, urgency: soon, label: nb_mouth_l, teach: nb_mouth_t, ask: nb_mouth_a }
+
+cards:
+  - { id: pp_breast_l, kind: sign_label, status: from_source, source: *breast, picture: "🤱", ref: "Swollen, red or tender breasts or nipples" }
+  - { id: pp_breast_t, kind: sign_teach, status: from_source, source: *breast, picture: "🤱", ref: "Your breasts or nipples are swollen, red or tender." }
+  - { id: pp_breast_a, kind: sign_ask, status: from_source, source: *breast, picture: "🤱", ref: "Mother: are your breasts or nipples swollen, red or tender?" }
+  - { id: pp_urine_l, kind: sign_label, status: from_source, source: *urine, picture: "🚻", ref: "Problems passing urine, or leaking" }
+  - { id: pp_urine_t, kind: sign_teach, status: from_source, source: *urine, picture: "🚻", ref: "You have problems passing urine, or urine is leaking." }
+  - { id: pp_urine_a, kind: sign_ask, status: from_source, source: *urine, picture: "🚻", ref: "Mother: do you have problems passing urine, or is urine leaking?" }
+  - { id: pp_wound_l, kind: sign_label, status: from_source, source: *wound, picture: "🩹", ref: "More pain or infection where you tore or were stitched" }
+  - { id: pp_wound_t, kind: sign_teach, status: from_source, source: *wound, picture: "🩹", ref: "There is more pain or infection where you tore or were stitched." }
+  - { id: pp_wound_a, kind: sign_ask, status: from_source, source: *wound, picture: "🩹", ref: "Mother: is there more pain, or infection, where you tore or were stitched?" }
+  - { id: pp_discharge_l, kind: sign_label, status: from_source, source: *discharge, picture: "💧", ref: "Smelly discharge" }
+  - { id: pp_discharge_t, kind: sign_teach, status: from_source, source: *discharge, picture: "💧", ref: "You have smelly discharge from the birth passage." }
+  - { id: pp_discharge_a, kind: sign_ask, status: from_source, source: *discharge, picture: "💧", ref: "Mother: do you have smelly discharge from the birth passage?" }
+  - { id: nb_eyes_l, kind: sign_label, status: from_source, source: *eyes, picture: "👁️", ref: "Pus coming from the baby's eyes" }
+  - { id: nb_eyes_t, kind: sign_teach, status: from_source, source: *eyes, picture: "👁️", ref: "Pus is coming from the baby's eyes." }
+  - { id: nb_eyes_a, kind: sign_ask, status: from_source, source: *eyes, picture: "👁️", ref: "Baby: is pus coming from the baby's eyes?" }
+  - { id: nb_cord_l, kind: sign_label, status: from_source, source: *cord, picture: "🩹", ref: "The baby's cord has pus or blood" }
+  - { id: nb_cord_t, kind: sign_teach, status: from_source, source: *cord, picture: "🩹", ref: "The baby's cord is irritated, with pus or blood." }
+  - { id: nb_cord_a, kind: sign_ask, status: from_source, source: *cord, picture: "🩹", ref: "Baby: is the cord irritated, with pus or blood?" }
+  - { id: nb_mouth_l, kind: sign_label, status: from_source, source: *mouth, picture: "👄", ref: "White patches or sores in the baby's mouth" }
+  - { id: nb_mouth_t, kind: sign_teach, status: from_source, source: *mouth, picture: "👄", ref: "The baby has sores or white patches in the mouth." }
+  - { id: nb_mouth_a, kind: sign_ask, status: from_source, source: *mouth, picture: "👄", ref: "Baby: are there sores or white patches in the baby's mouth?" }
+
+  - id: out_mother_soon
+    kind: outcome
+    status: from_source
+    picture: "🧑‍⚕️"
+    source: { doc: who-pcpnc, page: "M4", quote: "Go to health centre as soon as possible if any of the following signs:" }
+    ref: "Mother, go to the health centre as soon as possible. Tell your ASHA or ANM today."
+  - id: out_newborn_soon
+    kind: outcome
+    status: from_source
+    picture: "🧑‍⚕️"
+    source: { doc: who-pcpnc, page: "M6", quote: "Go to the health centre as soon as possible if your baby has any of the following signs:" }
+    ref: "Take the baby to the health centre as soon as possible. Tell your ASHA or ANM today."

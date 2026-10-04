@@ -3,17 +3,19 @@
 rules:
   - group: pregnancy
     rows:
-      - { id: any_yes, when: { anySign: { group: pregnancy, is: "yes" } }, level: urgent, card: out_preg_urgent }
+      - { id: urgent_yes, when: { anySign: { group: pregnancy, is: "yes", urgency: urgent } }, level: urgent, card: out_preg_urgent }
       - { id: any_unsure, when: { anySign: { group: pregnancy, is: unsure } }, level: ask_person, card: out_ask }
       - { id: default, level: none_listed, card: out_none }
   - group: mother_after_birth
     rows:
-      - { id: any_yes, when: { anySign: { group: mother_after_birth, is: "yes" } }, level: urgent, card: out_mother_urgent }
+      - { id: urgent_yes, when: { anySign: { group: mother_after_birth, is: "yes", urgency: urgent } }, level: urgent, card: out_mother_urgent }
+      - { id: soon_yes, when: { anySign: { group: mother_after_birth, is: "yes", urgency: soon } }, level: soon, card: out_mother_soon }
       - { id: any_unsure, when: { anySign: { group: mother_after_birth, is: unsure } }, level: ask_person, card: out_ask }
       - { id: default, level: none_listed, card: out_none }
   - group: newborn
     rows:
-      - { id: any_yes, when: { anySign: { group: newborn, is: "yes" } }, level: urgent, card: out_newborn_urgent }
+      - { id: urgent_yes, when: { anySign: { group: newborn, is: "yes", urgency: urgent } }, level: urgent, card: out_newborn_urgent }
+      - { id: soon_yes, when: { anySign: { group: newborn, is: "yes", urgency: soon } }, level: soon, card: out_newborn_soon }
       - { id: any_unsure, when: { anySign: { group: newborn, is: unsure } }, level: ask_person, card: out_ask }
       - { id: default, level: none_listed, card: out_none }
 

@@ -61,7 +61,7 @@ test('after the birth, mother and newborn signs are asked, and all "no" never sa
   for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Skip' }).click();
   await page.getByRole('button', { name: 'That is all' }).click();
   await expect(page.getByText('Mother: since last time, have you had excessive bleeding?')).toBeVisible();
-  for (let i = 0; i < 14; i++) await page.locator('.opt-no').click();
+  for (let i = 0; i < 21; i++) await page.locator('.opt-no').click();
   await page.getByRole('button', { name: 'That is all' }).click();
   await expect(page.getByText('None of the listed danger signs today.')).toBeVisible();
   await expect(page.getByText(/you are fine|healthy|nothing wrong/i)).toHaveCount(0);

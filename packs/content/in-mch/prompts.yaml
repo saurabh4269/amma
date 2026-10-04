@@ -40,7 +40,7 @@ cards:
 plan:
   - { id: decider, ask: s_decider_ask, label: s_decider, kind: contact, callOnUrgent: true }
   - { id: escort, ask: s_escort_ask, label: s_escort, kind: contact, callOnUrgent: true }
-  - { id: worker, ask: s_worker_ask, label: s_worker, kind: contact, callOnUrgent: true }
+  - { id: worker, ask: s_worker_ask, label: s_worker, kind: contact, callOnUrgent: true, callOnSoon: true }
   - { id: facility, ask: s_facility_ask, label: s_facility, kind: facility }
   - { id: transport, ask: s_transport_ask, label: s_transport, kind: transport, callOnUrgent: true }
   - { id: money, ask: s_money_ask, label: s_money, kind: yesno }

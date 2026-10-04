@@ -3,6 +3,7 @@
 # from page images and also needs proofreading. Change defaultStatus only after a speaker has reviewed the file.
 id: hi
 name: हिन्दी
+locale: hi-IN
 content: { id: in-mch, version: 0.1.0 }
 defaultStatus: machine_draft
 
@@ -58,6 +59,7 @@ ui:
   no_coverage: "आप जहाँ हैं वहाँ की स्वास्थ्य केन्द्रों की सूची नहीं डाली गई है। नाम लिखें।"
   no_location: "फ़ोन अपनी जगह नहीं बता सका। नाम लिखें।"
   unconfirmed: "सार्वजनिक नक्शे से, सरकारी सूची से नहीं"
+  press_for: "हिन्दी के लिए {n} दबाएँ।"
   consent: "यह सेवा सरकारी स्वास्थ्य पुस्तिकाओं से गर्भावस्था और नवजात शिशु की जानकारी देती है। यह स्वास्थ्य कार्यकर्ता की जगह नहीं लेती। यह इस फ़ोन नंबर के साथ आपके जवाब रखती है, संदेश नहीं। सब कुछ मिटाने के लिए कभी भी STOP भेजें।"
   stopped: "इस नंबर की सारी जानकारी मिटा दी गई है।"
   again: "नई बातचीत शुरू करने के लिए कोई भी संदेश भेजें।"

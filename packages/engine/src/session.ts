@@ -202,7 +202,8 @@ class Run {
 
   // ── recall ──────────────────────────────────────────────────────────────
   private enterRecall(): void {
-    const taught = signsFor(this.ix, this.st.phase, 'teach').map((s) => s.id);
+    // Recall is about the signs that mean "go now"; the see-a-worker-soon signs are only asked about.
+    const taught = signsFor(this.ix, this.st.phase, 'teach').filter((s) => s.urgency === 'urgent').map((s) => s.id);
     this.st.due = dueSigns(this.ix, this.st.profile, taught);
     if (this.st.due.length === 0) return this.advance();
     this.st.sub = { node: 'recall', taught, turns: 0, abstains: 0 };
@@ -397,12 +398,18 @@ class Run {
     const groups = this.ix.pack.phases[this.st.phase]!.check;
     const o = outcome(this.ix, groups, this.st.facts);
     this.st.level = o.level;
+    if (o.level === 'soon') {
+      // Say what each "yes" was about before saying what to do, so the advice is not heard as a general remark.
+      const yes = signsFor(this.ix, this.st.phase, 'check').filter((s) => s.urgency === 'soon' && this.st.facts[signFact(s.id)] === 'yes');
+      this.say(...yes.map((s) => s.teach));
+    }
     this.say(...o.cards);
-    if (o.level === 'urgent') {
-      this.playPlan();
+    if (o.level === 'urgent') this.playPlan();
+    if (o.level === 'urgent' || o.level === 'soon') {
       const contacts = this.ix.pack.plan.flatMap((s) => {
         const v = this.st.profile.plan[s.id];
-        if (!s.callOnUrgent || !v || !('contact' in v)) return [];
+        const wanted = o.level === 'urgent' ? s.callOnUrgent : s.callOnSoon;
+        if (!wanted || !v || !('contact' in v)) return [];
         return [{ slot: s.id, name: v.contact.name, phone: v.contact.phone }];
       });
       if (contacts.length) this.out.push({ type: 'offer_call', contacts });

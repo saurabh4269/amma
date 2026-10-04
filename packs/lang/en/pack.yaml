@@ -2,8 +2,11 @@
 # This folder only adds typed phrases for text channels.
 id: en
 name: English
+locale: en-IN
 content: { id: in-mch, version: 0.1.0 }
 translations: {}
+ui:
+  press_for: "For English, press {n}."
 lexicon:
   "sign:bleeding": ["bleeding", "blood"]
   "sign:breathless": ["breathless", "short of breath", "anaemia", "anemia", "low blood"]

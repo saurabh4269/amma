@@ -2,9 +2,9 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import formbody from '@fastify/formbody';
 import { Profile, type LanguagePack } from '@yaay/schema';
 import type { PackIndex } from '@yaay/engine';
-import { begin, receive, type Turn } from '@yaay/channel-text';
+import { begin, receive, REPEAT, type Turn } from '@yaay/channel-text';
 import type { Store, User } from './store.ts';
-import { twiml, validSignature } from './twilio.ts';
+import { twiml, validSignature, voiceTwiml } from './twilio.ts';
 
 export interface Config {
   ix: PackIndex;
@@ -25,6 +25,18 @@ const SERVER_UI = {
   stopped: 'Everything kept for this number has been deleted.',
   again: 'Send any message to start a new session.',
 } as const;
+
+/** One piece of a reply, with the language it is in so a call can speak it with the right voice. */
+interface Part {
+  text: string;
+  lang?: LanguagePack;
+}
+interface Reply {
+  parts: Part[];
+  /** The session finished: a call can hang up. */
+  ended: boolean;
+}
+const DEFAULT_LOCALE = 'en-IN';
 
 const STOP = /^\s*(stop|unsubscribe|बंद|रोको|थांबा)\s*$/i;
 
@@ -53,26 +65,63 @@ export function buildApp(cfg: Config): FastifyInstance {
     if (hit && hit.minute === minute && hit.count >= cfg.ratePerMinute) return twiml([]);
     hits.set(address, { minute, count: hit?.minute === minute ? hit.count + 1 : 1 });
 
-    return twiml(handle(address, body));
+    return twiml(handle(address, body, 'text').parts.map((p) => p.text));
   });
 
-  function handle(address: string, body: string): string[] {
+  // Phone calls. The same session, spoken; she answers by key press or by speaking.
+  // Twilio turns her speech into text for Hindi, Marathi and English. It has no Wolof.
+  app.post('/twilio/voice', async (req, reply) => {
+    const params = req.body as Record<string, string>;
+    const url = `${cfg.publicUrl}/twilio/voice`;
+    if (!validSignature(cfg.authToken, url, params, req.headers['x-twilio-signature'] as string | undefined)) {
+      return reply.code(403).send('bad signature');
+    }
+    if (!params.From) return reply.code(400).send('missing From');
+    // A separate record from the same number's text conversation: channels are kept apart.
+    const address = `voice:${params.From}`;
+    const first = params.Digits === undefined && params.SpeechResult === undefined;
+    const known = cfg.store.get(address);
+    const out = first && known?.conversation ? repeatLast(known) : handle(address, params.Digits ?? params.SpeechResult ?? '', 'voice');
+    const lang = cfg.languages.find((l) => l.id === cfg.store.get(address)?.lang);
+    reply.type('text/xml');
+    return voiceTwiml(
+      out.parts.map((p) => ({ text: p.text, locale: p.lang?.locale ?? lang?.locale ?? DEFAULT_LOCALE })),
+      { action: url, listenLocale: lang?.locale ?? DEFAULT_LOCALE, hangup: out.ended },
+    );
+  });
+
+  /** She called back in the middle of a session: say where we were instead of treating silence as an answer. */
+  function repeatLast(user: User): Reply {
+    const lang = cfg.languages.find((l) => l.id === user.lang);
+    const turn = receive(cfg.ix, lang!, user.conversation!, REPEAT);
+    return { parts: turn.messages.map((text) => ({ text, lang })), ended: false };
+  }
+
+  function handle(address: string, body: string, channel: 'text' | 'voice'): Reply {
     const user: User = cfg.store.get(address) ?? { address, consented: false };
     const lang = cfg.languages.find((l) => l.id === user.lang);
 
     if (STOP.test(body)) {
       cfg.store.forget(address);
-      return [ui(lang, 'stopped')];
+      return { parts: [{ text: ui(lang, 'stopped'), lang }], ended: true };
     }
 
     // First contact: say what this is and what is kept. Choosing a language is the consent.
     if (!user.consented || !lang) {
       const picked = cfg.languages[Number(body.trim()) - 1];
-      if (!picked) return [`${SERVER_UI.consent}\n\n${languageMenu()}`];
+      if (!picked) {
+        if (channel === 'voice') {
+          // On a call each language announces itself in its own voice; the explanation follows once she has chosen.
+          return { parts: cfg.languages.map((l, i) => ({ text: (l.ui.press_for ?? `${l.name}: {n}`).replace('{n}', String(i + 1)), lang: l })), ended: false };
+        }
+        return { parts: [{ text: `${SERVER_UI.consent}\n\n${languageMenu()}` }], ended: false };
+      }
       user.lang = picked.id;
       user.consented = true;
       user.profile = Profile.parse({ id: address, label: '', lang: picked.id, phase: 'pregnant' });
-      return finishTurn(user, begin(cfg.ix, picked, user.profile, cfg.today()));
+      const reply = finishTurn(user, begin(cfg.ix, picked, user.profile, cfg.today()));
+      // Said again in her own language, now that we know it.
+      return { ...reply, parts: [{ text: ui(picked, 'consent'), lang: picked }, ...reply.parts] };
     }
 
     if (!user.conversation) {
@@ -81,7 +130,7 @@ export function buildApp(cfg: Config): FastifyInstance {
     return finishTurn(user, receive(cfg.ix, lang, user.conversation, body));
   }
 
-  function finishTurn(user: User, turn: Turn): string[] {
+  function finishTurn(user: User, turn: Turn): Reply {
     if (turn.ended) {
       user.profile = turn.conversation.session.profile;
       user.conversation = undefined;
@@ -90,7 +139,8 @@ export function buildApp(cfg: Config): FastifyInstance {
     }
     cfg.store.put(user);
     const lang = cfg.languages.find((l) => l.id === user.lang);
-    return turn.ended ? [...turn.messages, ui(lang, 'again')] : turn.messages;
+    const texts = turn.ended ? [...turn.messages, ui(lang, 'again')] : turn.messages;
+    return { parts: texts.map((text) => ({ text, lang })), ended: turn.ended };
   }
 
   return app;

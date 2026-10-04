@@ -8,7 +8,8 @@ export function holds(ix: PackIndex, cond: Cond, facts: Facts): boolean {
   if ('fact' in cond) return facts[cond.fact] === cond.is;
   if ('anySign' in cond) {
     const signs = ix.signsByGroup.get(cond.anySign.group) ?? [];
-    return signs.some((s) => facts[signFact(s.id)] === cond.anySign.is);
+    const { is, urgency } = cond.anySign;
+    return signs.some((s) => (urgency === undefined || s.urgency === urgency) && facts[signFact(s.id)] === is);
   }
   if ('all' in cond) return cond.all.every((c) => holds(ix, c, facts));
   if ('any' in cond) return cond.any.some((c) => holds(ix, c, facts));
@@ -47,7 +48,7 @@ export function outcome(ix: PackIndex, groups: SignGroup[], facts: Facts): Outco
 
 export interface TableProblem {
   group: SignGroup;
-  problem: 'no_outcome' | 'yes_not_urgent' | 'unsure_cleared' | 'too_many_signs';
+  problem: 'no_outcome' | 'yes_not_urgent' | 'soon_yes_cleared' | 'unsure_cleared' | 'too_many_signs';
   facts?: Facts;
 }
 
@@ -56,9 +57,10 @@ const ANSWERS = ['yes', 'no', 'unsure'] as const;
 export const MAX_SIGNS_PER_GROUP = 13;
 
 /**
- * Prove three properties of a table by trying every combination of answers:
- * every combination has an outcome; any "yes" gives an urgent outcome; and any
- * "unsure" never gives "none listed" (an unsure answer must reach a person).
+ * Prove four properties of a table by trying every combination of answers:
+ * every combination has an outcome; a "yes" on an urgent sign gives an urgent outcome;
+ * a "yes" on a see-a-worker-soon sign gives at least "soon"; and any "unsure" never
+ * gives "none listed" (an unsure answer must reach a person).
  */
 export function checkTable(ix: PackIndex, table: RuleTable): TableProblem[] {
   const signs = ix.signsByGroup.get(table.group) ?? [];
@@ -71,20 +73,22 @@ export function checkTable(ix: PackIndex, table: RuleTable): TableProblem[] {
     problems.push({ group: table.group, problem, facts: { ...facts } });
   };
   const facts: Facts = {};
-  const walk = (i: number, anyYes: boolean, anyUnsure: boolean) => {
+  const walk = (i: number, urgentYes: boolean, soonYes: boolean, anyUnsure: boolean) => {
     const s = signs[i];
     if (!s) {
       const row = decide(ix, table, facts);
       if (!row) report('no_outcome', facts);
-      else if (anyYes && row.level !== 'urgent') report('yes_not_urgent', facts);
+      else if (urgentYes && row.level !== 'urgent') report('yes_not_urgent', facts);
+      else if (soonYes && levelRank(row.level) > levelRank('soon')) report('soon_yes_cleared', facts);
       else if (anyUnsure && row.level === 'none_listed') report('unsure_cleared', facts);
       return;
     }
     for (const a of ANSWERS) {
       facts[signFact(s.id)] = a;
-      walk(i + 1, anyYes || a === 'yes', anyUnsure || a === 'unsure');
+      const yes = a === 'yes';
+      walk(i + 1, urgentYes || (yes && s.urgency === 'urgent'), soonYes || (yes && s.urgency === 'soon'), anyUnsure || a === 'unsure');
     }
   };
-  walk(0, false, false);
+  walk(0, false, false, false);
   return problems;
 }

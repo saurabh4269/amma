@@ -12,7 +12,7 @@ const card = (id: string, kind: string, status = 'from_source') => ({
   status,
   ...(status === 'interface' ? {} : { source: src }),
 });
-const sign = (id: string, group: string) => ({ id, group, label: `${id}_l`, teach: `${id}_t`, ask: `${id}_a` });
+const sign = (id: string, group: string, urgency = 'urgent') => ({ id, group, urgency, label: `${id}_l`, teach: `${id}_t`, ask: `${id}_a` });
 const signCards = (id: string) => [card(`${id}_l`, 'sign_label'), card(`${id}_t`, 'sign_teach'), card(`${id}_a`, 'sign_ask')];
 const prompts = [
   'recall_ask', 'recall_more', 'recall_missed', 'recall_all', 'check_intro', 'open_ask', 'open_more',
@@ -21,7 +21,8 @@ const prompts = [
 const table = (group: string) => ({
   group,
   rows: [
-    { id: 'any_yes', when: { anySign: { group, is: 'yes' } }, level: 'urgent', card: 'out_urgent' },
+    { id: 'urgent_yes', when: { anySign: { group, is: 'yes', urgency: 'urgent' } }, level: 'urgent', card: 'out_urgent' },
+    { id: 'soon_yes', when: { anySign: { group, is: 'yes', urgency: 'soon' } }, level: 'soon', card: 'out_soon' },
     { id: 'any_unsure', when: { anySign: { group, is: 'unsure' } }, level: 'ask_person', card: 'out_ask' },
     { id: 'default', level: 'none_listed', card: 'out_none' },
   ],
@@ -36,9 +37,9 @@ export const fixtureInput = {
   sources: [{ id: 'fixture', title: 'Fixture', publisher: 'tests', year: 2026, url: 'https://example.org/fixture', license: 'none' }],
   cards: [
     ...['bleed', 'head', 'fever'].flatMap(signCards),
-    ...['pp_bleed', 'nb_feed'].flatMap(signCards),
+    ...['pp_bleed', 'pp_breast', 'nb_feed'].flatMap(signCards),
     ...prompts.map((p) => card(`p_${p}`, 'prompt', 'interface')),
-    card('out_urgent', 'outcome'), card('out_ask', 'outcome'), card('out_none', 'outcome'),
+    card('out_urgent', 'outcome'), card('out_soon', 'outcome'), card('out_ask', 'outcome'), card('out_none', 'outcome'),
     card('q_food_l', 'label', 'interface'), card('q_food_a', 'answer'),
     card('q_iron_l', 'label', 'interface'), card('q_iron_a', 'answer'),
     card('c_pain', 'label', 'interface'),
@@ -48,7 +49,7 @@ export const fixtureInput = {
     card('s_decider_ask', 'prompt', 'interface'), card('s_decider', 'label', 'interface'),
     card('s_facility_ask', 'prompt', 'interface'), card('s_facility', 'label', 'interface'),
   ],
-  signs: [sign('bleed', 'pregnancy'), sign('head', 'pregnancy'), sign('fever', 'pregnancy'), sign('pp_bleed', 'mother_after_birth'), sign('nb_feed', 'newborn')],
+  signs: [sign('bleed', 'pregnancy'), sign('head', 'pregnancy'), sign('fever', 'pregnancy'), sign('pp_bleed', 'mother_after_birth'), sign('pp_breast', 'mother_after_birth', 'soon'), sign('nb_feed', 'newborn')],
   questions: [
     { id: 'food', label: 'q_food_l', answer: 'q_food_a' },
     { id: 'iron', label: 'q_iron_l', answer: 'q_iron_a', tracks: ['anaemia'] },
@@ -66,7 +67,7 @@ export const fixtureInput = {
   ],
   tracks: [{ id: 'anaemia', label: 't_anaemia', phases: ['pregnant'], cards: ['t_anaemia_1', 't_anaemia_2'], boosts: ['bleed'] }],
   plan: [
-    { id: 'decider', ask: 's_decider_ask', label: 's_decider', kind: 'contact', callOnUrgent: true },
+    { id: 'decider', ask: 's_decider_ask', label: 's_decider', kind: 'contact', callOnUrgent: true, callOnSoon: true },
     { id: 'facility', ask: 's_facility_ask', label: 's_facility', kind: 'facility' },
   ],
   prompts: Object.fromEntries(prompts.map((p) => [p, `p_${p}`])),

@@ -75,6 +75,8 @@ export const Sign = z.strictObject({
   label: Id,
   teach: Id,
   ask: Id,
+  /** `urgent`: go now. `soon`: see a health worker as soon as possible. Only urgent signs are in the recall step. */
+  urgency: z.enum(['urgent', 'soon']).default('urgent'),
 });
 export type Sign = z.infer<typeof Sign>;
 
@@ -90,14 +92,14 @@ export type Question = z.infer<typeof Question>;
 /** Conditions over session facts. Facts are strings keyed like `sign:<id>`. */
 export type Cond =
   | { fact: string; is: string }
-  | { anySign: { group: SignGroup; is: 'yes' | 'no' | 'unsure' } }
+  | { anySign: { group: SignGroup; is: 'yes' | 'no' | 'unsure'; urgency?: 'urgent' | 'soon' } }
   | { all: Cond[] }
   | { any: Cond[] }
   | { not: Cond };
 export const Cond: z.ZodType<Cond> = z.lazy(() =>
   z.union([
     z.strictObject({ fact: z.string(), is: z.string() }),
-    z.strictObject({ anySign: z.strictObject({ group: SignGroup, is: z.enum(['yes', 'no', 'unsure']) }) }),
+    z.strictObject({ anySign: z.strictObject({ group: SignGroup, is: z.enum(['yes', 'no', 'unsure']), urgency: z.enum(['urgent', 'soon']).optional() }) }),
     z.strictObject({ all: z.array(Cond).min(1) }),
     z.strictObject({ any: z.array(Cond).min(1) }),
     z.strictObject({ not: Cond }),
@@ -164,6 +166,8 @@ export const PlanSlot = z.strictObject({
   kind: z.enum(['contact', 'facility', 'transport', 'yesno']),
   /** Whether a "yes" on a danger sign should offer to call this contact. */
   callOnUrgent: z.boolean().default(false),
+  /** Whether a "yes" on a see-a-worker-soon sign should offer to call this contact. */
+  callOnSoon: z.boolean().default(false),
 });
 export type PlanSlot = z.infer<typeof PlanSlot>;
 

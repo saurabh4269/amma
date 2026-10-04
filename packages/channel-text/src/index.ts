@@ -109,13 +109,20 @@ export function begin(ix: PackIndex, lang: LanguagePack, profile: Profile, date:
   return { conversation: { session: r.state, awaiting: out.awaiting }, messages: out.messages, ended: out.ended };
 }
 
+/** Sent in place of a message to ask for the last question again without answering it. */
+export const REPEAT = '\u0000';
+
 export function receive(ix: PackIndex, lang: LanguagePack, conversation: Conversation, body: string): Turn {
-  const event = interpret(body, conversation.awaiting, lang);
+  const event = body === REPEAT ? undefined : interpret(body, conversation.awaiting, lang);
   if (!event) {
     // Not a number we offered: repeat the choices rather than guess.
-    const again = conversation.awaiting.kind === 'choice'
-      ? conversation.awaiting.options.map((o, i) => `${i + 1}. ${text(ix, lang, o.card)}`).join('\n')
-      : '';
+    const a = conversation.awaiting;
+    const again =
+      a.kind === 'choice'
+        ? a.options.map((o, i) => `${i + 1}. ${text(ix, lang, o.card)}`).join('\n')
+        : a.kind === 'input'
+          ? text(ix, lang, ix.pack.plan.find((s) => s.id === a.slot)?.ask ?? '')
+          : '';
     return { conversation, messages: again ? [again] : [], ended: conversation.session.ended };
   }
   const r = step(ix, conversation.session, event);
