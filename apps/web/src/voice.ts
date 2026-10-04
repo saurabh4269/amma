@@ -92,6 +92,11 @@ export async function addExample(lang: string, meaning: string, vector: Float32A
   await set(storeKey(lang), [...rest, ...same.slice(-(MAX_EXAMPLES_PER_MEANING - 1)), { meaning, vector: [...vector], speaker }]);
 }
 
+/** Her speech as a vector. The audio itself is dropped as soon as this returns. */
+export async function embedAudio(audio: Float32Array): Promise<Float32Array> {
+  return (await loadEmbedder()).embed(audio);
+}
+
 export interface Listened {
   vector: Float32Array;
   /** Always a question to confirm, or an abstention. Never an acceptance. */
@@ -99,7 +104,7 @@ export interface Listened {
 }
 
 export async function understand(audio: Float32Array, examples: Example[], expect: string[]): Promise<Listened> {
-  const vector = await (await loadEmbedder()).embed(audio);
+  const vector = await embedAudio(audio);
   const top = (await speech()).scoreMeanings(vector, examples, expect)[0];
   return { vector, heard: top ? { kind: 'confirm', meaning: top.meaning } : { kind: 'abstain' } };
 }

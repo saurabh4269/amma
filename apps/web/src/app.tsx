@@ -4,6 +4,7 @@ import { ClinicCard } from './clinic-card.tsx';
 import { loadBundle, Words, type Loaded } from './pack.ts';
 import { Session } from './session.tsx';
 import { Setup } from './setup.tsx';
+import { Teach } from './teach.tsx';
 import { deleteProfile, listProfiles, openProfile, requestPersistence, saveProfile, type ProfileMeta } from './store.ts';
 
 type Screen =
@@ -12,7 +13,8 @@ type Screen =
   | { at: 'pin'; meta: ProfileMeta; wrong?: boolean }
   | { at: 'person'; profile: Profile; pin?: string }
   | { at: 'session'; profile: Profile; pin?: string }
-  | { at: 'card'; profile: Profile; pin?: string };
+  | { at: 'card'; profile: Profile; pin?: string }
+  | { at: 'teach'; profile: Profile; pin?: string };
 
 const LANG_KEY = 'yaay.lang';
 
@@ -130,6 +132,7 @@ export function App() {
           <div class="list">
             <button class="big primary" onClick={() => setScreen({ at: 'session', profile, pin })}>▶ {words.ui('start')}</button>
             <button class="big" onClick={() => setScreen({ at: 'card', profile, pin })}>📋 {words.ui('clinic_card')}</button>
+            <button class="big" onClick={() => setScreen({ at: 'teach', profile, pin })}>🎤 {words.ui('teach_voice')}</button>
           </div>
           <DeleteButton
             words={words}
@@ -156,6 +159,9 @@ export function App() {
           }}
         />
       );
+
+    case 'teach':
+      return <Teach ix={ix} words={words} profile={screen.profile} onBack={() => setScreen({ at: 'person', profile: screen.profile, pin: screen.pin })} />;
 
     case 'card':
       return <ClinicCard ix={ix} words={words} profile={screen.profile} onBack={() => setScreen({ at: 'person', profile: screen.profile, pin: screen.pin })} />;

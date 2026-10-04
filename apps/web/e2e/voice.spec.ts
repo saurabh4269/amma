@@ -40,3 +40,24 @@ test('the phone learns her words from her own correction, and after that asks be
   await page.locator('.opt-yes').click();
   await expect(page.getByText('Is there another one?')).toBeVisible();
 });
+
+test('"teach the phone my voice" stores an example per sign, which the session then uses', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('button.big.ghost').click();
+  await page.locator('input[name=label]').fill('teach');
+  await page.locator('button.primary').click();
+  await page.getByText('Teach the phone my voice').click();
+  const sign = page.locator('.teach', { hasText: 'Bleeding during pregnancy' });
+  await expect(sign).toContainText('× 0');
+  await sign.click();
+  await page.waitForTimeout(2500);
+  await sign.click();
+  await expect(sign).toContainText('× 1', { timeout: 30_000 });
+
+  await page.getByRole('button', { name: /Back/ }).click();
+  await page.getByText('Start this week’s session').click();
+  for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Skip' }).click();
+  await speak(page);
+  await expect(page.getByText('Did you say:')).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('.said')).toContainText('Bleeding during pregnancy');
+});
