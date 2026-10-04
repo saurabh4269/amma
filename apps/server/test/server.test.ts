@@ -252,6 +252,15 @@ describe('telegram', () => {
     expect(user.conversation?.session.phase).toBe('after_birth');
   });
 
+  it('the /stop command deletes her record', async () => {
+    const { telegram, store } = server();
+    await telegram(text('hi'));
+    await telegram(text('1'));
+    expect(store.get('telegram:42')).toBeDefined();
+    await telegram(text('/stop'));
+    expect(store.get('telegram:42')).toBeUndefined();
+  });
+
   it('tapping a button removes the buttons from the message that was answered', async () => {
     const { telegram, tg } = server();
     await telegram(text('hi'));

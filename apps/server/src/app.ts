@@ -72,7 +72,7 @@ const DEFAULT_LOCALE = 'en-IN';
 /** Words that take her back to the language choice. */
 const RESTART = /^\s*\/?(start|restart|menu|language)\s*$/i;
 
-const STOP = /^\s*(stop|unsubscribe|बंद|रोको|थांबा)\s*$/i;
+const STOP = /^\s*\/?(stop|unsubscribe|बंद|रोको|थांबा)\s*$/i;
 
 export function buildApp(cfg: Config): FastifyInstance {
   const app = Fastify({ logger: { level: 'info', redact: ['req.body', 'req.headers["x-twilio-signature"]'] } });
