@@ -78,6 +78,8 @@ translations:
   p_open_more: "Kuna jingine?"
   p_did_you_say: "Je, ulisema:"
   p_not_sure: "Sina uhakika kuhusu hilo. Tafadhali muulize mtu: mhudumu wako wa afya ya jamii, mkunga au daktari."
+  p_noted: "Nimeliandika hili kwenye kadi yako ya kliniki. Halikuonyesha mojawapo ya dalili za hatari ninazouliza, lakini siwezi kukuambia ni nini. Tafadhali mwonyeshe kadi mhudumu wako wa afya ya jamii, mkunga au daktari."
+  o_back: "mgongoni"
   p_yes: "Ndiyo"
   p_no: "Hapana"
   p_unsure: "Sina uhakika"

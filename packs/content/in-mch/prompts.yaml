@@ -9,6 +9,7 @@ prompts:
   open_more: p_open_more
   did_you_say: p_did_you_say
   not_sure: p_not_sure
+  noted: p_noted
   yes: p_yes
   no: p_no
   unsure: p_unsure
@@ -27,6 +28,7 @@ cards:
   - { id: p_open_ask, kind: prompt, status: interface, ref: "Is there anything you want to ask, or anything that does not feel right?" }
   - { id: p_open_more, kind: prompt, status: interface, ref: "Anything else?" }
   - { id: p_did_you_say, kind: prompt, status: interface, ref: "Did you say:" }
+  - { id: p_noted, kind: prompt, status: interface, ref: "I have written this on your card for the clinic. It did not lead to one of the danger signs I ask about, but I cannot tell you what it is. Please show the card to your ASHA, ANM or doctor." }
   - { id: p_not_sure, kind: prompt, status: interface, ref: "I am not sure about that. Please ask a person: your ASHA, ANM or doctor." }
   - { id: p_yes, kind: prompt, status: interface, ref: "Yes", picture: "✔️" }
   - { id: p_no, kind: prompt, status: interface, ref: "No", picture: "✖️" }

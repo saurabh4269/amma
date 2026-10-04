@@ -79,6 +79,8 @@ translations:
   p_open_more: "Am na leneen?"
   p_did_you_say: "Ndax dangaa wax:"
   p_not_sure: "Loolu wóoruma ko. Laajal nit: sa bajenu gox, sa sage-femme walla doktoor."
+  p_noted: "Bind naa ko ci sa kàrt bu kilinig bi. Jëmewul ci benn ci màndargay musiba yi may laaj, waaye mënuma la wax lan la. Won kàrt bi sa bajenu gox, sa sage-femme walla doktoor."
+  o_back: "ci ginnaaw"
   p_yes: "Waaw"
   p_no: "Déedéet"
   p_unsure: "Wóoruma"

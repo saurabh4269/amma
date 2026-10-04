@@ -16,7 +16,7 @@ const sign = (id: string, group: string, urgency = 'urgent') => ({ id, group, ur
 const signCards = (id: string) => [card(`${id}_l`, 'sign_label'), card(`${id}_t`, 'sign_teach'), card(`${id}_a`, 'sign_ask')];
 const prompts = [
   'recall_ask', 'recall_more', 'recall_missed', 'recall_all', 'check_intro', 'open_ask', 'open_more',
-  'did_you_say', 'not_sure', 'yes', 'no', 'unsure', 'done', 'plan_intro', 'plan_playback', 'clarify_summary', 'track_intro',
+  'did_you_say', 'noted', 'not_sure', 'yes', 'no', 'unsure', 'done', 'plan_intro', 'plan_playback', 'clarify_summary', 'track_intro',
 ];
 const table = (group: string) => ({
   group,

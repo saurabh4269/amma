@@ -9,7 +9,7 @@ attributes:
     options: [{ id: mild, label: o_mild, picture: "🙂" }, { id: strong, label: o_strong, picture: "😣" }]
   - id: pain_site
     ask: a_pain_site
-    options: [{ id: head, label: o_head, picture: "🤕" }, { id: belly, label: o_belly, picture: "🤰" }, { id: leg, label: o_leg, picture: "🦵" }, { id: chest, label: o_chest, picture: "🫁" }, { id: elsewhere, label: o_elsewhere }]
+    options: [{ id: head, label: o_head, picture: "🤕" }, { id: belly, label: o_belly, picture: "🤰" }, { id: leg, label: o_leg, picture: "🦵" }, { id: chest, label: o_chest, picture: "🫁" }, { id: back, label: o_back }, { id: elsewhere, label: o_elsewhere }]
   - id: pain_pattern
     ask: a_pain_pattern
     options: [{ id: comes_goes, label: o_comes_goes }, { id: constant, label: o_constant }]
@@ -60,6 +60,7 @@ cards:
   - { id: o_belly, kind: label, status: interface, ref: "in the belly" }
   - { id: o_leg, kind: label, status: interface, ref: "in the leg" }
   - { id: o_chest, kind: label, status: interface, ref: "in the chest" }
+  - { id: o_back, kind: label, status: interface, ref: "in the back" }
   - { id: o_elsewhere, kind: label, status: interface, ref: "somewhere else" }
   - { id: a_pain_pattern, kind: prompt, status: interface, ref: "Does the pain come and go, or is it there all the time?" }
   - { id: o_comes_goes, kind: label, status: interface, ref: "it comes and goes" }

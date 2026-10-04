@@ -78,6 +78,8 @@ translations:
   p_open_more: "Autre chose ?"
   p_did_you_say: "Est-ce que vous avez dit :"
   p_not_sure: "Je ne suis pas sûre de cela. Demandez à une personne : votre agent de santé communautaire, votre sage-femme ou le médecin."
+  p_noted: "Je l'ai écrit sur votre carte pour la consultation. Cela n'a pas mené à l'un des signes de danger que je demande, mais je ne peux pas vous dire ce que c'est. Montrez la carte à votre agent de santé, votre sage-femme ou le médecin."
+  o_back: "au dos"
   p_yes: "Oui"
   p_no: "Non"
   p_unsure: "Pas sûre"

@@ -74,9 +74,9 @@ test('a problem she describes when asked something else is taken up by the assis
   await page.locator('input[name=said]').fill('my back has been aching for days');
   await page.getByRole('button', { name: 'Send' }).click();
 
-  // The assistant opens on it and plays it back; nothing is assumed.
+  // The assistant opens on it and asks about it; she confirms the whole of it in the summary at the end.
   await expect(page.locator('.top-title')).toBeVisible();
-  await expect(page.getByText('Did you say:').last()).toBeVisible();
+  await expect(page.getByText('Where is the pain?')).toBeVisible();
   await page.getByRole('button', { name: /Back/ }).last().click();
   await expect(page.getByText('Which signs mean you must go to the hospital straight away?')).toBeVisible();
 });

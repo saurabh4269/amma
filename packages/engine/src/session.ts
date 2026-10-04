@@ -44,7 +44,7 @@ type Sub =
       turns: number;
       confirm?: string;
       given?: Attrs;
-      clar?: { complaint: string; attrs: Attrs; asking?: string };
+      clar?: { complaint: string; attrs: Attrs; asking?: string; /** Some details were read from her words rather than tapped. */ prefilled?: boolean };
       raised: string[];
     };
 
@@ -328,7 +328,9 @@ class Run {
     const label = m && this.openLabel(m);
     if (!m || !raw || !label) return this.notSure(sub);
     sub.given = r.attrs;
-    if (r.kind === 'confirm') {
+    // A suggested question is played back before its answer is given. A suggested problem goes straight to its
+    // details: the summary at the end ("Let me say it back. Is this right?") is where she confirms or rejects it.
+    if (r.kind === 'confirm' && m.kind !== 'complaint') {
       sub.confirm = raw;
       this.say(this.p('did_you_say'), label);
       this.out.push({ type: 'choice', options: [this.opt('yes'), this.opt('no')] });
@@ -347,7 +349,8 @@ class Run {
       this.say(q.answer);
       return this.continueOpen(sub);
     }
-    sub.clar = { complaint: m.id, attrs: knownDetails(this.ix, m.id, sub.given) };
+    const known = knownDetails(this.ix, m.id, sub.given);
+    sub.clar = { complaint: m.id, attrs: known, prefilled: Object.keys(known).length > 0 };
     sub.given = undefined;
     this.askClarifier(sub);
   }
@@ -384,6 +387,11 @@ class Run {
       return this.askClarifier(sub);
     }
     if (sub.clar) {
+      // "No" to a summary that held details read from her words: those may be what is wrong, so she is asked them herself.
+      if (option !== CHOICE.yes && sub.clar.prefilled) {
+        sub.clar = { complaint: sub.clar.complaint, attrs: {} };
+        return this.askClarifier(sub);
+      }
       if (option !== CHOICE.yes) return this.notSure(sub);
       const { complaint, attrs } = sub.clar;
       this.st.profile.complaints.push({ date: this.st.date, complaint, attrs });
@@ -394,6 +402,8 @@ class Run {
       sub.raised = raisedSigns(this.ix, complaint, attrs).filter((id) => checked.has(id) && this.st.facts[signFact(id)] !== 'yes');
       const first = sub.raised[0];
       if (first) return this.askSign(first);
+      // Nothing more to ask. She is told what was done with it, not left with silence.
+      this.say(this.p('noted'));
       return this.continueOpen(sub);
     }
     if (option === CHOICE.done) this.advance();

@@ -181,6 +181,7 @@ export const PROMPT_ROLES = [
   'open_ask',
   'open_more',
   'did_you_say',
+  'noted',
   'not_sure',
   'yes',
   'no',

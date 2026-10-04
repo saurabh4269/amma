@@ -446,7 +446,7 @@ describe('model suggestions on the server', () => {
     await type('1'); // pregnant
     expect(store.get('telegram:3')!.aside).toBeDefined();
     expect(store.get('telegram:3')!.conversation).toBeUndefined(); // the weekly session has not been started over her
-    expect(sent.at(-1)).toContain('p_did_you_say');
+    expect(sent.at(-1)).toContain('a_site'); // straight to the details; the summary at the end is where she confirms
   });
 
   it('what her words already say about the problem is not asked again, and an invented detail is dropped', async () => {
@@ -454,7 +454,6 @@ describe('model suggestions on the server', () => {
     for (const t of ['1', '1']) await type(t);
     await type('the lower part of my belly hurts'); // between the menu and the session: taken up at once
     expect(detailsAsked[0]).toContain('site');
-    await type('1'); // "Did you say: pain?" yes
     const sub = (store.get('telegram:3')!.aside!.session as unknown as { sub: { clar: { attrs: Record<string, string>; asking?: string } } }).sub;
     expect(sub.clar.attrs).toEqual({ site: 'lower' });
     expect(sub.clar.asking).not.toBe('site');

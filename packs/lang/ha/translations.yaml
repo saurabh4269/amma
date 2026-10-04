@@ -78,6 +78,8 @@ translations:
   p_open_more: "Akwai wani abu kuma?"
   p_did_you_say: "Kin ce:"
   p_not_sure: "Ban tabbata da wannan ba. Don Allah ki tambayi mutum: ma'aikaciyar lafiya ta unguwa, ungozoma ko likita."
+  p_noted: "Na rubuta wannan a katinki na asibiti. Bai kai ga ɗaya daga cikin alamun haɗari da nake tambaya ba, amma ba zan iya gaya miki mene ne ba. Don Allah ki nuna katin ga ma'aikaciyar lafiya ta unguwa, ungozoma ko likita."
+  o_back: "a baya"
   p_yes: "Eh"
   p_no: "A'a"
   p_unsure: "Ban tabbata ba"
